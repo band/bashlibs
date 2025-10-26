@@ -1,0 +1,7 @@
+Documents () 
+{ 
+    : smart directory;
+    : mfg: smart_dir;
+    : date: 2025-03-06;
+    ${@:-echo} "/Users/martymcgowan/Documents"
+}

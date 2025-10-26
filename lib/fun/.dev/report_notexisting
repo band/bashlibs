@@ -1,0 +1,7 @@
+report_notexisting () 
+{ 
+    : report the arument is not an Existing file;
+    : date: 2023-08-27;
+    [[ -e $1 ]] && return 1;
+    report_usage $1 "ISN'T" an existing file
+}

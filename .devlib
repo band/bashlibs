@@ -1,0 +1,3 @@
+  565  iso_date () { : returns YYYY-MM-DD from { da { mo { yr }}} args; case $# in 0) date +%i;; *) ;; esac; }
+  508  xx () { addresses cat | rd grep -i domashinski | tabletolist; }
+  373  rmtmp () { : remove easily identified TMP files; rm -f ~/tmp/{.,}*.{awk,err,tmp,nxt,one,two,new,old,out,txt,[a-z],0[0-9]}; }

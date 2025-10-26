@@ -1,0 +1,6 @@
+sync () 
+{ 
+    : for syncthing;
+    : date: 2022-06-03;
+    ${*:-echo} $HOME/Sync
+}

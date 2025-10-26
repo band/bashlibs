@@ -1,0 +1,8 @@
+report_nottrue () 
+{ 
+    : Fails if the Evaluating the arguments succeeds;
+    : date: 2017-07-18;
+    : date: 2018-02-16;
+    eval "$@" && return 1;
+    report_usage $@ FAILED
+}

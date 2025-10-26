@@ -1,0 +1,9 @@
+fuse_state () 
+{ 
+    : identify Unsed with all Library functions;
+    : date: 2024-05-25;
+    report_notfile $1 && return;
+    functions $1 | tpl | sort > .$1;
+    comm -${2:-1} <(fuse_none $(< .$1)) .$1;
+    printf "$1\tNone\n" 1>&2
+}

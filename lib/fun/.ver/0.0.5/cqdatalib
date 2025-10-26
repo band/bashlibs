@@ -1,0 +1,115 @@
+cqdata_libheader () 
+{ 
+    : " This is the cqdatalib Function Library Comment Header";
+    : "Copyright 2025, Marty McGowwan @ Shell Functions";
+    : date: 2025-05-07;
+    :;
+    : " This program is free software: you can redistribute it and/or modify";
+    : "it under the terms of the GNU General Public License as published by";
+    : "the Free Software Foundation, either version 3 of the License, or";
+    : "(at your option) any later version.";
+    :;
+    : " This program is distributed in the hope that it will be useful,";
+    : "but WITHOUT ANY WARRANTY; without even the implied warranty of";
+    : "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the";
+    : "GNU General Public License for more details.";
+    :;
+    : " You should have received a copy of the GNU General Public License";
+    : "along with this program.  If not, see <http://www.gnu.org/licenses/>."
+}
+csv () 
+{ 
+    : where many CSV are hiding;
+    : date: 2022-10-11;
+    ${@:-echo} $HOME/Downloads/csv
+}
+csv_group () 
+{ 
+    : date: 2023-02-25;
+    ${@:-echo} \
+               csv_{c2,collect,pick,tsv,group}
+}
+csv_pick () 
+{ 
+    : collect CSV records, the first record with commas is the header;
+    : allows multiple files, must all have same record structure;
+    : date: 2023-02-25;
+    :;
+    cawk 'NF > 1 && !p { p = 1; nf = NF; } p && NF >= nf ' ${@:--}
+}
+csv_tsv () 
+{ 
+    : date: 2022-04-09;
+    : date: 2022-07-30;
+    : date: 2022-08-01;
+    : date: 2023-02-25;
+    report_notfile $1 && return 1;
+    tail +2 $1 | lft 01 | fmdos | sed '
+        s/"* *, *"*/	/g
+s/^"//
+s/"$//
+'
+}
+csvqfx_group () 
+{ 
+    : date: 2023-02-25;
+    ${@:-echo} $(csv_group) cancsv csv{,rdb} \
+               csv_{canon,collect,data,fields} \
+               csv_{record,rdb,financial} csvqfx_group mit_csv2{rdb,tab,tsv} {lbth,rdb}_csv csvqfx_group financial_qfx qfx2{rdb,tbl,checks} \
+               qfx_{data,fields,hdr,in,wells}
+}
+financial_qfx () 
+{ 
+    : QFX goes straight to RDB;
+    : date: 2022-08-02;
+    : date: 2022-08-13;
+    : date: 2022-08-14;
+    debug ENTRY $*;
+    set -- $(financial $* 2> /dev/null);
+    report_notargcount 2 $# && return 1;
+    set $1 $2 ${2%.*}.tmp ${2%.*}.rdb;
+    debug CONTINUE 1: $1;
+    debug CONTINUE 2: $2;
+    debug CONTINUE 3: $3;
+    debug CONTINUE 4: $4;
+    qfx_data $1 | onlyChanged $4
+}
+qfx_hdr () 
+{ 
+    : date: 2022-07-30;
+    : date: 2022-10-10;
+    : date: 2023-01-24;
+    qfx_in $1 | field 1 | sort | uniq -c | awk 'NF > 1 && $1 > 2 { print $2 }'
+}
+qfx_in () 
+{ 
+    : date: 2022-03-15;
+    : date: 2022-07-30;
+    : date: 2022-10-10;
+    : date: 2023-02-25;
+    : date: 2023-09-05;
+    report_notfile $1 && return 1;
+    local func=$(myname);
+    rm -f .qi.*;
+    cat $1 | tr '<>' '\n\t' |
+    ... lft 00 | sed '
+    	/STMTTRN/d
+	s/TRNTYPE/\
+&/	
+    ' |
+    ... lft 01 | awk '
+        prt     { print }
+	/DTEND/ { prt = 1 }
+    ' | lft 02 | grep -v ^/ | tee .$func.dat |
+    ... field 1 | printfirst > .$func.hdr;
+    cat .$func.{hdr,dat} | tee lft 02
+}
+tsv_rdb () 
+{ 
+    : collect Holding in RDB;
+    : date: 2025-02-05;
+    set -- holding.{tsv,rdb};
+    ( fmdos $1;
+    echo ) | NF | compute 'exposed = sprintf("%7d",exposed); shares = sprintf("%9.2f",shares)' > $2;
+    echo $2
+}

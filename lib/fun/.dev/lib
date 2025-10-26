@@ -1,0 +1,7 @@
+lib () 
+{ 
+    : the preferred Lib directory;
+    : date: 2023-07-27;
+    : date: 2024-09-13;
+    ${*:-echo} $APP_HOME/lib
+}

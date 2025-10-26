@@ -1,0 +1,7 @@
+Shell () 
+{ 
+    : smart directory;
+    : mfg: smart_dir;
+    : date: 2025-04-09;
+    ${@:-echo} "/Users/martymcgowan/Library/Mobile Documents/iCloud~md~obsidian/Documents/Shell"
+}

@@ -1,0 +1,14 @@
+retiring () 
+{ 
+    : date: 2025-04-10;
+    : date: 2025-04-27;
+    : date: 2025-04-28;
+    : date: 2025-05-01;
+    : date: 2025-05-22;
+    debug ENTRY $# $*;
+    report_notfunction ${1:-/dev/null};
+    local lib=$(retired);
+    debug lib: $lib;
+    shd_setdate $* 2> /dev/null | tee -a $lib;
+    foreach do_whlib $* 1>&2
+}

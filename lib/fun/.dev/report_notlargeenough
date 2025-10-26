@@ -1,0 +1,7 @@
+report_notlargeenough () 
+{ 
+    : Fails if the 2nd arg is algebraically greater than or equal to the 1st afg;
+    : date: 2018-02-16;
+    [[ $2 -ge $1 ]] && return 1;
+    report_usage $1 $(echo 1: $1, 2: $2 3...: ${*:3})
+}

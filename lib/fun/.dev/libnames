@@ -1,0 +1,13 @@
+libnames () 
+{ 
+    : Active, Public libraries No profiles;
+    : related: allprofs;
+    : todo: anticipate moving function libraries to files with lib SUFFIX;
+    : date: 2023-07-22;
+    : date: 2025-04-27;
+    local libs=$(libfun)/*lib;
+    debug libs: $libs;
+    debug prof: $prof;
+    pause;
+    ${@:-echo} $libs $prof
+}

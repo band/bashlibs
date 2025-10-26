@@ -1,0 +1,7 @@
+aster_preface () 
+{ 
+    : preface each line with an asterisk and SPACE;
+    : date: 2024-09-28;
+    report_notpipe && return 1;
+    sed 's/^/* /'
+}

@@ -1,0 +1,8 @@
+report_notdirectory () 
+{ 
+    : Fail if the argument is not a Directory;
+    : date: 2018-02-16;
+    : date: 2018-10-09;
+    [[ -d $1 ]] && return 1;
+    report_usage $1 "ISN'T" a Directory ${@:2}
+}

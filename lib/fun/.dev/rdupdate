@@ -1,0 +1,51 @@
+rdupdate () 
+{ 
+    : update a Relational TABLE;
+    : date: 2024-02-03;
+    : date: 2024-06-19;
+    : date: 2024-10-27;
+    : date: 2025-02-14;
+    : date: 2025-02-20;
+    : date: 2025-04-27;
+    report_notfile $1 && return 1;
+    debug ENTRY $@;
+    local dir=$(dirname $1);
+    local tbl=$(basename $1);
+    debug A dir: $dir, tbl: $tbl;
+    pushd $dir > /dev/null;
+    local hry=$(needir .hry)/$tbl;
+    local nxt=.hry/${tbl%.*}.nxt;
+    local err=~/tmp/rdupdate.err;
+    debug B tbl: $tbl, hry: $hry, nxt: $nxt;
+    pause;
+    [[ -f $hry ]] || { 
+        debug W hry: $hry;
+        rdb_hdr {insert,delete}_time $(sed 1q $tbl) > $hry
+    };
+    local awkfile=$INSTALL_HOME/lib/awk/rdupdate.awk;
+    debug awkfile: $awkfile;
+    report_notfile $awkfile && { 
+        debug E2;
+        pause;
+        return 2
+    };
+    now=$(date '+%y%m%d%H%M%S');
+    debug D $* awk -F'\t' $tbl -v now=$now -f $awkfile $hry -;
+    awk NF $tbl | awk -F'\t' -v now=$now -f $awkfile $hry - 2> $err | sorttable > $nxt;
+    debug SIZE $nxt: $(wc $nxt);
+    pause;
+    [[ -s $nxt ]] && { 
+        diff $nxt $hry 1>&2 && { 
+            debug PWD: $PWD;
+            debug WC: $(wc $nxt $hry);
+            pause
+        } || { 
+            comment handle the difference;
+            pause;
+            diff $nxt $hry | more
+        }
+    };
+    ignore cdx;
+    ignore pushd;
+    pickd
+}

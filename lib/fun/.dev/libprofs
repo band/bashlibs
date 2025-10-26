@@ -1,0 +1,18 @@
+libprofs () 
+{ 
+    : libraries and profiles, now admit a Local Bin;
+    : related: un{refreshed,source,tidied};
+    : todo: anticipate moving function libraries to files with lib SUFFIX;
+    : date: 2023-07-22;
+    : date: 2024-09-13;
+    : date: 2025-01-02;
+    : date: 2025-05-19;
+    local libs=$(libfun)/*lib;
+    local locl=$(localbin)/*lib;
+    local prof=$(ls $(local_bin)/.*_profile);
+    debug prof: $prof;
+    debug libs: $libs;
+    debug locl: $locl;
+    pause;
+    ${@:-echo} $prof $libs $locl
+}

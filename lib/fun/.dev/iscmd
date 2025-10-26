@@ -1,0 +1,14 @@
+iscmd () 
+{ 
+    : T, F, is the argument an alias, file, or function;
+    : date: 2024-02-08;
+    case $(type -t $1) in 
+        alias | file | function)
+            true
+        ;;
+        *)
+            comment $1 Failed;
+            false
+        ;;
+    esac
+}

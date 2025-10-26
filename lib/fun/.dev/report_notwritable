@@ -1,0 +1,7 @@
+report_notwritable () 
+{ 
+    : Fails if file exists and is writable;
+    : date: 2023-08-27;
+    [[ -w $1 ]] && return 1;
+    report_usage $1 "ISN'T" a writable file
+}

@@ -1,0 +1,7 @@
+fuse_none () 
+{ 
+    : for a function collection, None are used;
+    : date: 2023-08-21;
+    :;
+    fuse_count $@ | awk '$1 < 1 { print $2 }'
+}

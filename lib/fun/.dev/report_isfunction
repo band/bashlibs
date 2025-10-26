@@ -1,0 +1,7 @@
+report_isfunction () 
+{ 
+    : fail if the argument is not a Function;
+    : date: 2018-08-10;
+    declare -f $1 > /dev/null || return 1;
+    report_usage $1 IS a Function ${*:2}
+}

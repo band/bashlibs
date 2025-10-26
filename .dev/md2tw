@@ -1,0 +1,28 @@
+md2tw () 
+{
+    : convert Markdown syntax to TW
+    : n.b. the s...g expression with lots of quotes exchanges stars for squotes
+    sed '
+ 	/^[`][`][`]/d	
+	s/^- /* /
+	s/^+ /* /
+        s/^## /!! /
+        s/^### /!!! /	
+	s/^1[.]/#/
+	s/[*][*]/'"''"'/g	
+	/^!include /{
+	    s/^.include /{{/
+            s/..src.shell./shell_/
+	    s/$/||EditLink}}/
+	    }
+	/](/{
+	    s=[(]\(.*\)[)]=]\
+	    <!-- \1 \
+	     -->=
+        }
+    '
+}
+
+
+
+

@@ -1,0 +1,10 @@
+recursive () 
+{ 
+    : recursively cal the calling functtion, consuming arguments;
+    : date: 2023-09-25;
+    : date: 2024-03-16;
+    debug ENTRY $# $@;
+    [[ $# -lt 2 ]] && return 1;
+    shift;
+    $(myname 2) "$@"
+}

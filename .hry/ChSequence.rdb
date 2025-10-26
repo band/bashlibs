@@ -1,0 +1,36 @@
+insert_time	delete_time	seqno	section	file	title	comment
+-----------	-----------	-----	-------	----	-----	-------
+250325145911		110	Introduction	Development.md	State of Development	the "source" is elsewhere
+250325145911		120	Introduction	WhatsDifferent.md	What's Different Here	surprises, maybe
+250325145911		130	Introduction	BashShell.md	On Shell Functions	the first e-book
+250325145911		140	Introduction	Philosophy.md	Function Philosophy	a bit philosophical about functiouns
+250325145911		150	Introduction	OnDebugging.md	Debugging Utilities	Turning On, Off Debugger, Pausing
+250325145911		160	Introduction	TheNullCommand.md	The Null Command, Usage, Caution	A new, cautious usage
+250325145911		170	Initial Setup	TheValueofanAlias.md	The Value of an Alias	 I've come to appreciate the concept
+250325145911		180	Initial Setup	TheProfileStory.md	The Profile Story	what every user starts with
+250325145911		190	Initial Setup	onSmartFiles.md	On Smart Files	 Files, Functions, and their lists
+250325145911		200	Initial Setup	ShellFunctions.md	More on the Shell Function	left over details
+250325145911		210	Libraries	bashlibs.md	bashlibs	the management document, naming conventions
+250325145911		220	Libraries	AliasValue.md	Value of the Alias	aliases as a command line shortcut
+250325145911		230	Libraries	TheDevLoop.md	The Development Loop	when you're adding, updating functions
+250325145911		240	Libraries	LibraryOrganization.md	Library Organization	which functions go where
+250325145911		250	Libraries	RetireFunctions.md	Wrapup and Retire Functions	Wrap Up Development
+250325145911		260	Libraries	MarkerFiles.md	Marker Files and Backup	Updating  Function Libraries, Database
+250325145911		270	Applications	Backup.md	The Universal Backup	  works on any type, no numeric limits
+250325145911		280	Applications	SimpleVersion.md	A Simple Version Scheme	given a current Backup, declare it a Version
+250325145911		290	Applications	FunctionList.md	Using Function Lists	constructing function lists, type of
+250325145911		300	Applications	UnixRelationalDB.md	Unix Relational Data Base	follows the Book of the same name
+250325145911		310	Applications	AlittleMath.md	A Little Math Library	function to wrap a command-line calculator
+250325145911		320	Applications	PunchtheClock.md	Punch the Clock	Timekeeping - Project, Task & Comment
+250325145911		330	Applications	SimpleVersion.md	A Simple Version Scheme	given a current Backup, declare it a Version
+250325145911		340	Applications	FunctionList.md	Using Function Lists	constructing function lists, type of
+250325145911		350	Applications	UnixRelationalDB.md	Unix Relational Data Base	follows the Book of the same name
+250325145911		360	Applications	AlittleMath.md	A Little Math Library	function to wrap a command-line calculator
+250325145911		370	Applications	PunchtheClock.md	Punch the Clock	Timekeeping - Project, Task & Comment
+250325145911		380	Author Tools	UsingMarkdown.md	Using Markdown Editor	settled on Markdown formatting
+250325145911		390	Author Tools	DocumentWriting.md	Document Writing Tools	functions around pandoc
+250325145911		400	Author Tools	UsingMarkdown.md	Using Markdown Editor	settled on Markdown formatting
+250325145911		410	Author Tools	DocumentWriting.md	Document Writing Tools	functions around pandoc
+250325145911		420	Appendix	UnixUtilities.md	Unix Utilities	Command Reference
+250325145911		430	Appendix	Shdoc.md	Shell Docs	an Abstract and Doc for the Shell
+250325145911		440	Appendix	onlyOneShBang.md	What about the shebang?	let's tone it down.

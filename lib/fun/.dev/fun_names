@@ -1,0 +1,9 @@
+fun_names () 
+{ 
+    : returns Function names of Arguments;
+    : date: 2024-06-06;
+    for f in ${*:-*};
+    do
+        isfunction $f && echo $f;
+    done
+}

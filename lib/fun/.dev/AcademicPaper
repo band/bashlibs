@@ -1,0 +1,8 @@
+AcademicPaper () 
+{ 
+    : smart directory;
+    : mfg: smart_dir;
+    : list: B;
+    : date: 2024-02-05;
+    ${@:-echo} "/Users/martymcgowan/Documents/AcademicPaper"
+}

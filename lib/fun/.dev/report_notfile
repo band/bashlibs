@@ -1,0 +1,9 @@
+report_notfile () 
+{ 
+    : report the argument is not a File;
+    : date: 2018-02-16;
+    : date: 2022-01-08;
+    [[ -f $1 ]] && return 1;
+    report_usage $1 "ISN'T" a file;
+    declare -f $(myname 2) 1>&2
+}

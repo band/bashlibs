@@ -1,0 +1,13 @@
+unsourced () 
+{ 
+    : those which havent been SOURCEd recenlty;
+    : related: source_unsourced;
+    : date: 2023-07-12;
+    : date: 2024-08-05;
+    : date: 2025-04-28;
+    ls -t .sourced $(allprofs) 2> /dev/null | awk '
+
+        $1 ~ /^.sourced$/ { exit };
+	                  { print }
+    '
+}

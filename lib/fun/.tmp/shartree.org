@@ -1,0 +1,27 @@
+
+ * share_init
+   * share_does
+     * comment
+   * share_help
+   * share_hint
+ * share_list_test
+   * doit
+   * indir
+   * share_list
+     * indir
+
+ * share_ls
+   * share_list
+ * share_peek
+    * fbdy
+    * nava
+    * share_fromto
+    * indir
+    * share_help
+    * share_run
+     * foreach
+     * indir
+     * share_list
+     * share_one
+       * debug
+       * newest

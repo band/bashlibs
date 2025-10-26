@@ -1,0 +1,15 @@
+update_option () 
+{ 
+    : give option to either, DIFF two files or UPDATE First from Second;
+    : Pay CLOSE ATTENTION, ...;
+    : the Orignal file is First, the Updated is Second;
+    : related: difftwo;
+    : date: 2024-09-04;
+    if_missingargs 2 $* && return;
+    report_notfile $1 && return 1;
+    report_notfile $2 && return 2;
+    set -- $1 $2;
+    debug SET $# $@;
+    pause;
+    printf "difftwo $*\n OR mv $2 $1\n  AND rdupdate $1\n" 1>&2
+}

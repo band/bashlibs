@@ -1,0 +1,33 @@
+pdmd () 
+{ 
+    : pandoc MarkDown, Author and Date;
+    : date: 2023-08-25;
+    : date: 2024-10-10;
+    : date: 2025-03-17;
+    : date: 2025-03-22;
+    :;
+    debug ENTRY $# $@;
+    [ -f $1 ] || { 
+        comment missing file $1;
+        return 1
+    };
+    :;
+    local doc=$(needir ../html)/${1%.*}.html;
+    : ${AUTHOR:+Assign an AUTHORs Name};
+    newest $doc $1 || { 
+        local hoy="$(date "+%B %e, %Y")";
+        debug SET $@;
+        debug doc, hoy: $doc, $hoy;
+        pause;
+        pandoc -s \
+        --quiet \
+        --filter pandoc-include \
+        --toc $1 -o $doc \
+        --variable "author=$AUTHOR" \
+        --variable "date=$hoy";
+        :
+    };
+    pause;
+    echo $doc;
+    recursive $@
+}

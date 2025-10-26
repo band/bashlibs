@@ -1,0 +1,2046 @@
+unuabs_libheader () 
+{ 
+    : " This is the unuabslib Function Library Comment Header";
+    : "Copyright 2025, Marty McGowwan @ Shell Functions";
+    : date: 2025-05-08;
+    :;
+    : " This program is free software: you can redistribute it and/or modify";
+    : "it under the terms of the GNU General Public License as published by";
+    : "the Free Software Foundation, either version 3 of the License, or";
+    : "(at your option) any later version.";
+    :;
+    : " This program is distributed in the hope that it will be useful,";
+    : "but WITHOUT ANY WARRANTY; without even the implied warranty of";
+    : "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the";
+    : "GNU General Public License for more details.";
+    :;
+    : " You should have received a copy of the GNU General Public License";
+    : "along with this program.  If not, see <http://www.gnu.org/licenses/>.";
+    :;
+    : date: 2025-05-08 - even libheaders need a date;
+    :
+}
+abx () 
+{ 
+    : prepare abstracting function;
+    : date: 2024-09-27;
+    abstracts $(dfg ${1:-abstract} | column fun | rd uniq | headoff)
+}
+all_ver () 
+{ 
+    : the backup dirs;
+    : date: 2023-10-23;
+    foreach one_ver $(backup_dirs | sed s=..bak==)
+}
+altable () 
+{ 
+    : create the TABLE of -al files in the current directory;
+    : date: 2023-07-22;
+    function _my_llrt () 
+    { 
+        rdb_hdr mode links owner group chars mon daysn hhmm name;
+        ls -al | grep -v ^total | tr -s ' ' '\t'
+    };
+    _my_llrt | compute '
+    	links = sprintf("%3d",links)
+        chars = sprintf("%7d",chars)
+        daysn = sprintf("%7d",daysn)
+    '
+}
+app_allawk () 
+{ 
+    : who uses the awk_file or AWK_PATH to find awk scripts;
+    : date: 2022-03-21;
+    fuse awk_file | field 1 | sort -u
+}
+app_alltxt () 
+{ 
+    : who uses a TXT file or _PATH to find one for the calling function;
+    : date: 2022-03-21;
+    fuse txt_file | field 1 | sort -u
+}
+app_description () 
+{ 
+    : describes requirements to be an APP on STDOUT;
+    : keep them here while we su;
+    : date: 2024-06-28;
+    cat <<'EOF'
+
+  1. calls APP_ISA function:   "app_isa $* ... || return"
+
+  2. where any number of related functions are named:
+         app_this, app_that, app_other, maybe even just plain app
+     where "app" in this sense is generic, any suitable handle
+
+  3. whose functions are formatted canonically by this statement
+
+     declare -f fun_a fun_b ....  > funlib
+
+  4. and may be stored in diverse libraries.
+     i.e. an APP may be built from functions in many libraries
+
+     $ graf main APP.out $(functions funlib)
+
+  5. the libraries are all available on the users path:
+
+     $ which funlib    # returns the full or relative PATH
+
+EOF
+
+}
+app_diff () 
+{ 
+    : compare, DIFF the LIB functions against those in the APP;
+    : date: 2020-03-22;
+    function _difftwo () 
+    { 
+        report_notfile $2 && return 1;
+        debug $(wc -l $*);
+        diff $1 $2 && return;
+        printf "< $1\n> $2\n\n";
+        sleep 2
+    };
+    set -- ${1:-backup};
+    set -- $1 $(which ${1}lib) $(which ${1}_app) ~/tmp/$1.app;
+    : library name, /full/path/library, /full/path_app, just APPs LIB functions;
+    debug $(wc -l ${*:2});
+    report_notfile ${3:-/dev/null} && return 1;
+    source $3;
+    : Key: 2 = /full/path/library, 4 = just APPs LIB functions;
+    declare -f $(functions $2) > $4;
+    _difftwo $2 $4;
+    unset _difftwo
+}
+app_entrypt () 
+{ 
+    : functions have these Entry Points, e.g. no higher caller;
+    : date: 2024-09-27;
+    grep '^ . [a-z]' $* | field 2
+}
+app_is () 
+{ 
+    : encourage FUNCTIONS to Become an APP;
+    : usage: "app_isa arg ... || return";
+    : caller may have an _INIT function, if so, call it;
+    : also, if CALLER_$1 is a function, call it with args, and return;
+    : and, if the first argument is NOT a function and;
+    : if there is a MAIN function, call it;
+    : internal -- parent_subfunction, FUNC return failure = 1.;
+    : to allow parent a default behavior of its own.;
+    : date: 2020-01-27;
+    : date: 2020-02-02 add default _MAIN function;
+    local parent=$(basename $0);
+    local init=${parent}_init;
+    local func=${parent}_$1;
+    local main=${parent}_main;
+    : -- any initialization;
+    isfunction $init && $init 2> /dev/null;
+    : -- a PARENT_function;
+    isfunction $func && { 
+        shift;
+        $func $*;
+        return 1
+    };
+    : implicit functions;
+    case $1 in 
+        help)
+            : this is the default help function.;
+            : a user-defined parent_help overrides by calling "parent help";
+            sfg ${parent}_ | pr -t4 1>&2;
+            return 1
+        ;;
+        *)
+            isfunction $main && { 
+                $main "$@";
+                return 1
+            };
+            ( printf "$parent %s\n" "[ help |";
+            printf "$(app_kids ${parent}_ | pr -t4 | sed 's/^/        /') \n]\n" ) 1>&2
+        ;;
+    esac
+}
+app_out () 
+{ 
+    : functions, libs needed for an App;
+    : date: 2024-05-19;
+    if_missingargs 1 $* && return;
+    do_do whlib;
+    do_whlib $(app_fun $* | tee .wrap.fun) | tee .wrap.out
+}
+app_starter () 
+{ 
+    : for an APP, generate Executable function calls to all _INIT functions;
+    : similar to fun_starter for LIBs;
+    : date: 2019-11-24;
+    report_notfile $1 && return 1;
+    for fun in $(functions $1 | grep _init$ | sort);
+    do
+        printf "%s 1>&2\n" $fun;
+    done
+}
+backup_abstracts () 
+{ 
+    : abstracts in the Backup Family;
+    : date: 2023-03-15;
+    : date: 2024-05-19;
+    rdb_hdr name abstract;
+    foreach abstract $(backup_all)
+}
+backup_bottom () 
+{ 
+    : opposite of backup_top;
+    : related: backup_top;
+    : date: 2023-07-10;
+    function _alt () 
+    { 
+        find $1 -type f | egrep '[.](ver|bak)/' | xargs ls -alrt
+    };
+    _alt ${1:-.} | awk '$5 > 0' | awk -F/ '!p[$NF]++ { print }' | field NF;
+    unset _alt
+}
+backup_clean () 
+{ 
+    : files not worth a backup, tilde, .out, .in;
+    : date: 2024-05-25;
+    find .bak -type f | grep -e ~$ -e .out$ -e .in$
+}
+backup_need () 
+{ 
+    : compare list of files to backup list;
+    : lesson: put Stderr on Stdout, which was just set to DevNull;
+    : date: 2024-02-08;
+    : date: 2024-06-28;
+    : date: 2024-09-21;
+    clean rm -f > /dev/null 2>&1;
+    indir .bak clean rm -f > /dev/null 2>&1;
+    comm $1 <(ls) <(indir .bak ls);
+    printf "======  stderr  ====\n%s\t%s\t%s\n" folder backup both 1>&2
+}
+backup_top () 
+{ 
+    : the immediate backup files;
+    : those that would become a version;
+    :;
+    : date: 2023-09-28;
+    find ${1:-.} -type f | grep '.bak/' | grep -v .bak/.bak/
+}
+bookmarks_folder () 
+{ 
+    : hierarchy list of bookmar folders;
+    : date: 2023-10-20;
+    cat $HOME/Downloads/html/bookmarks.html | awk '
+      
+        /ICON_URI/  { next }
+	/<HR>/      { sub(/<HR> */,""); print NR, $0; next; }
+        /<H3/       {
+	              # ------------- H3 is an OPEN Tag	--
+	              line = $0
+		      tabs = index(line,"<DT>")
+		      tabs -= 1
+		      tabs /=4
+		      # ---- Clean the line to the Text	--
+		      sub(/<[/]H3>/,"")
+                      sub(/<DT><H3 .*>/,"")
+		      printf "%s\t%s\n", "H" tabs, $0
+		    }
+	/HREF=/     {
+                      twos = "a: %s\tb: %s\n"
+	              sub(/.*HREF=./,"")
+		      sub(/<[/]A>.*$/,"")
+		      sub(/".*>/,"<.>")	
+		      url = $0
+                      label = $0
+		      # printf twos, label, url
+                      sub(/<.>.*/,"",url)
+                      sub(/.*<.>/,"",label)
+		      printf "\t%s\t%s\n", label, url
+		    }
+
+    ' | tee $(lib)/bookmarks/folders.txt
+}
+bymodate () 
+{ 
+    : tables by MODATE;
+    : date: 2023-07-22;
+    cat $(tables) | sorttable modate | justify
+}
+catch_name () 
+{ 
+    : resident records with no directory information;
+    : date: 2023-07-22;
+    grep -v '^[nameh]:' resident.src | awk ' NF { printf "n: %s\n", $0; next;}  { print }' | uniq
+}
+cdpath () 
+{ 
+    : after a CD, all local directories to the PATH;
+    : date: 2023-07-10;
+    :;
+    : ------------------ before moving, clear local directories --;
+    :;
+    for dir in {{{../,}../,}..,.}/bin;
+    do
+        pushd $dir > /dev/null;
+        pwd;
+        for lib in *lib;
+        do
+            [[ -f $lib ]] || continue;
+            sdf $(functions $lib 2> /dev/null | wc -l) $lib;
+        done;
+        pushd > /dev/null;
+        cdx > /dev/null;
+        echo;
+    done
+}
+cmdline () 
+{ 
+    : the functions are cmdlinelib;
+    : template for any library destination;
+    : example: "set cmdlinelib other THEN fbdy .1 PIPE sed s/.1/.2/g TEE .2";
+    : TAIL the number of functions added;
+    : related: retiring;
+    : date: 2024-02-03;
+    : date: 2024-05-28;
+    : date: 2024-09-12;
+    : date: 2024-09-13;
+    report_notfunction ${1:-/dev/null};
+    debug ENTRY $@;
+    pause;
+    local cmdlinelib=$(libfun)/cmdlinelib;
+    debug cmdlinelib: $cmdlinelib;
+    declare -f $@ 2> ~/tmp/cmdlinelib.err | tee ~/tmp/cmdlinelib.out | tee -a $cmdlinelib;
+    local result=$(functions $cmdlinelib | tail -${$#});
+    debug result: $result
+}
+collect_dots () 
+{ 
+    : functions to format, pretty print functions;
+    : date: 2023-07-22;
+    ${*:-echo} $(myname) dotty dotfunctions fold_pipedots sfg declare
+}
+columnate () 
+{ 
+    : produce command to align columns;
+    : date: 2020-09-13;
+    : date: 2025-02-20;
+    report_notfile $1;
+    set -- $1 ${1%.*}.nxt;
+    cat $1 | column > $2;
+    debug_on;
+    pause_on;
+    wc $@;
+    pause;
+    diff $1 $2 > /dev/null && rm -f $2 || echo mv $2 $1;
+    debug_off;
+    pause_off;
+    ls -alrt $@
+}
+command_declare () 
+{ 
+    : two features get folded with canonical format;
+    : 1. " ... command";
+    : 2. " date: 2022-10-01";
+    : 3. "     : date: 2024-10-02;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  \
+               fam_{x,y,x...}";
+    command declare -f $@ | fold_pipedots | fam_echosave
+}
+commonplace () 
+{ 
+    : smart directory;
+    : mfg: smart_dir;
+    : date: 2025-04-23;
+    ${@:-echo} "/Users/martymcgowan/marty3/md/commonplace"
+}
+csv_c2 () 
+{ 
+    : using prepared HDR, CSV files;
+    : related: csv_collect;
+    : date: 2023-02-25;
+    : date: 2023-09-05;
+    report_notfile $1.hdr && return 1;
+    report_notfile $1.csv && return 2;
+    report_notfunction ${1}_shorthand && return 3;
+    :;
+    fields="date amount action";
+    ( rdb_hdr $(< $1.hdr);
+    csv_tsv $1.csv | lft 00 | ${1}_shorthand ) | lft 01 |
+    ... column $fields RunDate Amount Action | lft 02 | compute '
+
+        date = RunDate;
+	amount = sprintf("%8.2f",Amount);
+	action = Action
+
+    ' | lft 03 | iso_date | column $fields
+}
+csv_collect () 
+{ 
+    : use CSV_PICK to prepare HDR, CSV. Must read on PIPE;
+    : related: csv_c2;
+    : date: 2023-02-25;
+    if_missingargs 1 $@ table name, root of file && return;
+    report_notpipe && return 1;
+    local stem=$1;
+    csv_pick | tee $stem.csv | sed 1q | sed 's/[(]$[)]//g; s/ //g; s/,/ /g' | tee $stem.hdr
+}
+datatype () 
+{ 
+    : produces the rdb datatype in each column;
+    : /RDB, p. 287;
+    : date: 2020-08-24;
+    : date: 2020-09-21;
+    :;
+    local listall=0;
+    case $1 in 
+        -l)
+            listall=1;
+            shift
+        ;;
+    esac;
+    column $* | awk -F\t -v listall=$listall '
+
+    function max(x,y)  { return ((x > y)? x : y); }
+
+    NR == 2 { dash = $0 }
+    NR < 3  { print; nfields = NF
+              for (i=1; i<= NF; i++) {
+                  dtype[i] = -1    # default is non-numberic Character strings      
+      }
+              next
+    }
+    listall == 1  { print }
+    NF != nfields { print "ERROR: %d has %d fields, Not %d\n", NR, NF, fields; exit; }
+
+        {   
+  n = split($0, field,"\t");
+  for (i=1; i<=nfields; i++) {
+
+              if( field[i] ~ /[0-9]/)  {
+
+                  num = field[i]
+                  dtype[i] = max( dtype[i], 0);
+                  dpoint   = index( num,".")
+          if (dpoint) {
+
+                      decimal  = length(substr(num,dpoint+1))
+      dtype[i] = max( dtype[i], decimal);
+                    }
+                 }
+             }
+ }
+    END {
+          if(listall) print dash
+
+  for (i=1; i< nfields; i++) {
+      printf "%6d\t", dtype[i]
+            }
+          printf "%6d\n", dtype[nfields]  
+        }
+    '
+}
+debug_init () 
+{ 
+    : default debugging and pausing are OFF;
+    : optinons ON, OFF, COMMENT;
+    : date: 2023-03-05;
+    : date: 2024-05-28;
+    debug_off;
+    pause_off;
+    debug_help 1>&2
+}
+debug_state () 
+{ 
+    : collect countof Function degug Status;
+    : DORMANT - debug is null-commanded out;
+    : ACTIVE -;
+    : date: 2024-02-21;
+    : date: 2024-02-26;
+    : date: 2024-12-02;
+    dfg_short debug | row '
+
+        context ~ /debug/ || context ~ /pause/
+	
+    ' | uniq | addcol status | column fun status context | compute '
+
+        d = (context ~ /: debug/)
+	p = (context ~ /: pause/)
+
+        status=(( d || p )? "dormant" : "active")
+
+    ' | column fun status | rduniq
+}
+debugfree () 
+{ 
+    : lists functions which may turn off debugging;
+    : date: 2023-09-11;
+    debug_off;
+    pause_off debugging;
+    ${@:-cat} $(lib)/$(myname).txt
+}
+declare_all () 
+{ 
+    : DECLARE and supporting functions;
+    : date: 2022-10-01;
+    ${*:-echo} declare \
+               declare_{all,test,command} dot{functions,ty} fold_pipedots fam_echosave
+}
+declare_command () 
+{ 
+    : two features get folded with canonical format;
+    : "1. ... command";
+    : "2. FAM_{x,y,x...}" -- depends on Lower Case Function names;
+    command declare -f $@ | fold_pipedots | fam_echosave
+}
+declare_test () 
+{ 
+    : shows functions worth examining the command vs plain version, no TEST.;
+    : date: 2021-01-03;
+    : date: 2021-11-05;
+    : date: 2024-07-28;
+    function _xx () 
+    { 
+        local f="$1";
+        shift;
+        isfunction "$f" && { 
+            set "$(whsrc $f)"
+        };
+        printf "%s\t%s\n" "$f" "$@"
+    };
+    set -- func_args ... .. args_test fold_pipedots declare{,_test} latestbook readhistory;
+    foreach _xx $@;
+    return;
+    ignore pushd $(home)/git/applemcg.github.io/reading;
+    local format="\n%s\n==============================================\n";
+    :;
+    printf $format UTILITIES;
+    declare -f func_args ... .. args_test fold_pipedots declare{,_test};
+    :;
+    printf $format BEFORE - declare builtin;
+    command declare -f latestbook readhistory;
+    :;
+    printf $format AFTER - declare Function;
+    declare -f latestbook readhistory
+}
+deliver_whlib () 
+{ 
+    : from FILE, return functions to LIBRARY;
+    : date: 2023-09-05;
+    if_missingargs 2 $@ && return;
+    local libr=$1;
+    shift;
+    debug libr: $libr;
+    pause;
+    report_notfile ./$libr && return 1;
+    debug file: ./$libr;
+    pause;
+    shd_setdate $($(gather_whlib $@) | grep $libr | field 1) | tee -a ./$libr
+}
+do_f2f () 
+{ 
+    : ~ Directory, local LIBrary and AWK file for F2FILE;
+    : todo: move this into F2FILE;
+    : date: 2023-08-06;
+    debug ENTRY $PwD $# $@;
+    pause;
+    cat ./$2 | awk -v dir=$1 -v quote="'" -f $3 2> $1/.f2file.$2.err;
+    debug DONE $PwD $# $@;
+    pause
+}
+doc_steps () 
+{ 
+    : collect steps for the document e.g. ! 640, 644, 671;
+    : date: 2023-10-20;
+    ( nprov "source xhylib" ) | tee $(needir ../txt)/sourceMe;
+    ( nprov "xfu; fbdy xfu xal" ) | tee ../txt/xfu;
+    ( nprov "xal | tr '\n' ' '; echo" ) | tee ../txt/xal
+}
+dotswap () 
+{ 
+    : swap DOTS hold and save, source the now saved;
+    : date: 2023-06-08;
+    : date: 2023-07-22;
+    if_missingargs 1 $@ && { 
+        indir .hold ls;
+        return
+    };
+    set -- .{{save,hold}/,}$1;
+    mv $1 $3;
+    mv $2 $1;
+    mv $3 $2;
+    ls -alrt ${*:-.} $@;
+    echo source $1
+}
+ediff () 
+{ 
+    : Each Diff -- show the names in context;
+    set -- $1 ${2:-/dev/null};
+    report_notfile $2 && return 1;
+    diff $1 $2;
+    printf "%s\n%s\n" "< $1" "> $2"
+}
+family_count () 
+{ 
+    : return sorted NN FamName;
+    : date: 2024-09-29;
+    : date: 2025-03-03;
+    : date: 2025-04-28;
+    set | functions | grep _ | sed 's/_/ /' | field 1 | sort | uniq -c | sort -rn
+}
+family_list () 
+{ 
+    : list the family fuctions;
+    : date: 2025-04-28;
+    ${*:-echo} $(sfg ^family)
+}
+family_members () 
+{ 
+    : collect function: family subfunction pairs;
+    : date: 2020-01-30;
+    : date: 2025-03-03;
+    set -- ${1:-justify} $(myname).rdb;
+    row 'subfunction !~ /^$/' < $(family_sub echo) | column > $2;
+    $*
+}
+family_names () 
+{ 
+    : ~, a list, not a table;
+    : families have more than two members;
+    : date: 2025-03-04;
+    set | functions | grep _ | sed 's/_/	/' | top_rdbhdr family subfun | column family | rduniq | row 'Count > 2' | ncolunn Count | headoff
+}
+family_subfun () 
+{ 
+    : ~, a table of family, subfun pairs;
+    : date: 2025-03-04;
+    : date: 2025-05-01;
+    set | functions | grep _ | sed 's/_/	/' |
+    ... top_rdbhdr family subfun
+}
+family_subfuns () 
+{ 
+    : tabulate the list of subfuns, or family;
+    : restrict the arg to FAMILY or SUBFUN,;
+    : date: 2025-03-04;
+    : date: 2025-05-20;
+    local comment;
+    set -- ${1:-subfun};
+    case $1 in 
+        family | subfun)
+            comment=$(echo $1 | tr [a-z] [A-Z])
+        ;;
+        *)
+            $(myname);
+            return
+        ;;
+    esac;
+    family_subfun | column $1 | sorttable | rduniq | row 'Count > 1' | sorttable -n;
+    comment COMMENT: $comment
+}
+files_funs () 
+{ 
+    : list file, functions ...;
+    : date: 2024-06-28;
+    for f in ${*-$(namedfiles)};
+    do
+        [[ -f $f ]] || continue;
+        ssf $f "$(functions $f | tr '\n' ' ')";
+    done
+}
+find2dot () 
+{ 
+    : turn off DEBUG, PAUSE debut commands;
+    : accepts FILE and FUNCTION arguments;
+    : related: abstract;
+    : date: 2023-03-07;
+    : date: 2023-09-05;
+    debug ENTRY $@;
+    pififuset $@ | awk '
+
+$2 ~ /^[(][)]$/ { name = $1 }
+
+$1 ~ /^[.][.]$/ { print name }
+
+    ' | uniq
+}
+fiveColumnTiddly () 
+{ 
+    : convert an rdb table into a 5-column tiddly table;
+    : date: 2020-07-04;
+    report_notpipe && return 1;
+    awk -F\t '
+    
+    NR == 1 { printf "| !%s | !%s | !%s | !%s | !%s |\n", $1, $2, $3, $4, $5}
+     NR < 3 { next };
+            { printf "|%s |%s |%s |%s |%s |\n", $1, $2, $3, $4, $5 }
+   '
+}
+fm_hist () 
+{ 
+    : commands in shell history;
+    debug ENTRY $#: $*;
+    pause;
+    grh | field 2 | sort -u
+}
+fotd () 
+{ 
+    : accumulate functions of TODAY;
+    : date: 2023-10-30;
+    : date: 2025-02-20;
+    local fun=$(lib)/functions;
+    mkdir -p $fun;
+    if_missingargs 1 $@ && return;
+    fbdy $*;
+    date +%functions_%F;
+    echo $* | tpl | tee -a $fun/$(date +%F.txt)
+}
+fotd_dir () 
+{ 
+    : smart directory;
+    : mfg: smart_dir;
+    : date: 2025-04-28;
+    ${@:-echo} "/Users/martymcgowan/marty3/lib/functions"
+}
+fun_allnames () 
+{ 
+    : returns function names of libraries or names of list, allegedgly functions;
+    : date: 2018-09-28;
+    : date: 2020-03-30;
+    report_notargcount 1 $# library OR function ... && return 1;
+    [[ -f $1 ]] && set -- $(functions $(onlyfiles $*));
+    echo $* 2> /dev/null
+}
+fun_decomment_test () 
+{ 
+    : w/o further comment;
+    : date: 2023-07-22;
+    declare -f fun_decomment backup_copyright | fun_decomment 2> .test.err;
+    comment cat .test.err
+}
+fun_deparenify () 
+{ 
+    : turn "(...)" into "( ... )" isolating the parens;
+    : date: 2023-07-22;
+    sed 's/[(]/& /g; s/[)]/ &/g' $*
+}
+fun_libsrc () 
+{ 
+    : where is the functions library and document source;
+    : date: 2023-11-08;
+    : date: 2024-03-16;
+    fun=${@:-$(myname)};
+    find $(bashlibs) $(libfun) -name $fun;
+    whlib $fun;
+    echo;
+    recursive ${@:2}
+}
+fun_ncopies () 
+{ 
+    : make separate TMP copies now a BAKup tree;
+    : date: 2023-09-30;
+    report_notfunction $1 && return 1;
+    mkdir .tmp;
+    rm -f .tmp/$1.*;
+    local file=.copies.sh;
+    find $(dfg_db) $(libfun) -type f -name $1 | xargs ls -al | awk -v fun=$1 '
+ 
+    !p[$5]++   {
+            # printf "%s\t%d\n",  $NF, $5
+	    printf "ln -f %s .tmp/%s.%d\n", $NF, fun, $5
+        }
+    ' | tee $file;
+    chmod +x $file;
+    comment source $file
+}
+fun_tally () 
+{ 
+    : Fuse count vs Nont;
+    : date: 2024-05-25;
+    functions $1 | sort > .$1;
+    comm -${2:-1} <(fuse_none $(< .$1)) .$1;
+    printf "$1\tNo Fuse\n" 1>&2
+}
+funclibs () 
+{ 
+    : getting old,;
+    : expire: 2024-07-01;
+    : date: 2023-07-22;
+    debug A "$@";
+    printf "%s\n%s\n" $HOME/.{bash,user}_profile;
+    for d in $(paths | grep $HOME);
+    do
+        pushd "$d" > /dev/null;
+        for f in *lib;
+        do
+            [[ -f $f ]] && echo $f;
+        done | sed "s=^=$PWD/=";
+        popd > /dev/null;
+    done
+}
+function_history () 
+{ 
+    : from the Function Database;
+    : date: 2024-10-10;
+    find $(dfg_db) -name ${1:-dfg_db} | xargs ls -alr
+}
+function_libs () 
+{ 
+    : whare are the function libraries;
+    : date: 2023-07-22;
+    find $(home) -type f -name '*[a-zA-Z]lib' 2> /dev/null | egrep '/(fun|bin)/' | grep -v '/\.[a-z]'
+}
+function_names () 
+{ 
+    : File Functions, File name = function name;
+    : use F!FILE to split multi-function files into unique files;
+    : date: 2024-01-26;
+    : date: 2024-04-30;
+    : date: 2024-09-02;
+    foreach function_truth ${*:-*} | awk '$2 ~ /^IS$/ { print $1 }'
+}
+funfile () 
+{ 
+    : is it a FunctionFile?;
+    : date: 2023-12-04;
+    report_notfile $1 && return 1;
+    set -- $1 $(basename $1);
+    functions $1 | diff - <(echo $2) > /dev/null && false || true
+}
+funslib () 
+{ 
+    : append the function arguments to the library of the first;
+    : date: 2023-07-10;
+    : date: 2023-07-22;
+    if_missingargs 1 $* && return 1;
+    local libname=$(whsrc $1);
+    [[ -f $libname ]] || { 
+        $(myname) ${@:2};
+        return
+    };
+    libfuns ${libname} $*;
+    lib_tidy ${libname}
+}
+fused_none () 
+{ 
+    : in a non-cmdlinelib, the unused;
+    : date: 2024-05-25;
+    report_notfile $1 && return 1;
+    fuse_count $(functions $1) | awk '$1 == 0 { print $2 }'
+}
+fuze_comm () 
+{ 
+    : Fuze over Fuse;
+    : date: 2024-06-29;
+    set ${1:-fuse};
+    comm -23 <(fuze $1 | sort) <(fuse $1 | field 1 | sort)
+}
+fuze_fuse () 
+{ 
+    : Fuze over Fuse;
+    : date: 2024-06-29;
+    set ${1:-fuse};
+    fbdy $(comm -23 <(fuze $1 | sort) <(fuse $1 | field 1 | sort)) | grep -e $1 -e '[(][)]'
+}
+fxfile () 
+{ 
+    : ~ library [ destination {bin}];
+    : awk_file f2file is the engine to pick aport the library;
+    : related: f2file;
+    : date: 2023-07-10;
+    : date: 2024-06-19;
+    if_missingargs 1 $@ && return;
+    report_notfile $1 && return 1;
+    local file=$1;
+    local dfdr=${2:-bin};
+    local awkf=$INSTALL_HOME/lib/awk/f2file.awk;
+    debug awkf: $awkf;
+    pause;
+    mkdir -p $dfdr;
+    cat $file | awk -v dir=$dfdr -v quote="'" -f $awkf
+}
+generic_py () 
+{ 
+    : calling function is a PYTHON source;
+    : date: 2023-07-22;
+    : date: 2023-08-12;
+    python3 $APP_HOME/lib/py/$(myname 2).py
+}
+githome () 
+{ 
+    : smart directory;
+    : mfg: smart_dir;
+    : date: 2024-04-27;
+    ${@:-echo} "/Users/martymcgowan/marty3/git"
+}
+good_status () 
+{ 
+    : find MARTY3 -name *.rdb AND grep statusvalue OR grep cmmd_status;
+    : date: 2020-09-24;
+    : date: 2023-07-09;
+    set -- statusvalue.rdb cmmd_status.rdb;
+    report_notfile $1 && return 1;
+    report_notfile $2 && return 2;
+    comm -13 <(column status < $1 | sorttable -u | headoff) <(column status < $2 | sorttable -u | headoff)
+}
+graf_entry () 
+{ 
+    : write the callgraph, return the entry points;
+    : lesson: sometimes direct stdout to stderr, Echo a file;
+    : date: 2024-09-27;
+    if_missingargs 1 $* && return;
+    local main=$1;
+    shift;
+    local lst=.${main%.*}.lst;
+    local err=.${main%.*}.err;
+    local org=$(commonplace)/${main%.*}.org;
+    fun_callgraf $(app_fun $main $* 2> .fun.err | tee $lst) 2> $err | tee $org | app_entrypt 1>&2;
+    debug files: $(wc -l .*.err $org);
+    echo $lst
+}
+graf_init () 
+{ 
+    : allow custom GRAF_USER, an executable, SOURCable file;
+    graf_default_user;
+    set -- $(which graf_user) /dev/null;
+    [[ -x $1 ]] && source $1
+}
+graf_mainhelp () 
+{ 
+    : write the SHD_TOHELP for each APPs MAIN functions,;
+    : where an APP has a TABLE in the GRAF_LIB,;
+    : written by GRAF_MAIN;
+    : date: 2019-10-04;
+    : date: 2019-11-15;
+    set -- $(graf_lib)/$1.rdb;
+    report_notfile $1 && return 1;
+    foreach shd_tohelp $(cat $1 | column mains | headoff)
+}
+graf_orgify () 
+{ 
+    : create orgMode file link;
+    : date: 2021-08-28;
+    sed '
+        s/\([a-zA-Z0-9-][a-zA-Z0-9_-]*\)/[[.\/src\/\1][\1]]/
+    '
+}
+graf_scenario () 
+{ 
+    : sample usage guide for multiple LIBs producing APPx;
+    : where an APP is also a function library, but entire to itself;
+    : each APP should have an _INIT function, so when SOURCEd,;
+    : it offers instructions on how to begin;
+    : date: 2024-06-28;
+    cat <<'EOF'
+
+    $ graf copy libA
+    $ graf copy libB
+    $ ...
+    $ graf main appA.out $(sfg appA)
+    $ graf main appB.out $(sfg appB)
+    $ ...
+    $ graf tapp APP
+    $ ---
+    $ open $(graf_lib)/appX.org # viewing
+    $ ...
+    $ APP ...                   # running
+    $ ...
+EOF
+
+}
+graf_table () 
+{ 
+    : write the TABLE of MAIN function entry points;
+    : for an an APP recorded by GRAF_FUN;
+    : date: 2019-09-21;
+    : date: 2019-11-15;
+    report_notargcount 1 $# && return 1;
+    set $1 $(graf_lib)/${1}.org;
+    report_notfile $2 && { 
+        ls $(graf_lib)/*.org;
+        return 2
+    };
+    ( rdb_hdr mains graf;
+    grep '^.\* ' $2 | sed "
+
+        s/.*\]\[//
+	s/\]\].*/	$1/
+
+      " | sort ) > ${2%.org}.rdb
+}
+graf_tapp () 
+{ 
+    : write the APP from its APPlib;
+    : allows STD, UTIL,and the APP lib;
+    : date: 2020-01-27;
+    : debug ENTRY $*;
+    report_notargcount 1 $# APP or applib && return 1;
+    : apps libraries usually come from a LIB;
+    local app=${1%lib};
+    local apl=${app}lib;
+    local entry=${app}_entry;
+    local whr=$(whf $entry);
+    report_notfile ${whr:-/dev/null} && return 1;
+    : the source applib is now available in this APPs shell;
+    source $whr;
+    local entry=${app}_entry;
+    report_notfunction $entry && return 1;
+    : -------------------------------------- Copy libraries to SRC tree --;
+    graf_copy ${apl} || return 2;
+    graf_copy stdlib || return 3;
+    graf_copy utillib || return 4;
+    : ---------------------------------- APP_ISA is the MAIN in any APP --;
+    set -- app_isa $($entry);
+    : ------------------------------------------------- create the GRAF --;
+    graf_main $app.out $*;
+    graf_app $app
+}
+gregorian () 
+{ 
+    : performs julian to gregorian day calculation on named Columns;
+    : date: 2016-06-09;
+    : date: 2022-06-18;
+    rdb_column_function $@
+}
+haversine () 
+{ 
+    : the ~ function;
+    echo $@ | awk '
+        
+        function r(g){
+
+            return g*(3.1415926/180.);
+	}
+	function d(x,y,x2,y2,a,c,dx,dy){
+
+	    dx=r(x2-x)
+	    dy=r(y2-y)
+	    x=r(x)
+	    x2=r(x2)
+	    a=(sin(dx/2))^2+cos(x)*cos(x2)*(sin(dy/2))^2
+	    c=2*atan2(sqrt(a),sqrt(1-a))
+	    printf("%.4f",6372.8*c)
+	}
+	{
+	    d($1,$2,$3,$4)
+	}
+	'
+}
+histfile () 
+{ 
+    : history and history.new;
+    : date: 2023-10-30;
+    : date: 2023-10-30;
+    ls -l $HOME/.bash_sessions/*.history* | awk '$5 > 0 { print $NF }'
+}
+history_dates () 
+{ 
+    : transfor History Times into History Dates;
+    : date: 2024-02-16;
+    report_notpipe && return 1;
+    :;
+    column {insert,delete}_time | addcol inserted deleted | compute '
+    
+	   inserted = substr(insert_time,1,6);
+	   deleted  = substr(delete_time,1,6)
+    
+' | column inserted deleted
+}
+include_missing () 
+{ 
+    : which included files are missing;
+    : maybe deprecated;
+    : date: 2024-06-28;
+    grep -f <(foreach file_missing $(include_mdfiles)) *.md
+}
+install_user () 
+{ 
+    : files identified w.r.t INSTALL_HOME;
+    : date: 2024-06-29;
+    dfg INSTALL_HOME | column context | headoff | sed 's/.*$INSTALL_/$INSTALL_/; s/;.*//; s/ .*//' | grep INSTALL_
+}
+is_smart () 
+{ 
+    : a limited SMART test, there might be other operators after the Minus sign;
+    : date: 2023-07-22;
+    report_notargcount 1 $# && return 1;
+    set -- $(declare -f $1 | grep '${.:-');
+    rstring=${1:0:5};
+    case "$rstring" in 
+        '${*:-' | '${@:-')
+            true
+        ;;
+        *)
+            false
+        ;;
+    esac
+}
+isfile () 
+{ 
+    : TRUE if the argument is a FILE;
+    : date: 2023-08-26;
+    [[ -f ${1:-/dev/null} ]]
+}
+julian () 
+{ 
+    : performs gregorian formats julian day calculation on named Columns;
+    : date: 2016-06-09;
+    : date: 2022-06-18;
+    rdb_column_function $@
+}
+lfc_tomd () 
+{ 
+    : link function copy to document location;
+    : date: 2023-10-20;
+    set $(bashlibs)/src/shell/$1 */.bak/$1;
+    newest $1 $2 && return;
+    debug ln -f ln $2 $1;
+    ln -f ln $2 $1
+}
+lib_neat () 
+{ 
+    : clean up a lib, typically with new or replacement functions at the end;
+    : date: 2023-07-22;
+    report_notfile ${1:-/dev/null} && return 1;
+    set -- $1 .libr;
+    declare -f $(functions $1 | tuniq | tee .x) > $2;
+    chmod +x $2;
+    backup $1;
+    mv $2 $1
+}
+lib_paths () 
+{ 
+    : BINs sibline LIB;
+    : date: 2023-09-10;
+    degug $*;
+    paths | grep '/bin$' | sed 's/bin$/lib/'
+}
+lib_toc () 
+{ 
+    : library Table of Contents: number, linenumber, name;
+    : date: 2024-01-10;
+    pr -tn $1 | awk '$3 ~ /[(][)]/' | sed 's/...$//' | pr -tn
+}
+live_grafs () 
+{ 
+    : list the available function tree graphs;
+    : date: 2024-09-27;
+    runfrom $(commonplace) 2> /dev/null || return;
+    ls *.org;
+    pickd 1>&2
+}
+locl_vslibr () 
+{ 
+    : compare a local BIN/ file or library to SOURCE library;
+    : default copy in bin/1 may be or bin/somelib;
+    : date: 2023-07-10;
+    unset $1;
+    local locl=.fbdy;
+    local copy=.shrc;
+    if_missingargs 1 $@ && return;
+    local libr=$(whsrc $1);
+    report_notfile $libr && return 1;
+    set $1 ${2:-$1};
+    ( source $1;
+    fbdy $1 > $locl );
+    ( source $2;
+    fbdy $1 > $copy );
+    diff $locl $copy;
+    wc -l $locl $copy;
+    echo $1
+}
+lsd () 
+{ 
+    : list the directory as a table;
+    : date: 2023-07-10;
+    : date: 2024-11-01;
+    ls -l | sed '1d ; s/  */	/g' | top_rdbhdr perm links owner group size month day dayTime filename | compute '
+
+        links = sprintf("%3d",links)
+        size  = sprintf("%5d",size)
+        day   = sprintf("%3d",day)
+
+    ' | justify | more
+}
+m3b () 
+{ 
+    : marty3/bin is getting busy;
+    : date: 2024-07-26;
+    ${*:-echo} $(marty3)/bin
+}
+markdown_link () 
+{ 
+    : produce the Markdown link from the Reference;
+    : date: 2021-10-19;
+    : date: 2022-09-03;
+    reference cat | row "$1" | addcol link | compute '
+
+        if( !comment ) { comment = name };
+	link = sprintf("+ [%s](%s \"%s\")", comment, url, name)
+
+    ' | column link | headoff | tee .link;
+    comment .link
+}
+max_depth () 
+{ 
+    : from a list of FIND files, how deep does it go?;
+    : date: 2023-07-22;
+    report_notpipe && return 1;
+    awk -F/ '{ if( NF>max_depth) max_depth=NF } END { print max_depth-1 }'
+}
+md_include () 
+{ 
+    : Markdown included files;
+    : date: 2023-09-19;
+    [[ $# -lt 1 ]] && return;
+    grep '!include' $1 | field 2;
+    $(myname) ${*:2}
+}
+meta_shell () 
+{ 
+    : I never met a Shell;
+    : example: bf2l P meta_shell P tee -a .sh;
+    : or declare -f meta_shell P meta_shell P grep example;
+    : date: 2023-07-11;
+    sed 's/ [P] / | /g; s/ [.][.] / ; /g'
+}
+mfg_fun () 
+{ 
+    : manfactured functions;
+    : date: 2023-08-21;
+    dfg mfg | row 'context ~ /^: mfg:/'
+}
+mk_graf_version () 
+{ 
+    : query the available versions OR define a function returning the value;
+    case $# in 
+        0)
+            grep '^## \[' changelog.md | sed 8q
+        ;;
+        *)
+            eval "graf_version () { echo graf_version $1 $2; }"
+        ;;
+    esac;
+    declare -f graf_version
+}
+mklib_init () 
+{ 
+    : in general, need to be in ..;
+    : fun_mkfence bin/mklib main "everbody needs a Maine";
+    debug ENTRY $@;
+    pickd;
+    doc_init ${1:-.};
+    mklibname mklib;
+    return;
+    echo Current Copy $DOC_COPY;
+    echo Available Copies: $(args_uniq $(docopy_list));
+    echo make
+}
+mkmd () 
+{ 
+    : MaKe MarkDown into .html;
+    debug ENTRY $# $@;
+    pause;
+    report_notfile $1 && return 1;
+    newest src/included.txt *.md || included *.md > src/included.txt;
+    local file=$1;
+    debug file: $file;
+    local outp=../${DOC_COPY}/${1%.md}.html;
+    debug outp: $outp;
+    local incl=$(included_by $1);
+    debug incl: $incl;
+    pause;
+    newest $outp $file $incl 2> /dev/null || pdmd $file
+}
+mkmk () 
+{ 
+    : local function;
+    source ../bin/mklib;
+    for f in *.md;
+    do
+        idmd $f;
+    done 2> .mk.err | grep -v NEWEST .mk.err;
+    ln -f ../{Development,index}.html
+}
+modified_today () 
+{ 
+    : TRUE when the file ARG was modified TODAY;
+    : lesson: a good case to use the -F Flag, rather than report_notfile;
+    : date: 2023-07-22;
+    : date: 2023-09-10;
+    : date: 2023-11-09;
+    local file=${1:-/dev/null};
+    [[ -f $file ]] || return 1;
+    :;
+    set -- $(stat -x $file | grep Modify);
+    local modified=$3,$4,$6;
+    debug modified: $modified;
+    :;
+    set -- $(date +%c);
+    local today=$2,$3,$5;
+    debug today: $today;
+    :;
+    [[ $modified == $today ]]
+}
+mult () 
+{ 
+    : the MULTILY operator in BCL;
+    : date: 2021-08-01;
+    : date: 2023-06-26;
+    echo "$@" | bcl tr ' ' '*'
+}
+multifuns () 
+{ 
+    : more than one function per file;
+    : date: 2023-09-05;
+    for f in $@;
+    do
+        nsf $(functions $f | wc -l) $f;
+    done | awk '$1 > 1'
+}
+mytable () 
+{ 
+    : updates a TABLE on STDIN, named for the CALLing Functin;
+    : date: 2023-07-22;
+    report_notpipe && return 1;
+    debug ENTRY $*;
+    local file=$(myname 2).rdb;
+    local temp=$(needir tmp)/$file;
+    tee $temp | onlyChanged $file;
+    echo $file;
+    debug RETURN $file
+}
+mytmprand () 
+{ 
+    : for a function, a temporary randdom file name;
+    : date: 2023-10-29;
+    mkdir -p .tmp;
+    set .tmp/$(myname 2).$(ranum8);
+    touch $1;
+    echo $1
+}
+nameddirs () 
+{ 
+    : all entries, less the files = directories;
+    : date: 2023-11-08;
+    : date: 2024-07-28;
+    comm -23 <(ls -1ad .* * | sort) <(namedfiles)
+}
+need_abstract () 
+{ 
+    : functions missing an abstract;
+    : date: 2023-07-22;
+    : date: 2024-04-29;
+    : date: 2024-09-28;
+    abx $@ | row 'abstract ~ /^ *$/' | column name | headoff
+}
+nonSpecialDotDirs () 
+{ 
+    : non-special directories may have functions in edit;
+    : date: 2023-09-05;
+    : date: 2023-09-28;
+    comm ${@:--23} <(dotDirs) <(specialDotDirs cat)
+}
+not_special () 
+{ 
+    : list the non-special files in the directory;
+    : date: 2023-07-22;
+    report_notfile .special && return 1;
+    ls -ald $(comm -23 <(ls -a) <(backup_files)) | awk '{print $NF}' | comm -23 - .special
+}
+number_deeper () 
+{ 
+    : return multiple, greater than 3 one=deep backups;
+    : date: 2023-12-29;
+    : date: 2024-11-30;
+    set -- $(ls -1d */.bak 2> /dev/null);
+    [[ $# -gt 3 ]] && echo $@ || echo .bak
+}
+oawk_file () 
+{ 
+    : which is my callers awk program file;
+    : date: 2023-08-27;
+    : date: 2024-04-13;
+    set -- ${1:-$(myname 2)}.awk;
+    awk_files | awk -F/ "\$NF ~ /^$1/ { print; exit }"
+}
+obs_tiddlylink () 
+{ 
+    : format column to wrap with TiddlyWiki LINK syntax;
+    : date: 2022-10-08;
+    compute "$1 = \"[[\" $1 \"]]\""
+}
+pause_toggle () 
+{ 
+    : TOGGLEs state of the PAUSE;
+    : date: 2023-08-02;
+    pause_ison && pause_off || pause_on
+}
+pfun_find () 
+{ 
+    : Precisely Find a function name;
+    : date: 2023-09-30;
+    : date: 2023-11-11;
+    fun_find ^$1 ${2:-.}
+}
+prep_cl () 
+{ 
+    : prepare the changelog;
+    : lesson: use default behavior to cycle thru a group,;
+    : --- saving optional arguments for testing;
+    : lesson: often, the shell conflates "UPPER" and "upper" file names;
+    : date: 2023-11-09;
+    function cluniq () 
+    { 
+        debug ENTRY $@;
+        debug $(wc -l $1);
+        pause;
+        cat $1 | sort -u
+    };
+    rm -fr .tmp;
+    debug ENTRY $@;
+    for lib in ${@:-$(backup_files)};
+    do
+        mkdir -p .tmp/$lib;
+        debug LIB: $lib;
+        local ver=$(grep $lib .versionfiles);
+        debug VER: $ver;
+        flcomm -23 $ver $lib | tee -a .tmp/$lib/DELETED;
+        flcomm -13 $ver $lib | tee -a .tmp/$lib/ADDED;
+        debug $(wc -l .tmp/*);
+        pause;
+    done;
+    for dir in .tmp/*;
+    do
+        [[ -d $dir ]] || continue;
+        pushd $dir > /dev/null;
+        comm -12 <(cluniq ADDED) <(cluniq DELETED) > changed.txt;
+        comm -13 <(cluniq ADDED) <(cluniq DELETED) > deleted.txt;
+        comm -23 <(cluniq ADDED) <(cluniq DELETED) > added.txt;
+        wc -l $PWD/{added,deleted,changed}.txt;
+        pushd > /dev/null;
+        remvds > /dev/null;
+    done
+}
+proc_parent_test () 
+{ 
+    : test the function to be a PROC;
+    : todo: repair use of QF;
+    : date: 2023-08-02;
+    set -- ./proc_bash proc_parent;
+    echo FUNCTION $($2);
+    echo =====;
+    printf "#! /usr/bin/env bash\n%s\n%s\n" "$(qf $2)" $2 > $1;
+    chmod +x $1;
+    echo SCRIPT $($1);
+    echo =====;
+    echo the function;
+    qf $(myname) | sed 's/^/    /';
+    echo ----;
+    echo the script:;
+    sed 's/^/    /' $1
+}
+program_doc () 
+{ 
+    : tell me about the PROGRAMlib;
+    : date: 2022-09-14;
+    : date: 2024-06-28;
+    cat <<EOF
+
+    The programlib is for functions which serve other functions 
+ in a "utility" sense, not really of a family.  i.e. It's not clear
+ what a "program" family would look like.   
+
+    In a sense, it is distinguished from the cmdlinelib, whose functiosn
+ are command line utilities.   Further distingushed from the "commandlib"
+ whose functions wrap another exisiting utility.  An example of such a
+ function is my "declare", which captures it's -f flag wraping the default
+ behavior -- show the function bodies in a consistent, which i call canonical
+ fashion.   I've added a feature, which captures ... ( literally "..." )
+ commands in the output, putting them, tabbed on the next line.
+
+    Suggestion, the debug, report_not, etc... functions belong here
+    
+EOF
+
+}
+qb () 
+{ 
+    : quickbackup;
+    : date: 2023-06-06;
+    : date: 2023-06-08;
+    : date: 2023-07-10;
+    : date: 2023-07-22;
+    isfunction $1 || return;
+    set -- $1 $(whsrc ${2:-$1});
+    report_notfile $2 && return;
+    backup $2;
+    chmod +wx $2;
+    shd_setdate $1 | tee -a $2;
+    lib_tidy $2;
+    chmod +w $2
+}
+qfx2rdb () 
+{ 
+    : copies a unique qfx from anywhere to {unique}.rdb;
+    : date: 2022-03-15;
+    : date: 2023-01-24;
+    : date: 2023-02-25;
+    if_missingargs 1 $* && return;
+    local qfx=$1;
+    local table=$(basename $1);
+    local lst=${table%.*}.lst;
+    local lst=${table%.*}.rdb;
+    newest $qfx $lst && return;
+    qfx_in $qfx | tee $lst | listtotable > $rdb
+}
+qfx_fields () 
+{ 
+    : produces the RDB field names from its qfx data source;
+    : date: 2022-07-30;
+    : date: 2022-08-02;
+    qfx_in $1 | field 1 | sort | uniq -c | awk 'NF > 1 && $1 > 2 { print $2 }'
+}
+rdb_csv () 
+{ 
+    : convert an RDB to CSV, comma to semi, TAB to comma;
+    : date: 2022-06-22;
+    cat ${*:--} | tr ',\t' ';,'
+}
+readht () 
+{ 
+    : format and open the lastest Markdown source;
+    : date: 2023-10-17;
+    open $(pdmd $(ls -t *.md | sed 1q))
+}
+ref_proto () 
+{ 
+    : in reference table, split protocol;
+    : return Table Next names;
+    : date: 2025-03-03;
+    local ref nxt cmd;
+    :;
+    ref=$(reference);
+    nxt=${ref%.rdb}.nxt;
+    cmd=${1:-echo};
+    :;
+    debug local: $ref $nxt $cmd;
+    pause;
+    :;
+    cat $ref | sorttable > $nxt;
+    $cmd $ref $nxt;
+    upd_1fm2 $ref $nxt;
+    rdupdate $ref
+}
+reference_add () 
+{ 
+    : prefer "reference listable" to produce an editable table;
+    : date: 2021-09-30;
+    : date: 2022-09-03;
+    if_missingargs 2 $@ && return;
+    printf "%s\t%s\t%s\n" "$1" "$2" "$3" | reference tee -a
+}
+reference_fields () 
+{ 
+    : return the field list of the reference;
+    : date: 2022-09-03;
+    reference sed 1q
+}
+reference_link () 
+{ 
+    : orgmode link from the Reference;
+    : date: 2021-10-19;
+    : date: 2022-09-03;
+    reference cat | row "$1" | addcol orglink | compute '
+
+        if( !comment ) { comment = name };
+	orglink = sprintf("+ [[%s][%s]]", url, comment)
+
+    ' | column orglink | headoff | tee .x
+}
+reference_list () 
+{ 
+    : the functions in REFERENCElib, plus or minus;
+    : date: 2022-09-03;
+    : date: 2025-03-03;
+    ${*:-echo} reference \
+               reference_{add,fields,link,list,relative}
+}
+repeated () 
+{ 
+    : repeat Pattern [Count, 2];
+    : date: 2023-08-27;
+    count=${2:-2};
+    result=;
+    while [ $count -gt 0 ]; do
+        result=$result$1;
+        let count-=1;
+    done;
+    echo $result
+}
+runfrom_test () 
+{ 
+    : demonstrate proper returns in RUNFROM;
+    : date: 2023-07-22;
+    debug_on;
+    pause_on;
+    debug $PWD;
+    pause;
+    printf "\nParent directory\n";
+    runfrom .. pwd;
+    debug $PWD;
+    pause;
+    printf "\nCurrent directory\n";
+    runfrom . pwd;
+    debug_off;
+    pause_off
+}
+setget () 
+{ 
+    : SET or GET the value of the FIRST argument;
+    : related: setenv;
+    : date: 2023-08-02;
+    if_missingargs 1 $* && return;
+    debug ENTRY $# $*;
+    local name=$1;
+    local valu="$2";
+    debug Name: $name, Valu: $valu;
+    report_isfunction $name , unset $1 to reuse it && return 1;
+    set $name $(echo $name | tr a-z A-Z);
+    debug NAME?: $*;
+    local abstr=": manufactured from $(myname 2) by $(myname) Dated 2022-09-23";
+    local param="$2:?";
+    debug PARAM: $param;
+    pause;
+    local messg="echo \${$param}";
+    local buggy="debug \$# \$*";
+    debug buggy: "$buggy";
+    local desid="[[ \$# -ge 1 ]] && { setenv $2 \"\$1\"; }";
+    local whfun="$1 () { $abstr; $buggy; $desid; $messg; }";
+    debug whfun: "$whffun";
+    pause;
+    eval "$whfun";
+    debug VALUE: $valu;
+    [[ -n "$valu" ]] && { 
+        debug EVAL $name WoITH $valu;
+        $name "$valu"
+    }
+}
+shd_justcolon () 
+{ 
+    : return the leading colon, null-command lines;
+    : date: 2023-01-02;
+    report_notpipe && return 1;
+    awk '
+    NR > 2 {
+             if ( $1 !~ /^:/ ) exit
+             else              print
+           }
+    '
+}
+shd_lonecolon () 
+{ 
+    : return the leading colon, non-Tag, null-command lines;
+    : date: 2023-01-02;
+    : date: 2025-05-01;
+    report_notpipe && return 1;
+    awk '
+    NR > 2 {
+             if    ( $1 !~ /^:/  ) exit
+             else if ( $2 ~ /:$/ ) exit
+             else                 print
+           }
+    '
+}
+shd_needabstr () 
+{ 
+    : which function arguments need an ABSTRACT;
+    : date: 2023-02-27;
+    foreach abstract $@ | top_rdbhdr name abstract | row 'abstract !~ /^[a-zA-Z]/'
+}
+show_example () 
+{ 
+    : placeholder if EXAMPLE format is worth pursuing;
+    : date: 2023-08-25;
+    : date: 2023-09-05;
+    if_missingargs 1 $* && return;
+    report_notfunction $1 && return 1;
+    declare -f $1 | grep ': example: ' | sed "
+
+         s/[^']*: example: *//
+	 s/; *$//
+    "
+}
+smart_funs () 
+{ 
+    : all smart functions;
+    : date: 2023-07-22;
+    : date: 2024-11-01;
+    : date: 2025-05-22;
+    function _smart_funs () 
+    { 
+        dfg . | row 'context ~ /^\${[12*@]:-/' | column
+    };
+    indir $(lib) _smart_funs
+}
+smart_split () 
+{ 
+    : split context;
+    : date: 2025-01-27;
+    sed 's/} .*//; s/:-/	/; s/${//'
+}
+smart_tally () 
+{ 
+    : collect smart function tally from dfg;
+    : date: 2023-07-22;
+    dfg . | row 'context ~ /^.{[*@12]:-/' | column_data context | sed 's/}.*//; s/:-/ /; s/^..//' | sort | uniq -c
+}
+smart_types () 
+{ 
+    : Smart Funs, Count, Argtype, Command;
+    : date: 2025-01-27;
+    smart_funs | column context | addcol command | rename context argtype | smart_split | sorttable command | rduniq
+}
+spacesToTab () 
+{ 
+    : convert leading spaces to a TAB, repeat as necessary;
+    : date: 2021-03-23;
+    : date: 2021-03-24;
+    : date: 2021-05-05;
+    case $# in 
+        0)
+            report_notpipe && return 1;
+            cat -
+        ;;
+        1)
+            : convert the first string of spaces, 1 or more to a tab;
+            sed 's/  */	/'
+        ;;
+        *)
+            : repeat as necessary;
+            $(myname) $1 | $(myname) ${*:2}
+        ;;
+    esac
+}
+stdin_orargs () 
+{ 
+    : concatentes STDIN or echos ARGs default ton CALLER;
+    : todo: mname 2;
+    : date: 2023-08-02;
+    [[ -p /dev/stdin ]] && cat || echo ${*:-${FUNCNAME[2]}}
+}
+subfunction_count () 
+{ 
+    : return sorted NN SubfunctionName;
+    : date: 2023-10-05;
+    set | functions | grep _ | sed 's/_/ /' | field 2 | sort | uniq -c | sort -n
+}
+substitute () 
+{ 
+    : substitute old sting with new string in file arguments;
+    : date: 2024-05-13;
+    function _do_substitute () 
+    { 
+        debug ENTRY $# $*;
+        tmp=~/tmp/$$substitute;
+        sed "s/$1/$2/g" $3 > $tmp;
+        debug wc $3 $tmp;
+        difftwo $3 $tmp;
+        pause;
+        cp $tmp $3
+    };
+    report_notargcount 3 $# && return 1;
+    local from to;
+    from=$1;
+    to=$2;
+    shift 2;
+    for arg in $*;
+    do
+        _do_substitute $from $to $arg;
+    done
+}
+task_clean () 
+{ 
+    : clean up the fields in a task log;
+    : date: 2023-07-22;
+    set ~/Downloads/json/todolist-2022-12.json;
+    debug ENTRY $@;
+    task_tsv $1 | row 'task !~ /^$/' | lft 00 | compute '
+
+        gsub(/m.rning.*/,"morning prayers",task)
+	task    = substr(task,1,16)
+	subtask = substr(subtask,1,27)	
+
+    '
+}
+task_tally () 
+{ 
+    : after _clean, idenfify tasks;
+    : date: 2023-07-22;
+    report_notpipe && return 1;
+    debug ENTRY $@;
+    column task | sorttable | rduniq | sorttable -rn
+}
+task_tandc () 
+{ 
+    : Time and Category;
+    : date: 2023-11-13;
+    task_json2tsv $@ | awk -F'\t' '
+
+           { time = $1; category = $2; }
+    NF > 2 { category = category ", " $3 }
+           { printf "%s\t%s\n", time, category }
+    '
+}
+tat () 
+{ 
+    : shud B an alias;
+    : date: 2023-10-05;
+    foreach ta $(grh | field 2 | sort -u) | awk '$2 ~ /^is$/'
+}
+tbl_fmlist () 
+{ 
+    : from LIST to full-formed TABLE;
+    : test case is FUNCTION TAGS;
+    : DEFAULT is not acceptable TAG;
+    : todo: needs a ULR to the explanation;
+    : date: 2016-06-09;
+    set -- ${1:-$(ls -t *_list.txt)};
+    report_notfile $1 && return 1;
+    set -- $1 ${1%_list.txt}.rdb;
+    ( hdr_row $1;
+    cat $1 ) | listtotable | awk NF | tee $2
+}
+thdr () 
+{ 
+    : top RDB Hdr;
+    : date: 2024-06-28;
+    rdb_hdr $*;
+    cat -
+}
+threeColumnTiddly () 
+{ 
+    : convert an rdb table into a 3-column tiddly table;
+    : and since the pipe is part of the table, then;
+    : replace actual pipes with their character code;
+    : date: 2020-07-04;
+    : date: 2020-10-22;
+    report_notpipe && return 1;
+    sed 's/|/\&#124;/g' | awk -F\t '
+    
+    NR == 1 { printf "| !%s | !%s | !%s |\n", $1, $2, $3}
+     NR < 3 { next };
+            { printf "|%s |%s |%s |\n", $1, $2, $3}
+   '
+}
+tiddly_month_test () 
+{ 
+    : test the edge cases of the century, and some current months;
+    : and a few shorthand instances. Must have a FULL month name;
+    : example: tiddly_month_test 2>&1 | grep Bad.Month;
+    : date: 2022-10-03;
+    : date: 2022-10-08;
+    function _tmt () 
+    { 
+        tiddly_month $*;
+        printf "\t--- $* ---\n\n" 1>&2
+    };
+    _tmt February 2000;
+    _tmt January 2022;
+    _tmt November 2022;
+    _tmt December 2022;
+    _tmt February 2023;
+    _tmt May 2023;
+    _tmt Apr 2023;
+    _tmt February 2100
+}
+tidy_lib () 
+{ 
+    : see lib_tidy;
+    : date: 2023-07-22;
+    source $1;
+    { 
+        declare -f $(functions $1);
+        fun_starter $1
+    } > .l;
+    mv .l $1;
+    chmod +x $1
+}
+timck () 
+{ 
+    : timimi check on index or file HANDle;
+    : lacking an accessible CMMD, default is ECHO;
+    : usage: ~ [handle] command;
+    : date: 2023-11-17;
+    : date: 2023-11-18;
+    : date: 2023-11-23;
+    function _timhand () 
+    { 
+        debug ENTRY $# $@;
+        set $(ls -t $(timimi)/${1}*.html | sed 1q);
+        [[ -f $1 ]] && { 
+            echo $1;
+            return
+        };
+        comment use one of these: $(tim_hand);
+        return 1
+    };
+    :;
+    local cmmd;
+    local hand;
+    :;
+    debug ENTRY $# $@;
+    :;
+    case $# in 
+        0)
+            cmmd=echo hand=index
+        ;;
+        1)
+            cmmd=$1 hand=index
+        ;;
+        *)
+            hand=$1 cmmd=$2
+        ;;
+    esac;
+    :;
+    type -a $cmmd > /dev/null 2>&1 || cmmd=echo;
+    debug cmmd=$cmmd, hand=$hand;
+    pause;
+    :;
+    set $(_timhand $hand) /dev/null;
+    [[ -f $1 ]] || return;
+    $cmmd $1 $(marty3)/$hand.html
+}
+timimi_handle () 
+{ 
+    : names of the relevant backups;
+    : date: 2024-02-25;
+    local handle=${1:-index};
+    local sample=$(marty3)/$handle.html;
+    [[ -f $sample ]] || { 
+        comment pick Handle from:;
+        marty3 pushd > /dev/null;
+        ls *.html | grep -v '[ -]' | sed 's/.html//; s/^/   /' 1>&2;
+        pushd > /dev/null;
+        return 1
+    };
+    shift;
+    ${*:-echo} $(timimi)/$handle-{8,A{1..4}}.html $sample
+}
+todaysdate () 
+{ 
+    : in ceiu formats, computer european, iso {default}, US, YYYYmmdd: 8;
+    : date: 2020-09-19;
+    set -- ${1:--i};
+    case $1 in 
+        -c)
+            date +%y%m%d
+        ;;
+        -e)
+            date +%d/%m/%y
+        ;;
+        -i)
+            date +%F
+        ;;
+        -u)
+            date +%x
+        ;;
+        -8)
+            date +%Y%m%d
+        ;;
+        *)
+            $(myname)
+        ;;
+    esac
+}
+tolib () 
+{ 
+    : insist on appending;
+    : date: 2023-08-11;
+    report_notpipe && return;
+    set ${1%lib}lib;
+    report_notfile $1 && return 1;
+    tee -a $1
+}
+tw_abstract () 
+{ 
+    : tiddly table of the FAMILY abstracts;
+    : date: 2022-10-08;
+    : date: 2023-03-15;
+    set -- ${1:-dfg}_abstracts;
+    isfunction $1 || { 
+        declare -f $(myname);
+        return
+    };
+    $1 | tiddlylink name | twoColumnTiddly
+}
+tw_blockify () 
+{ 
+    : put two tw links in blocked [ ... ][ ... ] format;
+    : date: 2020-09-09;
+    : date: 2022-10-08;
+    echo "$*" | sed 's/\]\]  *\[\[/]]	[[/' | awk -F\t ' { printf "[ %s ][ %s ]\n", $1, $2 }'
+}
+tw_filteroperators () 
+{ 
+    : retrieve the list of FILTER Operators with an eye to grouping;
+    : date: 2022-10-08;
+    curl -L https://tiddlywiki.com/static/Filter%2520Operators.html 2> /dev/null | grep -i operator.html | sed 's=</a></td>==; s=.*>=='
+}
+update_history () 
+{ 
+    : http://subbass.blogspot.com/2009/10/howto-sync-bash-history-between.html;
+    : date: 2023-10-30;
+    : date: 2023-10-30;
+    shopt -s histappend;
+    PROMPT_COMMAND="update_terminal_cwd; history -n; history -a;";
+    unset HISTFILESIZE;
+    HISTFILESIZE=2000
+}
+util_fun () 
+{ 
+    : put functions in utillib, No more than that;
+    : date: 2023-10-30;
+    : date: 2023-10-30;
+    shd_setdate $@ | tee -a $(which utillib)
+}
+version_fundiff () 
+{ 
+    : produce function diffs ahead of declareing a version;
+    : date: 2023-10-05;
+    : date: 2024-06-19;
+    set .bak/*;
+    debug SET $# $@;
+    for f in $@;
+    do
+        g=../dir/$(basename $f);
+        debug basename g: $g;
+        pause;
+        [[ -f $g ]] && { 
+            difftwo $f $g;
+            continue
+        };
+        source $f;
+        for u in $(functions $f);
+        do
+            debug u: $u;
+            pause;
+            local b=../dir/*/$u;
+            [[ -f $b ]] || continue;
+            debug difftwo $u $b;
+            pause;
+            difftwo $u $b;
+        done;
+        pause;
+    done
+}
+where_versions () 
+{ 
+    : identify the directories with versioning info;
+    : date: 2023-09-26;
+    : date: 2024-06-19;
+    foreach dirname $(find ~/{mcorg,marty3} -name .ver -type d) ~/.ver
+}
+graf_profile () 
+{ 
+    : a function-file.s call graph;
+    : date: 2025-06-13;
+    emax /Users/martymcgowan/marty3/graf/lib/profile.org
+}

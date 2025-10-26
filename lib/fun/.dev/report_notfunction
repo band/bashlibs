@@ -1,0 +1,8 @@
+report_notfunction () 
+{ 
+    : returns TRUE when 1st arg is Not a function,;
+    : ... FALSE if it IS a function;
+    : date: 2018-02-16;
+    declare -f $1 > /dev/null && return 1;
+    report_usage $1 "ISN'T" a function
+}

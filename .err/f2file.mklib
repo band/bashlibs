@@ -1,0 +1,551 @@
+A: NR 1, n 0, f 0, b 1, c 0, p 0, r mklib_fence_main, t src/shell/mklib/mklib_fence_main, q 0: mklib_fence_main () 
+A: NR 2, n 1, f 0, b 0, c 0, p 0, r mklib_fence_main, t src/shell/mklib/mklib_fence_main, q 0: { 
+A: NR 3, n 1, f 0, b 0, c 0, p 0, r mklib_fence_main, t src/shell/mklib/mklib_fence_main, q 0:     : ------------------- initialization, Environment Functions --
+A: NR 4, n 1, f 0, b 0, c 1, p 0, r mklib_fence_main, t src/shell/mklib/mklib_fence_main, q 0: }
+A: NR 5, n 0, f 0, b 1, c 0, p 0, r make, t src/shell/mklib/make, q 0: make () 
+A: NR 6, n 1, f 0, b 0, c 0, p 0, r make, t src/shell/mklib/make, q 0: { 
+A: NR 7, n 1, f 0, b 0, c 0, p 0, r make, t src/shell/mklib/make, q 0:     : make-work for the Document;
+A: NR 8, n 1, f 0, b 0, c 0, p 0, r make, t src/shell/mklib/make, q 0:     :;
+A: NR 9, n 1, f 0, b 0, c 0, p 0, r make, t src/shell/mklib/make, q 0:     debug ENTRY $# $@;
+A: NR 10, n 1, f 0, b 0, c 0, p 0, r make, t src/shell/mklib/make, q 0:     pause;
+A: NR 11, n 1, f 0, b 0, c 0, p 0, r make, t src/shell/mklib/make, q 0:     :;
+A: NR 12, n 1, f 0, b 0, c 0, p 0, r make, t src/shell/mklib/make, q 0:     : -------------------- Update all the New Markdowns --;
+A: NR 13, n 1, f 0, b 0, c 0, p 0, r make, t src/shell/mklib/make, q 0:     :;
+A: NR 14, n 1, f 0, b 0, c 0, p 0, r make, t src/shell/mklib/make, q 0:     : -------------- first the examples --;
+A: NR 15, n 1, f 0, b 0, c 0, p 0, r make, t src/shell/mklib/make, q 0:     :;
+A: NR 16, n 1, f 0, b 0, c 0, p 0, r make, t src/shell/mklib/make, q 0:     indir examples mk_examples;
+A: NR 17, n 1, f 0, b 0, c 0, p 0, r make, t src/shell/mklib/make, q 0:     :;
+A: NR 18, n 1, f 0, b 0, c 0, p 0, r make, t src/shell/mklib/make, q 0:     : ----------- any undated functions --;
+A: NR 19, n 1, f 0, b 0, c 0, p 0, r make, t src/shell/mklib/make, q 0:     :;
+A: NR 20, n 1, f 0, b 0, c 0, p 0, r make, t src/shell/mklib/make, q 0:     : lfc_tomd $(lib)/dir;
+A: NR 21, n 1, f 0, b 0, c 0, p 0, r make, t src/shell/mklib/make, q 0:     :;
+A: NR 22, n 1, f 0, b 0, c 0, p 0, r make, t src/shell/mklib/make, q 0:     : -------------- then chapter order --;
+A: NR 23, n 1, f 0, b 0, c 0, p 0, r make, t src/shell/mklib/make, q 0:     :;
+A: NR 24, n 1, f 0, b 0, c 0, p 0, r make, t src/shell/mklib/make, q 0:     indir src mk_chapters;
+A: NR 25, n 1, f 0, b 0, c 0, p 0, r make, t src/shell/mklib/make, q 0:     :;
+A: NR 26, n 1, f 0, b 0, c 0, p 0, r make, t src/shell/mklib/make, q 0:     : ----------- finally, each chapter --;
+A: NR 27, n 1, f 0, b 0, c 0, p 0, r make, t src/shell/mklib/make, q 0:     :;
+A: NR 28, n 1, f 0, b 0, c 0, p 0, r make, t src/shell/mklib/make, q 0:     foreach idmd $(chapter_list);
+A: NR 29, n 1, f 0, b 0, c 0, p 0, r make, t src/shell/mklib/make, q 0:     :;
+A: NR 30, n 1, f 0, b 0, c 0, p 0, r make, t src/shell/mklib/make, q 0:     : ---------- Open the Main Document --;
+A: NR 31, n 1, f 0, b 0, c 0, p 0, r make, t src/shell/mklib/make, q 0:     :;
+A: NR 32, n 0, f 0, b 0, c 0, p 0, r make, t src/shell/mklib/make, q 0:     main_document open;
+A: NR 33, n 1, f 0, b 0, c 0, p 0, r make, t src/shell/mklib/make, q 0:     :;
+A: NR 34, n 1, f 0, b 0, c 0, p 0, r make, t src/shell/mklib/make, q 0:     : ------ Wnen this Makefile Changes --;
+A: NR 35, n 1, f 0, b 0, c 0, p 0, r make, t src/shell/mklib/make, q 0:     :;
+A: NR 36, n 1, f 0, b 0, c 0, p 0, r make, t src/shell/mklib/make, q 0:     pushd bin > /dev/null;
+A: NR 37, n 0, f 0, b 0, c 0, p 0, r make, t src/shell/mklib/make, q 0:     newest .mklib mklib || { 
+A: NR 38, n 1, f 0, b 0, c 0, p 0, r make, t src/shell/mklib/make, q 0:         remake mklib | tee .mklib
+A: NR 39, n 1, f 0, b 0, c 0, p 0, r make, t src/shell/mklib/make, q 0:     };
+A: NR 40, n 0, f 0, b 0, c 0, p 0, r make, t src/shell/mklib/make, q 0:     pushd > /dev/null;
+A: NR 41, n 0, f 0, b 0, c 0, p 0, r make, t src/shell/mklib/make, q 0:     cdx > /dev/null;
+A: NR 42, n 1, f 0, b 0, c 0, p 0, r make, t src/shell/mklib/make, q 0:     :;
+A: NR 43, n 1, f 0, b 0, c 0, p 0, r make, t src/shell/mklib/make, q 0:     : ------ Wnen this Makefile Changes --;
+A: NR 44, n 1, f 0, b 0, c 0, p 0, r make, t src/shell/mklib/make, q 0:     :;
+A: NR 45, n 1, f 0, b 0, c 0, p 0, r make, t src/shell/mklib/make, q 0:     pickd
+A: NR 46, n 1, f 0, b 0, c 1, p 0, r make, t src/shell/mklib/make, q 0: }
+A: NR 47, n 0, f 0, b 1, c 0, p 0, r main_document, t src/shell/mklib/main_document, q 0: main_document () 
+A: NR 48, n 1, f 0, b 0, c 0, p 0, r main_document, t src/shell/mklib/main_document, q 0: { 
+A: NR 49, n 1, f 0, b 0, c 0, p 0, r main_document, t src/shell/mklib/main_document, q 0:     : anticpating different look;
+A: NR 50, n 0, f 0, b 0, c 0, p 0, r main_document, t src/shell/mklib/main_document, q 0:     ${@:-echo} ../Development.html
+A: NR 51, n 1, f 0, b 0, c 1, p 0, r main_document, t src/shell/mklib/main_document, q 0: }
+A: NR 52, n 0, f 0, b 1, c 0, p 0, r docopy_list, t src/shell/mklib/docopy_list, q 0: docopy_list () 
+A: NR 53, n 1, f 0, b 0, c 0, p 0, r docopy_list, t src/shell/mklib/docopy_list, q 0: { 
+A: NR 54, n 1, f 0, b 0, c 0, p 0, r docopy_list, t src/shell/mklib/docopy_list, q 0:     : available copies;
+A: NR 55, n 1, f 0, b 0, c 0, p 0, r docopy_list, t src/shell/mklib/docopy_list, q 0:     column copy < $(bashlibs)/src/docCopy.rdb | headoff | sort -u
+A: NR 56, n 1, f 0, b 0, c 1, p 0, r docopy_list, t src/shell/mklib/docopy_list, q 0: }
+A: NR 57, n 0, f 0, b 1, c 0, p 0, r lfc_tomd, t src/shell/mklib/lfc_tomd, q 0: lfc_tomd () 
+A: NR 58, n 1, f 0, b 0, c 0, p 0, r lfc_tomd, t src/shell/mklib/lfc_tomd, q 0: { 
+A: NR 59, n 1, f 0, b 0, c 0, p 0, r lfc_tomd, t src/shell/mklib/lfc_tomd, q 0:     : link function copy to document location;
+A: NR 60, n 1, f 0, b 0, c 0, p 0, r lfc_tomd, t src/shell/mklib/lfc_tomd, q 0:     : relying on the first Backup, i.e. .bak/file = ./file;
+A: NR 61, n 0, f 0, b 0, c 0, p 0, r lfc_tomd, t src/shell/mklib/lfc_tomd, q 0:     : usage: ~ directory with;
+A: NR 62, n 1, f 0, b 0, c 0, p 0, r lfc_tomd, t src/shell/mklib/lfc_tomd, q 0:     debug ENTRY $@;
+A: NR 63, n 0, f 0, b 0, c 0, p 0, r lfc_tomd, t src/shell/mklib/lfc_tomd, q 0:     pushd ${1:-.} > /dev/null;
+A: NR 64, n 0, f 0, b 0, c 0, p 0, r lfc_tomd, t src/shell/mklib/lfc_tomd, q 0:     local lock=$(needir .lock)/$(myname);
+A: NR 65, n 1, f 0, b 0, c 0, p 0, r lfc_tomd, t src/shell/mklib/lfc_tomd, q 0:     for fun in $(find .-type f -newer $lock | grep .bak/ | grep -v .bak/.bak/);
+A: NR 66, n 1, f 0, b 0, c 0, p 0, r lfc_tomd, t src/shell/mklib/lfc_tomd, q 0:     do
+A: NR 67, n 0, f 0, b 0, c 0, p 0, r lfc_tomd, t src/shell/mklib/lfc_tomd, q 0:         debug fun: $fun;
+A: NR 68, n 1, f 0, b 0, c 0, p 0, r lfc_tomd, t src/shell/mklib/lfc_tomd, q 0:         pause;
+A: NR 69, n 0, f 0, b 0, c 0, p 0, r lfc_tomd, t src/shell/mklib/lfc_tomd, q 0:         set $(bashlibs)/src/shell/$(basename $fun) $fun;
+A: NR 70, n 0, f 0, b 0, c 0, p 0, r lfc_tomd, t src/shell/mklib/lfc_tomd, q 0:         newest $1 $2 && continue;
+A: NR 71, n 1, f 0, b 0, c 0, p 0, r lfc_tomd, t src/shell/mklib/lfc_tomd, q 0:         debug ln -f $2 $1;
+A: NR 72, n 1, f 0, b 0, c 0, p 0, r lfc_tomd, t src/shell/mklib/lfc_tomd, q 0:         pause;
+A: NR 73, n 1, f 0, b 0, c 0, p 0, r lfc_tomd, t src/shell/mklib/lfc_tomd, q 0:         ln -f $2 $1;
+A: NR 74, n 1, f 0, b 0, c 0, p 0, r lfc_tomd, t src/shell/mklib/lfc_tomd, q 0:     done;
+A: NR 75, n 0, f 0, b 0, c 0, p 0, r lfc_tomd, t src/shell/mklib/lfc_tomd, q 0:     touch $lock;
+A: NR 76, n 0, f 0, b 0, c 0, p 0, r lfc_tomd, t src/shell/mklib/lfc_tomd, q 0:     ls -alrt;
+A: NR 77, n 0, f 0, b 0, c 0, p 0, r lfc_tomd, t src/shell/mklib/lfc_tomd, q 0:     pushd > /dev/null;
+A: NR 78, n 0, f 0, b 0, c 0, p 0, r lfc_tomd, t src/shell/mklib/lfc_tomd, q 0:     cdx > /dev/null
+A: NR 79, n 1, f 0, b 0, c 1, p 0, r lfc_tomd, t src/shell/mklib/lfc_tomd, q 0: }
+A: NR 80, n 0, f 0, b 1, c 0, p 0, r remake, t src/shell/mklib/remake, q 0: remake () 
+A: NR 81, n 1, f 0, b 0, c 0, p 0, r remake, t src/shell/mklib/remake, q 0: { 
+A: NR 82, n 1, f 0, b 0, c 0, p 0, r remake, t src/shell/mklib/remake, q 0:     : a library from its funcions;
+A: NR 83, n 1, f 0, b 0, c 0, p 0, r remake, t src/shell/mklib/remake, q 0:     debug ENTRY $# $@;
+A: NR 84, n 1, f 0, b 0, c 0, p 0, r remake, t src/shell/mklib/remake, q 0:     pause;
+A: NR 85, n 0, f 0, b 0, c 0, p 0, r remake, t src/shell/mklib/remake, q 0:     local file=$1;
+A: NR 86, n 1, f 0, b 0, c 0, p 0, r remake, t src/shell/mklib/remake, q 0:     set -- $(functions $file);
+A: NR 87, n 0, f 0, b 0, c 0, p 0, r remake, t src/shell/mklib/remake, q 0:     source $file;
+A: NR 88, n 0, f 0, b 0, c 0, p 0, r remake, t src/shell/mklib/remake, q 0:     fbdy $@;
+A: NR 89, n 0, f 0, b 0, c 0, p 0, r remake, t src/shell/mklib/remake, q 0:     echo "eval $1 1>&2"
+A: NR 90, n 1, f 0, b 0, c 1, p 0, r remake, t src/shell/mklib/remake, q 0: }
+A: NR 91, n 0, f 0, b 1, c 0, p 0, r mk_examples, t src/shell/mklib/mk_examples, q 0: mk_examples () 
+A: NR 92, n 1, f 0, b 0, c 0, p 0, r mk_examples, t src/shell/mklib/mk_examples, q 0: { 
+A: NR 93, n 1, f 0, b 0, c 0, p 0, r mk_examples, t src/shell/mklib/mk_examples, q 0:     debug ENTRY $# $@;
+A: NR 94, n 0, f 0, b 0, c 0, p 0, r mk_examples, t src/shell/mklib/mk_examples, q 0:     indir ../src/shell devdir $PWD;
+A: NR 95, n 1, f 0, b 0, c 0, p 0, r mk_examples, t src/shell/mklib/mk_examples, q 0:     :;
+A: NR 96, n 1, f 0, b 0, c 0, p 0, r mk_examples, t src/shell/mklib/mk_examples, q 0:     debug DEV_DIR $DEV_DIR;
+A: NR 97, n 0, f 0, b 0, c 0, p 0, r mk_examples, t src/shell/mklib/mk_examples, q 0:     popd > /dev/null;
+A: NR 98, n 0, f 0, b 0, c 0, p 0, r mk_examples, t src/shell/mklib/mk_examples, q 0:     debug PWD: $PWD;
+A: NR 99, n 0, f 0, b 0, c 0, p 0, r mk_examples, t src/shell/mklib/mk_examples, q 0:     debug $(wc -l *lib);
+A: NR 100, n 1, f 0, b 0, c 0, p 0, r mk_examples, t src/shell/mklib/mk_examples, q 0:     pause;
+A: NR 101, n 1, f 0, b 0, c 0, p 0, r mk_examples, t src/shell/mklib/mk_examples, q 0:     foreach source *lib;
+A: NR 102, n 1, f 0, b 0, c 0, p 0, r mk_examples, t src/shell/mklib/mk_examples, q 0:     foreach f1file $(functions *lib);
+A: NR 103, n 1, f 0, b 0, c 0, p 0, r mk_examples, t src/shell/mklib/mk_examples, q 0:     fbdy_examples;
+A: NR 104, n 0, f 0, b 0, c 0, p 0, r mk_examples, t src/shell/mklib/mk_examples, q 0:     debug WAIT;
+A: NR 105, n 1, f 0, b 0, c 0, p 0, r mk_examples, t src/shell/mklib/mk_examples, q 0:     pause
+A: NR 106, n 1, f 0, b 0, c 1, p 0, r mk_examples, t src/shell/mklib/mk_examples, q 0: }
+A: NR 107, n 0, f 0, b 1, c 0, p 0, r mklib_fence_copy, t src/shell/mklib/mklib_fence_copy, q 0: mklib_fence_copy () 
+A: NR 108, n 1, f 0, b 0, c 0, p 0, r mklib_fence_copy, t src/shell/mklib/mklib_fence_copy, q 0: { 
+A: NR 109, n 1, f 0, b 0, c 0, p 0, r mklib_fence_copy, t src/shell/mklib/mklib_fence_copy, q 0:     : --------------------------------- COPY-specific functions --
+A: NR 110, n 1, f 0, b 0, c 1, p 0, r mklib_fence_copy, t src/shell/mklib/mklib_fence_copy, q 0: }
+A: NR 111, n 0, f 0, b 1, c 0, p 0, r chapter_list, t src/shell/mklib/chapter_list, q 0: chapter_list () 
+A: NR 112, n 1, f 0, b 0, c 0, p 0, r chapter_list, t src/shell/mklib/chapter_list, q 0: { 
+A: NR 113, n 1, f 0, b 0, c 0, p 0, r chapter_list, t src/shell/mklib/chapter_list, q 0:     : the copy_specific source file list;
+A: NR 114, n 1, f 0, b 0, c 0, p 0, r chapter_list, t src/shell/mklib/chapter_list, q 0:     debug ENTRY $@;
+A: NR 115, n 0, f 0, b 0, c 0, p 0, r chapter_list, t src/shell/mklib/chapter_list, q 0:     pushd $(bashlibs)/src/;
+A: NR 116, n 1, f 0, b 0, c 0, p 0, r chapter_list, t src/shell/mklib/chapter_list, q 0:     set -- ${DOC_COPY}.rdb ./ChSequence.rdb mklib;
+A: NR 117, n 1, f 0, b 0, c 0, p 0, r chapter_list, t src/shell/mklib/chapter_list, q 0:     debug SET $@;
+A: NR 118, n 1, f 0, b 0, c 0, p 0, r chapter_list, t src/shell/mklib/chapter_list, q 0:     pause;
+A: NR 119, n 0, f 0, b 0, c 0, p 0, r chapter_list, t src/shell/mklib/chapter_list, q 0:     newest $* && return;
+A: NR 120, n 1, f 0, b 0, c 0, p 0, r chapter_list, t src/shell/mklib/chapter_list, q 0:     debug TOC $@;
+A: NR 121, n 0, f 0, b 0, c 0, p 0, r chapter_list, t src/shell/mklib/chapter_list, q 0:     make_toc $2;
+MULTI? nq: 0, j: 38, qs:     column file < $2 | headoff | sed 's/$/.md/'
+MULTI? nq: 1, j: 9, qs: s/$/.md/'
+A: NR 122, n 1, f 0, b 0, c 0, p 0, r chapter_list, t src/shell/mklib/chapter_list, q 0:     column file < $2 | headoff | sed 's/$/.md/'
+A: NR 123, n 1, f 0, b 0, c 1, p 0, r chapter_list, t src/shell/mklib/chapter_list, q 0: }
+A: NR 124, n 0, f 0, b 1, c 0, p 0, r make_toc, t src/shell/mklib/make_toc, q 0: make_toc () 
+A: NR 125, n 1, f 0, b 0, c 0, p 0, r make_toc, t src/shell/mklib/make_toc, q 0: { 
+A: NR 126, n 1, f 0, b 0, c 0, p 0, r make_toc, t src/shell/mklib/make_toc, q 0:     : the copy_specific TOC;
+A: NR 127, n 1, f 0, b 0, c 0, p 0, r make_toc, t src/shell/mklib/make_toc, q 0:     debug ENTRY $@;
+A: NR 128, n 0, f 0, b 0, c 0, p 0, r make_toc, t src/shell/mklib/make_toc, q 0:     cat $1 | row "copy ~ /${DOC_COPY}/" | ncolumn copy | tee ${DOC_COPY}.rdb
+A: NR 129, n 1, f 0, b 0, c 1, p 0, r make_toc, t src/shell/mklib/make_toc, q 0: }
+A: NR 130, n 0, f 0, b 1, c 0, p 0, r mk_chapters, t src/shell/mklib/mk_chapters, q 0: mk_chapters () 
+A: NR 131, n 1, f 0, b 0, c 0, p 0, r mk_chapters, t src/shell/mklib/mk_chapters, q 0: { 
+A: NR 132, n 1, f 0, b 0, c 0, p 0, r mk_chapters, t src/shell/mklib/mk_chapters, q 0:     : Chapter order for State of Development in ChSequence.rdb;
+A: NR 133, n 1, f 0, b 0, c 0, p 0, r mk_chapters, t src/shell/mklib/mk_chapters, q 0:     : no longer need work, doc, etc...;
+A: NR 134, n 1, f 0, b 0, c 0, p 0, r mk_chapters, t src/shell/mklib/mk_chapters, q 0:     debug ENTRY $# $@;
+A: NR 135, n 1, f 0, b 0, c 0, p 0, r mk_chapters, t src/shell/mklib/mk_chapters, q 0:     : wrap this as if a function;
+A: NR 136, n 0, f 0, b 0, c 0, p 0, r mk_chapters, t src/shell/mklib/mk_chapters, q 0:     set ./chapters.txt docCopy.rdb ChSequence.rdb;
+A: NR 137, n 1, f 0, b 0, c 0, p 0, r mk_chapters, t src/shell/mklib/mk_chapters, q 0:     column file title comment < $3 | justify | tee $1;
+A: NR 138, n 1, f 0, b 0, c 0, p 0, r mk_chapters, t src/shell/mklib/mk_chapters, q 0:     return;
+A: NR 139, n 1, f 0, b 0, c 0, p 0, r mk_chapters, t src/shell/mklib/mk_chapters, q 0:     :;
+A: NR 140, n 1, f 0, b 0, c 0, p 0, r mk_chapters, t src/shell/mklib/mk_chapters, q 0:     : depends on value of "rewrite-path" in pandoc-include;
+A: NR 141, n 1, f 0, b 0, c 0, p 0, r mk_chapters, t src/shell/mklib/mk_chapters, q 0:     : see https://pypi.org/project/pandoc-include/;
+A: NR 142, n 1, f 0, b 0, c 0, p 0, r mk_chapters, t src/shell/mklib/mk_chapters, q 0:     :;
+A: NR 143, n 0, f 0, b 0, c 0, p 0, r mk_chapters, t src/shell/mklib/mk_chapters, q 0:     printf "@include %s/chapters.txt\n" | tee chapters.txt;
+A: NR 144, n 1, f 0, b 0, c 0, p 0, r mk_chapters, t src/shell/mklib/mk_chapters, q 0:     :;
+A: NR 145, n 1, f 0, b 0, c 0, p 0, r mk_chapters, t src/shell/mklib/mk_chapters, q 0:     : ----------------------- up to date, if so return --;
+A: NR 146, n 1, f 0, b 0, c 0, p 0, r mk_chapters, t src/shell/mklib/mk_chapters, q 0:     :;
+A: NR 147, n 1, f 0, b 0, c 0, p 0, r mk_chapters, t src/shell/mklib/mk_chapters, q 0:     debug NEWEST $1 $3 ../bin/mklib;
+A: NR 148, n 1, f 0, b 0, c 0, p 0, r mk_chapters, t src/shell/mklib/mk_chapters, q 0:     pause;
+A: NR 149, n 0, f 0, b 0, c 0, p 0, r mk_chapters, t src/shell/mklib/mk_chapters, q 0:     newest $1 $3 ../bin/mklib && return;
+A: NR 150, n 1, f 0, b 0, c 0, p 0, r mk_chapters, t src/shell/mklib/mk_chapters, q 0:     debug UPDATE $# $@;
+A: NR 151, n 1, f 0, b 0, c 0, p 0, r mk_chapters, t src/shell/mklib/mk_chapters, q 0:     pause;
+A: NR 152, n 1, f 0, b 0, c 0, p 0, r mk_chapters, t src/shell/mklib/mk_chapters, q 0:     :
+A: NR 153, n 1, f 0, b 0, c 1, p 0, r mk_chapters, t src/shell/mklib/mk_chapters, q 0: }
+A: NR 154, n 0, f 0, b 1, c 0, p 0, r mklib_fence_fence, t src/shell/mklib/mklib_fence_fence, q 0: mklib_fence_fence () 
+A: NR 155, n 1, f 0, b 0, c 0, p 0, r mklib_fence_fence, t src/shell/mklib/mklib_fence_fence, q 0: { 
+A: NR 156, n 1, f 0, b 0, c 0, p 0, r mklib_fence_fence, t src/shell/mklib/mklib_fence_fence, q 0:     : ----------------------------- The Fences of August Wilson --;
+A: NR 157, n 1, f 0, b 0, c 0, p 0, r mklib_fence_fence, t src/shell/mklib/mklib_fence_fence, q 0:     :;
+A: NR 158, n 1, f 0, b 0, c 0, p 0, r mklib_fence_fence, t src/shell/mklib/mklib_fence_fence, q 0:     : --- after considering "herd" as a collective name --
+A: NR 159, n 1, f 0, b 0, c 1, p 0, r mklib_fence_fence, t src/shell/mklib/mklib_fence_fence, q 0: }
+A: NR 160, n 0, f 0, b 1, c 0, p 0, r fence_names, t src/shell/mklib/fence_names, q 0: fence_names () 
+A: NR 161, n 1, f 0, b 0, c 0, p 0, r fence_names, t src/shell/mklib/fence_names, q 0: { 
+A: NR 162, n 1, f 0, b 0, c 0, p 0, r fence_names, t src/shell/mklib/fence_names, q 0:     : just the name, 3rd field - library "fence" name;
+A: NR 163, n 0, f 0, b 0, c 0, p 0, r fence_names, t src/shell/mklib/fence_names, q 0:     set ${MKLIB_NAME:-$1} ${@:2};
+A: NR 164, n 0, f 0, b 0, c 0, p 0, r fence_names, t src/shell/mklib/fence_names, q 0:     report_notfile $1 && return 1;
+MULTI? nq: 0, j: 29, qs:     fence_funs $1 | awk -F_ '{ print $3 }'
+MULTI? nq: 1, j: 13, qs: { print $3 }'
+A: NR 165, n 0, f 0, b 0, c 0, p 0, r fence_names, t src/shell/mklib/fence_names, q 0:     fence_funs $1 | awk -F_ '{ print $3 }'
+A: NR 166, n 1, f 0, b 0, c 1, p 0, r fence_names, t src/shell/mklib/fence_names, q 0: }
+A: NR 167, n 0, f 0, b 1, c 0, p 0, r fence_herd, t src/shell/mklib/fence_herd, q 0: fence_herd () 
+A: NR 168, n 1, f 0, b 0, c 0, p 0, r fence_herd, t src/shell/mklib/fence_herd, q 0: { 
+A: NR 169, n 1, f 0, b 0, c 0, p 0, r fence_herd, t src/shell/mklib/fence_herd, q 0:     : separate out a singe herd of functions;
+A: NR 170, n 0, f 0, b 0, c 0, p 0, r fence_herd, t src/shell/mklib/fence_herd, q 0:     : usage: ~ library herd;
+A: NR 171, n 1, f 0, b 0, c 0, p 0, r fence_herd, t src/shell/mklib/fence_herd, q 0:     debug ENTRY $# $@;
+A: NR 172, n 1, f 0, b 0, c 0, p 0, r fence_herd, t src/shell/mklib/fence_herd, q 0:     pause;
+A: NR 173, n 1, f 0, b 0, c 0, p 0, r fence_herd, t src/shell/mklib/fence_herd, q 0:     report_notargcount 2 $# && return 2;
+A: NR 174, n 0, f 0, b 0, c 0, p 0, r fence_herd, t src/shell/mklib/fence_herd, q 0:     report_notfile $1 && return 1;
+A: NR 175, n 1, f 0, b 0, c 0, p 0, r fence_herd, t src/shell/mklib/fence_herd, q 0:     declare -f $(fence_funs $@) | tee $(needir .herd)/${2}lib
+A: NR 176, n 1, f 0, b 0, c 1, p 0, r fence_herd, t src/shell/mklib/fence_herd, q 0: }
+A: NR 177, n 0, f 0, b 1, c 0, p 0, r fence_spread, t src/shell/mklib/fence_spread, q 0: fence_spread () 
+A: NR 178, n 1, f 0, b 0, c 0, p 0, r fence_spread, t src/shell/mklib/fence_spread, q 0: { 
+A: NR 179, n 1, f 0, b 0, c 0, p 0, r fence_spread, t src/shell/mklib/fence_spread, q 0:     : inspired by "recombinant";
+A: NR 180, n 1, f 0, b 0, c 0, p 0, r fence_spread, t src/shell/mklib/fence_spread, q 0:     debug ENTRY $# $@;
+A: NR 181, n 0, f 0, b 0, c 0, p 0, r fence_spread, t src/shell/mklib/fence_spread, q 0:     set ${MKLIB_NAME:-$1} ${@:2};
+A: NR 182, n 0, f 0, b 0, c 0, p 0, r fence_spread, t src/shell/mklib/fence_spread, q 0:     report_notfile $1 && return 1;
+A: NR 183, n 1, f 0, b 0, c 0, p 0, r fence_spread, t src/shell/mklib/fence_spread, q 0:     debug SET $# $@;
+A: NR 184, n 1, f 0, b 0, c 0, p 0, r fence_spread, t src/shell/mklib/fence_spread, q 0:     pause;
+A: NR 185, n 1, f 0, b 0, c 0, p 0, r fence_spread, t src/shell/mklib/fence_spread, q 0:     for herd in $(fence_names $1);
+A: NR 186, n 1, f 0, b 0, c 0, p 0, r fence_spread, t src/shell/mklib/fence_spread, q 0:     do
+A: NR 187, n 0, f 0, b 0, c 0, p 0, r fence_spread, t src/shell/mklib/fence_spread, q 0:         debug HERD: $herd;
+A: NR 188, n 1, f 0, b 0, c 0, p 0, r fence_spread, t src/shell/mklib/fence_spread, q 0:         pause;
+A: NR 189, n 0, f 0, b 0, c 0, p 0, r fence_spread, t src/shell/mklib/fence_spread, q 0:         fence_herd $1 $herd;
+A: NR 190, n 1, f 0, b 0, c 0, p 0, r fence_spread, t src/shell/mklib/fence_spread, q 0:     done
+A: NR 191, n 1, f 0, b 0, c 1, p 0, r fence_spread, t src/shell/mklib/fence_spread, q 0: }
+A: NR 192, n 0, f 0, b 1, c 0, p 0, r fence_tidy, t src/shell/mklib/fence_tidy, q 0: fence_tidy () 
+A: NR 193, n 1, f 0, b 0, c 0, p 0, r fence_tidy, t src/shell/mklib/fence_tidy, q 0: { 
+A: NR 194, n 1, f 0, b 0, c 0, p 0, r fence_tidy, t src/shell/mklib/fence_tidy, q 0:     : compatible with lib_tidy;
+A: NR 195, n 0, f 0, b 0, c 0, p 0, r fence_tidy, t src/shell/mklib/fence_tidy, q 0:     set ${MKLIB_NAME:-$1} ${@:2};
+A: NR 196, n 0, f 0, b 0, c 0, p 0, r fence_tidy, t src/shell/mklib/fence_tidy, q 0:     report_notfile $1 && return 1;
+A: NR 197, n 0, f 0, b 0, c 0, p 0, r fence_tidy, t src/shell/mklib/fence_tidy, q 0:     fbdy $(fence_spread $1);
+A: NR 198, n 0, f 0, b 0, c 0, p 0, r fence_tidy, t src/shell/mklib/fence_tidy, q 0:     echo ${1}_init \$1 1\>\$2
+A: NR 199, n 1, f 0, b 0, c 1, p 0, r fence_tidy, t src/shell/mklib/fence_tidy, q 0: }
+A: NR 200, n 0, f 0, b 1, c 0, p 0, r fence_fun, t src/shell/mklib/fence_fun, q 0: fence_fun () 
+A: NR 201, n 1, f 0, b 0, c 0, p 0, r fence_fun, t src/shell/mklib/fence_fun, q 0: { 
+A: NR 202, n 1, f 0, b 0, c 0, p 0, r fence_fun, t src/shell/mklib/fence_fun, q 0:     : list fencec functions. the fence and those fenced off;
+A: NR 203, n 1, f 0, b 0, c 0, p 0, r fence_fun, t src/shell/mklib/fence_fun, q 0:     if_missingargs 2 $@ && return;
+A: NR 204, n 0, f 0, b 0, c 0, p 0, r fence_fun, t src/shell/mklib/fence_fun, q 0:     set ${MKLIB_NAME:-$1} ${@:2};
+A: NR 205, n 0, f 0, b 0, c 0, p 0, r fence_fun, t src/shell/mklib/fence_fun, q 0:     report_notfile $1 && return 1;
+A: NR 206, n 0, f 0, b 0, c 0, p 0, r fence_fun, t src/shell/mklib/fence_fun, q 0:     set $1 $(basename $1) $2;
+MULTI? nq: 0, j: 57, qs:     functions $1 | awk -v on=0 -v fence=${2}_fence_${3} '
+A: NR 207, n 0, f 0, b 0, c 0, p 0, r fence_fun, t src/shell/mklib/fence_fun, q 1:     functions $1 | awk -v on=0 -v fence=${2}_fence_${3} '
+A: NR 208, n 1, f 0, b 0, c 0, p 0, r fence_fun, t src/shell/mklib/fence_fun, q 1: 
+A: NR 209, n 1, f 0, b 0, c 0, p 0, r fence_fun, t src/shell/mklib/fence_fun, q 1: 	              {
+A: NR 210, n 1, f 0, b 0, c 0, p 0, r fence_fun, t src/shell/mklib/fence_fun, q 1: 		         # print on, $1, $0;
+A: NR 211, n 1, f 0, b 0, c 0, p 0, r fence_fun, t src/shell/mklib/fence_fun, q 1: 		      }
+A: NR 212, n 0, f 0, b 0, c 0, p 0, r fence_fun, t src/shell/mklib/fence_fun, q 1:    	$1 == fence   { on = 1; print; next}
+A: NR 213, n 0, f 0, b 0, c 0, p 0, r fence_fun, t src/shell/mklib/fence_fun, q 1: 	$1 ~/_fence_/ { on = 0; }		
+A: NR 214, n 0, f 0, b 0, c 0, p 0, r fence_fun, t src/shell/mklib/fence_fun, q 1:         on            { print; }
+MULTI? nq: 0, j: 5, qs:     '
+A: NR 215, n 1, f 0, b 0, c 0, p 0, r fence_fun, t src/shell/mklib/fence_fun, q 0:     '
+A: NR 216, n 1, f 0, b 0, c 1, p 0, r fence_fun, t src/shell/mklib/fence_fun, q 0: }
+A: NR 217, n 0, f 0, b 1, c 0, p 0, r fence_list, t src/shell/mklib/fence_list, q 0: fence_list () 
+A: NR 218, n 1, f 0, b 0, c 0, p 0, r fence_list, t src/shell/mklib/fence_list, q 0: { 
+A: NR 219, n 1, f 0, b 0, c 0, p 0, r fence_list, t src/shell/mklib/fence_list, q 0:     : list the fence functions, its what its all about;
+A: NR 220, n 0, f 0, b 0, c 0, p 0, r fence_list, t src/shell/mklib/fence_list, q 0:     set ${MKLIB_NAME:-$1} ${@:2};
+A: NR 221, n 0, f 0, b 0, c 0, p 0, r fence_list, t src/shell/mklib/fence_list, q 0:     report_notfile $1 && return 1;
+A: NR 222, n 0, f 0, b 0, c 0, p 0, r fence_list, t src/shell/mklib/fence_list, q 0:     fence_fun $1 fence
+A: NR 223, n 1, f 0, b 0, c 1, p 0, r fence_list, t src/shell/mklib/fence_list, q 0: }
+A: NR 224, n 0, f 0, b 1, c 0, p 0, r fence_funs, t src/shell/mklib/fence_funs, q 0: fence_funs () 
+A: NR 225, n 1, f 0, b 0, c 0, p 0, r fence_funs, t src/shell/mklib/fence_funs, q 0: { 
+A: NR 226, n 1, f 0, b 0, c 0, p 0, r fence_funs, t src/shell/mklib/fence_funs, q 0:     : the function fences;
+A: NR 227, n 0, f 0, b 0, c 0, p 0, r fence_funs, t src/shell/mklib/fence_funs, q 0:     set ${MKLIB_NAME:-$1} ${@:2};
+A: NR 228, n 0, f 0, b 0, c 0, p 0, r fence_funs, t src/shell/mklib/fence_funs, q 0:     report_notfile $1 && return 1;
+A: NR 229, n 0, f 0, b 0, c 0, p 0, r fence_funs, t src/shell/mklib/fence_funs, q 0:     case $# in 
+A: NR 230, n 1, f 0, b 0, c 0, p 0, r fence_funs, t src/shell/mklib/fence_funs, q 0:         1)
+A: NR 231, n 0, f 0, b 0, c 0, p 0, r fence_funs, t src/shell/mklib/fence_funs, q 0:             functions $1 | grep _fence_
+A: NR 232, n 1, f 0, b 0, c 0, p 0, r fence_funs, t src/shell/mklib/fence_funs, q 0:         ;;
+A: NR 233, n 1, f 0, b 0, c 0, p 0, r fence_funs, t src/shell/mklib/fence_funs, q 0:         2)
+A: NR 234, n 0, f 0, b 0, c 0, p 0, r fence_funs, t src/shell/mklib/fence_funs, q 0:             fence_fun $@
+A: NR 235, n 1, f 0, b 0, c 0, p 0, r fence_funs, t src/shell/mklib/fence_funs, q 0:         ;;
+A: NR 236, n 1, f 0, b 0, c 0, p 0, r fence_funs, t src/shell/mklib/fence_funs, q 0:         *)
+A: NR 237, n 0, f 0, b 0, c 0, p 0, r fence_funs, t src/shell/mklib/fence_funs, q 0:             comment $(myname) library name
+A: NR 238, n 1, f 0, b 0, c 0, p 0, r fence_funs, t src/shell/mklib/fence_funs, q 0:         ;;
+A: NR 239, n 1, f 0, b 0, c 0, p 0, r fence_funs, t src/shell/mklib/fence_funs, q 0:     esac
+A: NR 240, n 1, f 0, b 0, c 1, p 0, r fence_funs, t src/shell/mklib/fence_funs, q 0: }
+A: NR 241, n 0, f 0, b 1, c 0, p 0, r fence_mkfun, t src/shell/mklib/fence_mkfun, q 0: fence_mkfun () 
+A: NR 242, n 1, f 0, b 0, c 0, p 0, r fence_mkfun, t src/shell/mklib/fence_mkfun, q 0: { 
+A: NR 243, n 1, f 0, b 0, c 0, p 0, r fence_mkfun, t src/shell/mklib/fence_mkfun, q 0:     : write out a Function_Fence;
+A: NR 244, n 0, f 0, b 0, c 0, p 0, r fence_mkfun, t src/shell/mklib/fence_mkfun, q 0:     : usage: ~ library fencename "label for comment...";
+A: NR 245, n 0, f 0, b 0, c 0, p 0, r fence_mkfun, t src/shell/mklib/fence_mkfun, q 0:     set ${MKLIB_NAME:-$1} ${@:2};
+A: NR 246, n 0, f 0, b 0, c 0, p 0, r fence_mkfun, t src/shell/mklib/fence_mkfun, q 0:     report_notfile $1 && return 1;
+A: NR 247, n 1, f 0, b 0, c 0, p 0, r fence_mkfun, t src/shell/mklib/fence_mkfun, q 0:     if_missingargs 2 $@ && return;
+A: NR 248, n 0, f 0, b 0, c 0, p 0, r fence_mkfun, t src/shell/mklib/fence_mkfun, q 0:     printf "$1_fence_$2 () { : ------------ %s\t--; }\n" "${@:3}"
+A: NR 249, n 1, f 0, b 0, c 1, p 0, r fence_mkfun, t src/shell/mklib/fence_mkfun, q 0: }
+A: NR 250, n 0, f 0, b 1, c 0, p 0, r fun_hasfence, t src/shell/mklib/fun_hasfence, q 0: fun_hasfence () 
+A: NR 251, n 1, f 0, b 0, c 0, p 0, r fun_hasfence, t src/shell/mklib/fun_hasfence, q 0: { 
+A: NR 252, n 1, f 0, b 0, c 0, p 0, r fun_hasfence, t src/shell/mklib/fun_hasfence, q 0:     : does the library have a fence;
+A: NR 253, n 0, f 0, b 0, c 0, p 0, r fun_hasfence, t src/shell/mklib/fun_hasfence, q 0:     set ${MKLIB_NAME:-$1} ${@:2};
+A: NR 254, n 0, f 0, b 0, c 0, p 0, r fun_hasfence, t src/shell/mklib/fun_hasfence, q 0:     report_notfile $1 && return 1;
+A: NR 255, n 0, f 0, b 0, c 0, p 0, r fun_hasfence, t src/shell/mklib/fun_hasfence, q 0:     report_notfile $1 && return 1;
+A: NR 256, n 0, f 0, b 0, c 0, p 0, r fun_hasfence, t src/shell/mklib/fun_hasfence, q 0:     [[ $(fence_funs $1 | wc -l) -gt 0 ]]
+A: NR 257, n 1, f 0, b 0, c 1, p 0, r fun_hasfence, t src/shell/mklib/fun_hasfence, q 0: }
+A: NR 258, n 0, f 0, b 1, c 0, p 0, r fence_mkfun_test, t src/shell/mklib/fence_mkfun_test, q 0: fence_mkfun_test () 
+A: NR 259, n 1, f 0, b 0, c 0, p 0, r fence_mkfun_test, t src/shell/mklib/fence_mkfun_test, q 0: { 
+A: NR 260, n 1, f 0, b 0, c 0, p 0, r fence_mkfun_test, t src/shell/mklib/fence_mkfun_test, q 0:     : demonstrate proper fencing;
+A: NR 261, n 0, f 0, b 0, c 0, p 0, r fence_mkfun_test, t src/shell/mklib/fence_mkfun_test, q 0:     : usage: ~ nameofLIB nameofFENCE "label for comment ...";
+A: NR 262, n 0, f 0, b 0, c 0, p 0, r fence_mkfun_test, t src/shell/mklib/fence_mkfun_test, q 0:     eval $(fence_mkfun namelib demo "mfg: $(myname)");
+A: NR 263, n 1, f 0, b 0, c 0, p 0, r fence_mkfun_test, t src/shell/mklib/fence_mkfun_test, q 0:     declare -f namelib_fence_demo;
+A: NR 264, n 1, f 0, b 0, c 0, p 0, r fence_mkfun_test, t src/shell/mklib/fence_mkfun_test, q 0:     unset namelib_fence_demo
+A: NR 265, n 1, f 0, b 0, c 1, p 0, r fence_mkfun_test, t src/shell/mklib/fence_mkfun_test, q 0: }
+A: NR 266, n 0, f 0, b 1, c 0, p 0, r fence_gaggle, t src/shell/mklib/fence_gaggle, q 0: fence_gaggle () 
+A: NR 267, n 1, f 0, b 0, c 0, p 0, r fence_gaggle, t src/shell/mklib/fence_gaggle, q 0: { 
+A: NR 268, n 1, f 0, b 0, c 0, p 0, r fence_gaggle, t src/shell/mklib/fence_gaggle, q 0:     : separate out a singe herd of functions;
+A: NR 269, n 0, f 0, b 0, c 0, p 0, r fence_gaggle, t src/shell/mklib/fence_gaggle, q 0:     : usage: ~ library herd;
+A: NR 270, n 1, f 0, b 0, c 0, p 0, r fence_gaggle, t src/shell/mklib/fence_gaggle, q 0:     debug ENTRY $# $@;
+A: NR 271, n 1, f 0, b 0, c 0, p 0, r fence_gaggle, t src/shell/mklib/fence_gaggle, q 0:     pause;
+A: NR 272, n 1, f 0, b 0, c 0, p 0, r fence_gaggle, t src/shell/mklib/fence_gaggle, q 0:     report_notargcount 2 $# && return 2;
+A: NR 273, n 0, f 0, b 0, c 0, p 0, r fence_gaggle, t src/shell/mklib/fence_gaggle, q 0:     report_notfile $1 && return 1;
+A: NR 274, n 1, f 0, b 0, c 0, p 0, r fence_gaggle, t src/shell/mklib/fence_gaggle, q 0:     declare -f $(fence_funs $@) | tee $(needir .herd)/${2}lib
+A: NR 275, n 1, f 0, b 0, c 1, p 0, r fence_gaggle, t src/shell/mklib/fence_gaggle, q 0: }
+A: NR 276, n 0, f 0, b 1, c 0, p 0, r fence_lib, t src/shell/mklib/fence_lib, q 0: fence_lib () 
+A: NR 277, n 1, f 0, b 0, c 0, p 0, r fence_lib, t src/shell/mklib/fence_lib, q 0: { 
+A: NR 278, n 1, f 0, b 0, c 0, p 0, r fence_lib, t src/shell/mklib/fence_lib, q 0:     : list the LIBRARies fence functions, its what its all about;
+A: NR 279, n 1, f 0, b 0, c 0, p 0, r fence_lib, t src/shell/mklib/fence_lib, q 0:     debug ENTRY $# $@;
+A: NR 280, n 1, f 0, b 0, c 0, p 0, r fence_lib, t src/shell/mklib/fence_lib, q 0:     pause;
+A: NR 281, n 0, f 0, b 0, c 0, p 0, r fence_lib, t src/shell/mklib/fence_lib, q 0:     report_notfile $1 && return 1;
+A: NR 282, n 0, f 0, b 0, c 0, p 0, r fence_lib, t src/shell/mklib/fence_lib, q 0:     functions $1 | grep _fence_
+A: NR 283, n 1, f 0, b 0, c 1, p 0, r fence_lib, t src/shell/mklib/fence_lib, q 0: }
+A: NR 284, n 0, f 0, b 1, c 0, p 0, r fence_range, t src/shell/mklib/fence_range, q 0: fence_range () 
+A: NR 285, n 1, f 0, b 0, c 0, p 0, r fence_range, t src/shell/mklib/fence_range, q 0: { 
+A: NR 286, n 1, f 0, b 0, c 0, p 0, r fence_range, t src/shell/mklib/fence_range, q 0:     : list all the heards on the RANGE;
+A: NR 287, n 1, f 0, b 0, c 0, p 0, r fence_range, t src/shell/mklib/fence_range, q 0:     debug ENTRY $# $@;
+A: NR 288, n 1, f 0, b 0, c 0, p 0, r fence_range, t src/shell/mklib/fence_range, q 0:     pause;
+MULTI? nq: 0, j: 28, qs:     fence_lib $1 | awk -F_ '{ printf , $1, $3 }'
+MULTI? nq: 1, j: 20, qs: { printf , $1, $3 }'
+A: NR 289, n 0, f 0, b 0, c 0, p 0, r fence_range, t src/shell/mklib/fence_range, q 0:     fence_lib $1 | awk -F_ '{ printf "%s\t%s\n", $1, $3 }'
+A: NR 290, n 1, f 0, b 0, c 1, p 0, r fence_range, t src/shell/mklib/fence_range, q 0: }
+A: NR 291, n 0, f 0, b 1, c 0, p 0, r lib_hasfence, t src/shell/mklib/lib_hasfence, q 0: lib_hasfence () 
+A: NR 292, n 1, f 0, b 0, c 0, p 0, r lib_hasfence, t src/shell/mklib/lib_hasfence, q 0: { 
+A: NR 293, n 1, f 0, b 0, c 0, p 0, r lib_hasfence, t src/shell/mklib/lib_hasfence, q 0:     : does the library have a fence;
+A: NR 294, n 0, f 0, b 0, c 0, p 0, r lib_hasfence, t src/shell/mklib/lib_hasfence, q 0:     set ${MKLIB_NAME:-$1} ${@:2};
+A: NR 295, n 0, f 0, b 0, c 0, p 0, r lib_hasfence, t src/shell/mklib/lib_hasfence, q 0:     report_notfile $1 && return 1;
+A: NR 296, n 0, f 0, b 0, c 0, p 0, r lib_hasfence, t src/shell/mklib/lib_hasfence, q 0:     report_notfile $1 && return 1;
+A: NR 297, n 0, f 0, b 0, c 0, p 0, r lib_hasfence, t src/shell/mklib/lib_hasfence, q 0:     [[ $(fence_funs $1 | wc -l) -gt 0 ]]
+A: NR 298, n 1, f 0, b 0, c 1, p 0, r lib_hasfence, t src/shell/mklib/lib_hasfence, q 0: }
+A: NR 299, n 0, f 0, b 1, c 0, p 0, r rdlib_fence_util, t src/shell/mklib/rdlib_fence_util, q 0: rdlib_fence_util () 
+A: NR 300, n 1, f 0, b 0, c 0, p 0, r rdlib_fence_util, t src/shell/mklib/rdlib_fence_util, q 0: { 
+A: NR 301, n 1, f 0, b 0, c 0, p 0, r rdlib_fence_util, t src/shell/mklib/rdlib_fence_util, q 0:     return
+A: NR 302, n 1, f 0, b 0, c 1, p 0, r rdlib_fence_util, t src/shell/mklib/rdlib_fence_util, q 0: }
+A: NR 303, n 0, f 0, b 1, c 0, p 0, r mklib_fence_gather, t src/shell/mklib/mklib_fence_gather, q 0: mklib_fence_gather () 
+A: NR 304, n 1, f 0, b 0, c 0, p 0, r mklib_fence_gather, t src/shell/mklib/mklib_fence_gather, q 0: { 
+A: NR 305, n 1, f 0, b 0, c 0, p 0, r mklib_fence_gather, t src/shell/mklib/mklib_fence_gather, q 0:     : ------------------------------- collect, adjust functions --
+A: NR 306, n 1, f 0, b 0, c 1, p 0, r mklib_fence_gather, t src/shell/mklib/mklib_fence_gather, q 0: }
+A: NR 307, n 0, f 0, b 1, c 0, p 0, r fbdy_examples, t src/shell/mklib/fbdy_examples, q 0: fbdy_examples () 
+A: NR 308, n 1, f 0, b 0, c 0, p 0, r fbdy_examples, t src/shell/mklib/fbdy_examples, q 0: { 
+A: NR 309, n 1, f 0, b 0, c 0, p 0, r fbdy_examples, t src/shell/mklib/fbdy_examples, q 0:     : used in the "make" to fix fbdy_examples;
+A: NR 310, n 0, f 0, b 0, c 0, p 0, r fbdy_examples, t src/shell/mklib/fbdy_examples, q 0:     pushd src/shells;
+A: NR 311, n 1, f 0, b 0, c 0, p 0, r fbdy_examples, t src/shell/mklib/fbdy_examples, q 0:     for f in fbdy_*;
+A: NR 312, n 1, f 0, b 0, c 0, p 0, r fbdy_examples, t src/shell/mklib/fbdy_examples, q 0:     do
+A: NR 313, n 1, f 0, b 0, c 0, p 0, r fbdy_examples, t src/shell/mklib/fbdy_examples, q 0:         : overwrite the Function File fbdy_some,;
+A: NR 314, n 1, f 0, b 0, c 0, p 0, r fbdy_examples, t src/shell/mklib/fbdy_examples, q 0:         : replacing FBDY_SOME with FBDY;
+A: NR 315, n 0, f 0, b 0, c 0, p 0, r fbdy_examples, t src/shell/mklib/fbdy_examples, q 0:         overwrite $f $f fbdy;
+A: NR 316, n 1, f 0, b 0, c 0, p 0, r fbdy_examples, t src/shell/mklib/fbdy_examples, q 0:     done;
+A: NR 317, n 0, f 0, b 0, c 0, p 0, r fbdy_examples, t src/shell/mklib/fbdy_examples, q 0:     cat fbdy_*
+A: NR 318, n 1, f 0, b 0, c 1, p 0, r fbdy_examples, t src/shell/mklib/fbdy_examples, q 0: }
+A: NR 319, n 0, f 0, b 1, c 0, p 0, r md_chapter, t src/shell/mklib/md_chapter, q 0: md_chapter () 
+A: NR 320, n 1, f 0, b 0, c 0, p 0, r md_chapter, t src/shell/mklib/md_chapter, q 0: { 
+A: NR 321, n 1, f 0, b 0, c 0, p 0, r md_chapter, t src/shell/mklib/md_chapter, q 0:     : MarkDown chapter links;
+A: NR 322, n 1, f 0, b 0, c 0, p 0, r md_chapter, t src/shell/mklib/md_chapter, q 0:     : add the formating field, format the line into mdline;
+MULTI? nq: 0, j: 29, qs:     addcol mdline | compute '
+A: NR 323, n 1, f 0, b 0, c 0, p 0, r md_chapter, t src/shell/mklib/md_chapter, q 1:     addcol mdline | compute '
+A: NR 324, n 1, f 0, b 0, c 0, p 0, r md_chapter, t src/shell/mklib/md_chapter, q 1: 
+A: NR 325, n 0, f 0, b 0, c 0, p 0, r md_chapter, t src/shell/mklib/md_chapter, q 1:         mdline = "- [" title "](./" file ".html) -- " comment
+A: NR 326, n 1, f 0, b 0, c 0, p 0, r md_chapter, t src/shell/mklib/md_chapter, q 1: 
+MULTI? nq: 0, j: 5, qs:     ' | column mdline | headoff
+A: NR 327, n 0, f 0, b 0, c 0, p 0, r md_chapter, t src/shell/mklib/md_chapter, q 0:     ' | column mdline | headoff
+A: NR 328, n 1, f 0, b 0, c 1, p 0, r md_chapter, t src/shell/mklib/md_chapter, q 0: }
+A: NR 329, n 0, f 0, b 1, c 0, p 0, r mklib_fence_init, t src/shell/mklib/mklib_fence_init, q 0: mklib_fence_init () 
+A: NR 330, n 1, f 0, b 0, c 0, p 0, r mklib_fence_init, t src/shell/mklib/mklib_fence_init, q 0: { 
+A: NR 331, n 1, f 0, b 0, c 0, p 0, r mklib_fence_init, t src/shell/mklib/mklib_fence_init, q 0:     : ------------------- initialization, Environment Functions --
+A: NR 332, n 1, f 0, b 0, c 1, p 0, r mklib_fence_init, t src/shell/mklib/mklib_fence_init, q 0: }
+A: NR 333, n 0, f 0, b 1, c 0, p 0, r devdir, t src/shell/mklib/devdir, q 0: devdir () 
+A: NR 334, n 1, f 0, b 0, c 0, p 0, r devdir, t src/shell/mklib/devdir, q 0: { 
+A: NR 335, n 1, f 0, b 0, c 0, p 0, r devdir, t src/shell/mklib/devdir, q 0:     : sets and fetches the DEV_DIR;
+A: NR 336, n 0, f 0, b 0, c 0, p 0, r devdir, t src/shell/mklib/devdir, q 0:     : usage: ~ $PWD - sets to the current directory;
+A: NR 337, n 0, f 0, b 0, c 0, p 0, r devdir, t src/shell/mklib/devdir, q 0:     : ...: ~ .... - returns the most recent setting;
+A: NR 338, n 0, f 0, b 0, c 0, p 0, r devdir, t src/shell/mklib/devdir, q 0:     : date: 2019-01-23;
+A: NR 339, n 0, f 0, b 0, c 0, p 0, r devdir, t src/shell/mklib/devdir, q 0:     : date: 2022-02-25;
+A: NR 340, n 0, f 0, b 0, c 0, p 0, r devdir, t src/shell/mklib/devdir, q 0:     [[ $# -ge 1 ]] && { 
+A: NR 341, n 1, f 0, b 0, c 0, p 0, r devdir, t src/shell/mklib/devdir, q 0:         setenv DEV_DIR "$1"
+A: NR 342, n 1, f 0, b 0, c 0, p 0, r devdir, t src/shell/mklib/devdir, q 0:     };
+A: NR 343, n 0, f 0, b 0, c 0, p 0, r devdir, t src/shell/mklib/devdir, q 0:     echo $DEV_DIR
+A: NR 344, n 1, f 0, b 0, c 1, p 0, r devdir, t src/shell/mklib/devdir, q 0: }
+A: NR 345, n 0, f 0, b 1, c 0, p 0, r docopy, t src/shell/mklib/docopy, q 0: docopy () 
+A: NR 346, n 1, f 0, b 0, c 0, p 0, r docopy, t src/shell/mklib/docopy, q 0: { 
+A: NR 347, n 1, f 0, b 0, c 0, p 0, r docopy, t src/shell/mklib/docopy, q 0:     : sets and fetches the DOC_COPY;
+A: NR 348, n 0, f 0, b 0, c 0, p 0, r docopy, t src/shell/mklib/docopy, q 0:     : usage: ~ $PWD - sets to the current directory;
+A: NR 349, n 0, f 0, b 0, c 0, p 0, r docopy, t src/shell/mklib/docopy, q 0:     : ...: ~ .... - returns the most recent setting;
+A: NR 350, n 0, f 0, b 0, c 0, p 0, r docopy, t src/shell/mklib/docopy, q 0:     : date: 2019-01-23;
+A: NR 351, n 0, f 0, b 0, c 0, p 0, r docopy, t src/shell/mklib/docopy, q 0:     : date: 2022-02-25;
+A: NR 352, n 0, f 0, b 0, c 0, p 0, r docopy, t src/shell/mklib/docopy, q 0:     [[ $# -ge 1 ]] && { 
+A: NR 353, n 1, f 0, b 0, c 0, p 0, r docopy, t src/shell/mklib/docopy, q 0:         setenv DOC_COPY "$1"
+A: NR 354, n 1, f 0, b 0, c 0, p 0, r docopy, t src/shell/mklib/docopy, q 0:     };
+A: NR 355, n 0, f 0, b 0, c 0, p 0, r docopy, t src/shell/mklib/docopy, q 0:     echo $DOC_COPY
+A: NR 356, n 1, f 0, b 0, c 1, p 0, r docopy, t src/shell/mklib/docopy, q 0: }
+A: NR 357, n 0, f 0, b 1, c 0, p 0, r doc_init, t src/shell/mklib/doc_init, q 0: doc_init () 
+A: NR 358, n 1, f 0, b 0, c 0, p 0, r doc_init, t src/shell/mklib/doc_init, q 0: { 
+A: NR 359, n 1, f 0, b 0, c 0, p 0, r doc_init, t src/shell/mklib/doc_init, q 0:     : in defference to its roots, anticpating different look;
+A: NR 360, n 1, f 0, b 0, c 0, p 0, r doc_init, t src/shell/mklib/doc_init, q 0:     : list of copies -- docopy_list;
+A: NR 361, n 0, f 0, b 0, c 0, p 0, r doc_init, t src/shell/mklib/doc_init, q 0:     : obsolescent: no long support multiple copies;
+A: NR 362, n 1, f 0, b 0, c 0, p 0, r doc_init, t src/shell/mklib/doc_init, q 0:     return;
+A: NR 363, n 1, f 0, b 0, c 0, p 0, r doc_init, t src/shell/mklib/doc_init, q 0:     debug ENTRY $@;
+A: NR 364, n 0, f 0, b 0, c 0, p 0, r doc_init, t src/shell/mklib/doc_init, q 0:     docopy ${1:-.}
+A: NR 365, n 1, f 0, b 0, c 1, p 0, r doc_init, t src/shell/mklib/doc_init, q 0: }
+A: NR 366, n 0, f 0, b 1, c 0, p 0, r mklib_init, t src/shell/mklib/mklib_init, q 0: mklib_init () 
+A: NR 367, n 1, f 0, b 0, c 0, p 0, r mklib_init, t src/shell/mklib/mklib_init, q 0: { 
+A: NR 368, n 1, f 0, b 0, c 0, p 0, r mklib_init, t src/shell/mklib/mklib_init, q 0:     : in general, need to be in ..;
+A: NR 369, n 1, f 0, b 0, c 0, p 0, r mklib_init, t src/shell/mklib/mklib_init, q 0:     : fun_mkfence bin/mklib main "everbody needs a Maine";
+A: NR 370, n 1, f 0, b 0, c 0, p 0, r mklib_init, t src/shell/mklib/mklib_init, q 0:     debug ENTRY $@;
+A: NR 371, n 1, f 0, b 0, c 0, p 0, r mklib_init, t src/shell/mklib/mklib_init, q 0:     pickd;
+A: NR 372, n 0, f 0, b 0, c 0, p 0, r mklib_init, t src/shell/mklib/mklib_init, q 0:     doc_init ${1:-.};
+A: NR 373, n 0, f 0, b 0, c 0, p 0, r mklib_init, t src/shell/mklib/mklib_init, q 0:     mklibname mklib;
+A: NR 374, n 1, f 0, b 0, c 0, p 0, r mklib_init, t src/shell/mklib/mklib_init, q 0:     return;
+A: NR 375, n 1, f 0, b 0, c 0, p 0, r mklib_init, t src/shell/mklib/mklib_init, q 0:     echo Current Copy $DOC_COPY;
+A: NR 376, n 1, f 0, b 0, c 0, p 0, r mklib_init, t src/shell/mklib/mklib_init, q 0:     echo Available Copies: $(args_uniq $(docopy_list));
+A: NR 377, n 1, f 0, b 0, c 0, p 0, r mklib_init, t src/shell/mklib/mklib_init, q 0:     echo make
+A: NR 378, n 1, f 0, b 0, c 1, p 0, r mklib_init, t src/shell/mklib/mklib_init, q 0: }
+A: NR 379, n 0, f 0, b 1, c 0, p 0, r mklibname, t src/shell/mklib/mklibname, q 0: mklibname () 
+A: NR 380, n 1, f 0, b 0, c 0, p 0, r mklibname, t src/shell/mklib/mklibname, q 0: { 
+A: NR 381, n 1, f 0, b 0, c 0, p 0, r mklibname, t src/shell/mklib/mklibname, q 0:     : sets and fetches the MKLIB_NAME;
+A: NR 382, n 0, f 0, b 0, c 0, p 0, r mklibname, t src/shell/mklib/mklibname, q 0:     : usage: ~ library - sets the MAKE LIBRARY name;
+A: NR 383, n 0, f 0, b 0, c 0, p 0, r mklibname, t src/shell/mklib/mklibname, q 0:     : ...: ~ .... - returns the most recent setting;
+A: NR 384, n 0, f 0, b 0, c 0, p 0, r mklibname, t src/shell/mklib/mklibname, q 0:     : date: 2019-01-23;
+A: NR 385, n 0, f 0, b 0, c 0, p 0, r mklibname, t src/shell/mklib/mklibname, q 0:     : date: 2022-02-25;
+A: NR 386, n 1, f 0, b 0, c 0, p 0, r mklibname, t src/shell/mklib/mklibname, q 0:     debug ENTRY $@;
+A: NR 387, n 0, f 0, b 0, c 0, p 0, r mklibname, t src/shell/mklib/mklibname, q 0:     [[ $# -ge 1 ]] && { 
+A: NR 388, n 1, f 0, b 0, c 0, p 0, r mklibname, t src/shell/mklib/mklibname, q 0:         setenv MKLIB_NAME "$1"
+A: NR 389, n 1, f 0, b 0, c 0, p 0, r mklibname, t src/shell/mklib/mklibname, q 0:     };
+A: NR 390, n 0, f 0, b 0, c 0, p 0, r mklibname, t src/shell/mklib/mklibname, q 0:     echo $MKLIB_NAME
+A: NR 391, n 1, f 0, b 0, c 1, p 0, r mklibname, t src/shell/mklib/mklibname, q 0: }
+A: NR 392, n 0, f 0, b 1, c 0, p 0, r mklib_fence_pandoc, t src/shell/mklib/mklib_fence_pandoc, q 0: mklib_fence_pandoc () 
+A: NR 393, n 1, f 0, b 0, c 0, p 0, r mklib_fence_pandoc, t src/shell/mklib/mklib_fence_pandoc, q 0: { 
+A: NR 394, n 1, f 0, b 0, c 0, p 0, r mklib_fence_pandoc, t src/shell/mklib/mklib_fence_pandoc, q 0:     : ---------------------------------------- pandoc interface --
+A: NR 395, n 1, f 0, b 0, c 1, p 0, r mklib_fence_pandoc, t src/shell/mklib/mklib_fence_pandoc, q 0: }
+A: NR 396, n 0, f 0, b 1, c 0, p 0, r idmd, t src/shell/mklib/idmd, q 0: idmd () 
+A: NR 397, n 1, f 0, b 0, c 0, p 0, r idmd, t src/shell/mklib/idmd, q 0: { 
+A: NR 398, n 1, f 0, b 0, c 0, p 0, r idmd, t src/shell/mklib/idmd, q 0:     : include SRC, then MarkDown, Author and Date;
+A: NR 399, n 0, f 0, b 0, c 0, p 0, r idmd, t src/shell/mklib/idmd, q 0:     : date: 2023-08-25;
+A: NR 400, n 0, f 0, b 0, c 0, p 0, r idmd, t src/shell/mklib/idmd, q 0:     : date: 2024-03-20;
+A: NR 401, n 1, f 0, b 0, c 0, p 0, r idmd, t src/shell/mklib/idmd, q 0:     :;
+A: NR 402, n 1, f 0, b 0, c 0, p 0, r idmd, t src/shell/mklib/idmd, q 0:     debug ENTRY $# $@;
+A: NR 403, n 1, f 0, b 0, c 0, p 0, r idmd, t src/shell/mklib/idmd, q 0:     if_missingargs 1 $@ && return;
+A: NR 404, n 0, f 0, b 0, c 0, p 0, r idmd, t src/shell/mklib/idmd, q 0:     local base=$(basename $PWD);
+A: NR 405, n 0, f 0, b 0, c 0, p 0, r idmd, t src/shell/mklib/idmd, q 0:     debug base: $base;
+A: NR 406, n 1, f 0, b 0, c 0, p 0, r idmd, t src/shell/mklib/idmd, q 0:     pause;
+A: NR 407, n 0, f 0, b 0, c 0, p 0, r idmd, t src/shell/mklib/idmd, q 0:     [[ $base != "src" ]] && { 
+A: NR 408, n 0, f 0, b 0, c 0, p 0, r idmd, t src/shell/mklib/idmd, q 0:         comment $base is not src. Find the SRC directory;
+A: NR 409, n 1, f 0, b 0, c 0, p 0, r idmd, t src/shell/mklib/idmd, q 0:         return 2
+A: NR 410, n 1, f 0, b 0, c 0, p 0, r idmd, t src/shell/mklib/idmd, q 0:     };
+A: NR 411, n 1, f 0, b 0, c 0, p 0, r idmd, t src/shell/mklib/idmd, q 0:     :;
+A: NR 412, n 0, f 0, b 0, c 0, p 0, r idmd, t src/shell/mklib/idmd, q 0:     local src=${1%.*}.md;
+A: NR 413, n 0, f 0, b 0, c 0, p 0, r idmd, t src/shell/mklib/idmd, q 0:     report_notfile ./$src && return 1;
+A: NR 414, n 0, f 0, b 0, c 0, p 0, r idmd, t src/shell/mklib/idmd, q 0:     local err=./${1%.*}.err;
+A: NR 415, n 0, f 0, b 0, c 0, p 0, r idmd, t src/shell/mklib/idmd, q 0:     newest ../$src $src || { 
+A: NR 416, n 1, f 0, b 0, c 0, p 0, r idmd, t src/shell/mklib/idmd, q 0:         debug INCLUDING $src to $mkd with $err;
+A: NR 417, n 0, f 0, b 0, c 0, p 0, r idmd, t src/shell/mklib/idmd, q 0:         include $src > ../$src 2> $err
+A: NR 418, n 1, f 0, b 0, c 0, p 0, r idmd, t src/shell/mklib/idmd, q 0:     };
+A: NR 419, n 0, f 0, b 0, c 0, p 0, r idmd, t src/shell/mklib/idmd, q 0:     debug $(llrt $src $err);
+A: NR 420, n 1, f 0, b 0, c 0, p 0, r idmd, t src/shell/mklib/idmd, q 0:     pause;
+A: NR 421, n 1, f 0, b 0, c 0, p 0, r idmd, t src/shell/mklib/idmd, q 0:     :;
+A: NR 422, n 0, f 0, b 0, c 0, p 0, r idmd, t src/shell/mklib/idmd, q 0:     pushd .. > /dev/null;
+A: NR 423, n 0, f 0, b 0, c 0, p 0, r idmd, t src/shell/mklib/idmd, q 0:     pdmd $src;
+A: NR 424, n 0, f 0, b 0, c 0, p 0, r idmd, t src/shell/mklib/idmd, q 0:     popd > /dev/null;
+A: NR 425, n 0, f 0, b 0, c 0, p 0, r idmd, t src/shell/mklib/idmd, q 0:     debug PWD: $PWD;
+A: NR 426, n 1, f 0, b 0, c 0, p 0, r idmd, t src/shell/mklib/idmd, q 0:     pause
+A: NR 427, n 1, f 0, b 0, c 1, p 0, r idmd, t src/shell/mklib/idmd, q 0: }
+A: NR 428, n 0, f 0, b 1, c 0, p 0, r readht, t src/shell/mklib/readht, q 0: readht () 
+A: NR 429, n 1, f 0, b 0, c 0, p 0, r readht, t src/shell/mklib/readht, q 0: { 
+A: NR 430, n 1, f 0, b 0, c 0, p 0, r readht, t src/shell/mklib/readht, q 0:     : format and open the lastest Markdown source;
+A: NR 431, n 0, f 0, b 0, c 0, p 0, r readht, t src/shell/mklib/readht, q 0:     : date: 2023-10-17;
+A: NR 432, n 0, f 0, b 0, c 0, p 0, r readht, t src/shell/mklib/readht, q 0:     open $(pdmd $(ls -t *.md | sed 1q))
+A: NR 433, n 1, f 0, b 0, c 1, p 0, r readht, t src/shell/mklib/readht, q 0: }
+A: NR 434, n 0, f 0, b 1, c 0, p 0, r mkmd, t src/shell/mklib/mkmd, q 0: mkmd () 
+A: NR 435, n 1, f 0, b 0, c 0, p 0, r mkmd, t src/shell/mklib/mkmd, q 0: { 
+A: NR 436, n 1, f 0, b 0, c 0, p 0, r mkmd, t src/shell/mklib/mkmd, q 0:     : MaKe MarkDown into .html;
+A: NR 437, n 1, f 0, b 0, c 0, p 0, r mkmd, t src/shell/mklib/mkmd, q 0:     debug ENTRY $# $@;
+A: NR 438, n 1, f 0, b 0, c 0, p 0, r mkmd, t src/shell/mklib/mkmd, q 0:     pause;
+A: NR 439, n 0, f 0, b 0, c 0, p 0, r mkmd, t src/shell/mklib/mkmd, q 0:     report_notfile $1 && return 1;
+A: NR 440, n 0, f 0, b 0, c 0, p 0, r mkmd, t src/shell/mklib/mkmd, q 0:     newest src/included.txt *.md || included *.md > src/included.txt;
+A: NR 441, n 0, f 0, b 0, c 0, p 0, r mkmd, t src/shell/mklib/mkmd, q 0:     local file=$1;
+A: NR 442, n 0, f 0, b 0, c 0, p 0, r mkmd, t src/shell/mklib/mkmd, q 0:     debug file: $file;
+A: NR 443, n 0, f 0, b 0, c 0, p 0, r mkmd, t src/shell/mklib/mkmd, q 0:     local outp=../${DOC_COPY}/${1%.md}.html;
+A: NR 444, n 0, f 0, b 0, c 0, p 0, r mkmd, t src/shell/mklib/mkmd, q 0:     debug outp: $outp;
+A: NR 445, n 0, f 0, b 0, c 0, p 0, r mkmd, t src/shell/mklib/mkmd, q 0:     local incl=$(included_by $1);
+A: NR 446, n 0, f 0, b 0, c 0, p 0, r mkmd, t src/shell/mklib/mkmd, q 0:     debug incl: $incl;
+A: NR 447, n 1, f 0, b 0, c 0, p 0, r mkmd, t src/shell/mklib/mkmd, q 0:     pause;
+A: NR 448, n 0, f 0, b 0, c 0, p 0, r mkmd, t src/shell/mklib/mkmd, q 0:     newest $outp $file $incl 2> /dev/null || pdmd $file
+A: NR 449, n 1, f 0, b 0, c 1, p 0, r mkmd, t src/shell/mklib/mkmd, q 0: }
+A: NR 450, n 0, f 0, b 1, c 0, p 0, r included, t src/shell/mklib/included, q 0: included () 
+A: NR 451, n 1, f 0, b 0, c 0, p 0, r included, t src/shell/mklib/included, q 0: { 
+A: NR 452, n 1, f 0, b 0, c 0, p 0, r included, t src/shell/mklib/included, q 0:     : files included in the sources by pandoc-include;
+A: NR 453, n 1, f 0, b 0, c 0, p 0, r included, t src/shell/mklib/included, q 0:     debug ENTRY $# $@;
+A: NR 454, n 1, f 0, b 0, c 0, p 0, r included, t src/shell/mklib/included, q 0:     pause;
+A: NR 455, n 0, f 0, b 0, c 0, p 0, r included, t src/shell/mklib/included, q 0:     report_notfile $1 && return 1;
+MULTI? nq: 0, j: 10, qs:     grep '^!include' $1 | sed 
+MULTI? nq: 1, j: 10, qs: ^!include' $1 | sed 
+A: NR 456, n 0, f 0, b 0, c 0, p 0, r included, t src/shell/mklib/included, q 0:     grep '^!include' $1 | sed "s/!include  */$1	/"
+A: NR 457, n 1, f 0, b 0, c 1, p 0, r included, t src/shell/mklib/included, q 0: }
+A: NR 458, n 0, f 0, b 1, c 0, p 0, r included_by, t src/shell/mklib/included_by, q 0: included_by () 
+A: NR 459, n 1, f 0, b 0, c 0, p 0, r included_by, t src/shell/mklib/included_by, q 0: { 
+A: NR 460, n 1, f 0, b 0, c 0, p 0, r included_by, t src/shell/mklib/included_by, q 0:     : files included in a specific source;
+A: NR 461, n 1, f 0, b 0, c 0, p 0, r included_by, t src/shell/mklib/included_by, q 0:     debug ENTRY $# $@;
+A: NR 462, n 1, f 0, b 0, c 0, p 0, r included_by, t src/shell/mklib/included_by, q 0:     pause;
+A: NR 463, n 0, f 0, b 0, c 0, p 0, r included_by, t src/shell/mklib/included_by, q 0:     report_notfile $1 && return 1;
+A: NR 464, n 0, f 0, b 0, c 0, p 0, r included_by, t src/shell/mklib/included_by, q 0:     grep $1 src/included.txt | field 2
+A: NR 465, n 1, f 0, b 0, c 1, p 0, r included_by, t src/shell/mklib/included_by, q 0: }
+A: NR 466, n 0, f 0, b 1, c 0, p 0, r pdmd, t src/shell/mklib/pdmd, q 0: pdmd () 
+A: NR 467, n 1, f 0, b 0, c 0, p 0, r pdmd, t src/shell/mklib/pdmd, q 0: { 
+A: NR 468, n 1, f 0, b 0, c 0, p 0, r pdmd, t src/shell/mklib/pdmd, q 0:     : pandoc MarkDown, Author and Date;
+A: NR 469, n 0, f 0, b 0, c 0, p 0, r pdmd, t src/shell/mklib/pdmd, q 0:     : date: 2023-08-25;
+A: NR 470, n 0, f 0, b 0, c 0, p 0, r pdmd, t src/shell/mklib/pdmd, q 0:     : date: 2023-09-26;
+A: NR 471, n 0, f 0, b 0, c 0, p 0, r pdmd, t src/shell/mklib/pdmd, q 0:     : date: 2024-03-15;
+A: NR 472, n 0, f 0, b 0, c 0, p 0, r pdmd, t src/shell/mklib/pdmd, q 0:     : date: 2024-03-20;
+A: NR 473, n 1, f 0, b 0, c 0, p 0, r pdmd, t src/shell/mklib/pdmd, q 0:     :;
+A: NR 474, n 1, f 0, b 0, c 0, p 0, r pdmd, t src/shell/mklib/pdmd, q 0:     debug ENTRY $# $@;
+A: NR 475, n 1, f 0, b 0, c 0, p 0, r pdmd, t src/shell/mklib/pdmd, q 0:     if_missingargs 1 $@ && return;
+A: NR 476, n 1, f 0, b 0, c 0, p 0, r pdmd, t src/shell/mklib/pdmd, q 0:     :;
+A: NR 477, n 0, f 0, b 0, c 0, p 0, r pdmd, t src/shell/mklib/pdmd, q 0:     local doc=./${1%.*}.html;
+A: NR 478, n 1, f 0, b 0, c 0, p 0, r pdmd, t src/shell/mklib/pdmd, q 0:     :;
+A: NR 479, n 0, f 0, b 0, c 0, p 0, r pdmd, t src/shell/mklib/pdmd, q 0:     local hoy="$(date "+%B %e, %Y")";
+A: NR 480, n 1, f 0, b 0, c 0, p 0, r pdmd, t src/shell/mklib/pdmd, q 0:     debug SET $@, hoy: $hoy;
+A: NR 481, n 1, f 0, b 0, c 0, p 0, r pdmd, t src/shell/mklib/pdmd, q 0:     debug SET $@, doc: $doc;
+A: NR 482, n 1, f 0, b 0, c 0, p 0, r pdmd, t src/shell/mklib/pdmd, q 0:     pandoc -s \
+A: NR 483, n 0, f 0, b 0, c 0, p 0, r pdmd, t src/shell/mklib/pdmd, q 0:         --quiet \
+A: NR 484, n 1, f 0, b 0, c 0, p 0, r pdmd, t src/shell/mklib/pdmd, q 0:         --filter pandoc-include \
+A: NR 485, n 0, f 0, b 0, c 0, p 0, r pdmd, t src/shell/mklib/pdmd, q 0:         --toc $1 -o $doc \
+A: NR 486, n 0, f 0, b 0, c 0, p 0, r pdmd, t src/shell/mklib/pdmd, q 0:         --variable "author=Marty McGowan" \
+A: NR 487, n 0, f 0, b 0, c 0, p 0, r pdmd, t src/shell/mklib/pdmd, q 0:         --variable "date=$hoy";
+A: NR 488, n 1, f 0, b 0, c 0, p 0, r pdmd, t src/shell/mklib/pdmd, q 0:     :;
+A: NR 489, n 0, f 0, b 0, c 0, p 0, r pdmd, t src/shell/mklib/pdmd, q 0:     echo $doc;
+A: NR 490, n 0, f 0, b 0, c 0, p 0, r pdmd, t src/shell/mklib/pdmd, q 0:     recursive $@
+A: NR 491, n 1, f 0, b 0, c 1, p 0, r pdmd, t src/shell/mklib/pdmd, q 0: }
+A: NR 492, n 0, f 0, b 1, c 0, p 0, r mkmk, t src/shell/mklib/mkmk, q 0: mkmk () 
+A: NR 493, n 1, f 0, b 0, c 0, p 0, r mkmk, t src/shell/mklib/mkmk, q 0: { 
+A: NR 494, n 1, f 0, b 0, c 0, p 0, r mkmk, t src/shell/mklib/mkmk, q 0:     : local function;
+A: NR 495, n 0, f 0, b 0, c 0, p 0, r mkmk, t src/shell/mklib/mkmk, q 0:     source ../bin/mklib;
+A: NR 496, n 1, f 0, b 0, c 0, p 0, r mkmk, t src/shell/mklib/mkmk, q 0:     for f in *.md;
+A: NR 497, n 1, f 0, b 0, c 0, p 0, r mkmk, t src/shell/mklib/mkmk, q 0:     do
+A: NR 498, n 0, f 0, b 0, c 0, p 0, r mkmk, t src/shell/mklib/mkmk, q 0:         idmd $f;
+A: NR 499, n 0, f 0, b 0, c 0, p 0, r mkmk, t src/shell/mklib/mkmk, q 0:     done 2> .mk.err | grep -v NEWEST .mk.err;
+A: NR 500, n 1, f 0, b 0, c 0, p 0, r mkmk, t src/shell/mklib/mkmk, q 0:     ln -f ../{Development,index}.html
+A: NR 501, n 1, f 0, b 0, c 1, p 0, r mkmk, t src/shell/mklib/mkmk, q 0: }
+A: NR 502, n 0, f 0, b 1, c 0, p 0, r ch_filelist, t src/shell/mklib/ch_filelist, q 0: ch_filelist () 
+A: NR 503, n 1, f 0, b 0, c 0, p 0, r ch_filelist, t src/shell/mklib/ch_filelist, q 0: { 
+A: NR 504, n 1, f 0, b 0, c 0, p 0, r ch_filelist, t src/shell/mklib/ch_filelist, q 0:     : the files in the Chapter Sequence;
+A: NR 505, n 0, f 0, b 0, c 0, p 0, r ch_filelist, t src/shell/mklib/ch_filelist, q 0:     : date: 2024-04-11;
+MULTI? nq: 0, j: 44, qs:     column file < ChSequence.rdb | compute 'file = file ' | headoff
+MULTI? nq: 1, j: 13, qs: file = file ' | headoff
+A: NR 506, n 1, f 0, b 0, c 0, p 0, r ch_filelist, t src/shell/mklib/ch_filelist, q 0:     column file < ChSequence.rdb | compute 'file = file ".md"' | headoff
+A: NR 507, n 1, f 0, b 0, c 1, p 0, r ch_filelist, t src/shell/mklib/ch_filelist, q 0: }
+A: NR 508, n 0, f 0, b 1, c 0, p 0, r pdmk, t src/shell/mklib/pdmk, q 0: pdmk () 
+A: NR 509, n 1, f 0, b 0, c 0, p 0, r pdmk, t src/shell/mklib/pdmk, q 0: { 
+A: NR 510, n 1, f 0, b 0, c 0, p 0, r pdmk, t src/shell/mklib/pdmk, q 0:     : make model for pdmd, PanDoc MarkDown;
+A: NR 511, n 0, f 0, b 0, c 0, p 0, r pdmk, t src/shell/mklib/pdmk, q 0:     : date: 2024-04-27;
+A: NR 512, n 1, f 0, b 0, c 0, p 0, r pdmk, t src/shell/mklib/pdmk, q 0:     set -- ${1%.md}.{md,html};
+A: NR 513, n 0, f 0, b 0, c 0, p 0, r pdmk, t src/shell/mklib/pdmk, q 0:     newest $2 $1 || pdmd $1
+A: NR 514, n 1, f 0, b 0, c 1, p 0, r pdmk, t src/shell/mklib/pdmk, q 0: }
+A: NR 515, n 0, f 0, b 1, c 0, p 0, r pdmk, t src/shell/mklib/pdmk, q 0: pdmk () 
+A: NR 516, n 1, f 0, b 0, c 0, p 0, r pdmk, t src/shell/mklib/pdmk, q 0: { 
+A: NR 517, n 1, f 0, b 0, c 0, p 0, r pdmk, t src/shell/mklib/pdmk, q 0:     : make model for pdmd, PanDoc MarkDown;
+A: NR 518, n 0, f 0, b 0, c 0, p 0, r pdmk, t src/shell/mklib/pdmk, q 0:     : date: 2024-04-27;
+A: NR 519, n 1, f 0, b 0, c 0, p 0, r pdmk, t src/shell/mklib/pdmk, q 0:     set -- ${1%.md}.{md,html};
+A: NR 520, n 0, f 0, b 0, c 0, p 0, r pdmk, t src/shell/mklib/pdmk, q 0:     newest $2 $1 $(included $1 | field 2) || pdmd $1
+A: NR 521, n 1, f 0, b 0, c 1, p 0, r pdmk, t src/shell/mklib/pdmk, q 0: }
+A: NR 522, n 0, f 0, b 1, c 0, p 0, r pdall, t src/shell/mklib/pdall, q 0: pdall () 
+A: NR 523, n 1, f 0, b 0, c 0, p 0, r pdall, t src/shell/mklib/pdall, q 0: { 
+A: NR 524, n 1, f 0, b 0, c 0, p 0, r pdall, t src/shell/mklib/pdall, q 0:     : pandoc the document;
+A: NR 525, n 0, f 0, b 0, c 0, p 0, r pdall, t src/shell/mklib/pdall, q 0:     : date: 2024-04-27;
+A: NR 526, n 1, f 0, b 0, c 0, p 0, r pdall, t src/shell/mklib/pdall, q 0:     foreach pdmk *.md;
+A: NR 527, n 1, f 0, b 0, c 0, p 0, r pdall, t src/shell/mklib/pdall, q 0:     ln -f {Development,index}.html;
+A: NR 528, n 0, f 0, b 0, c 0, p 0, r pdall, t src/shell/mklib/pdall, q 0:     open index.html
+A: NR 529, n 1, f 0, b 0, c 1, p 0, r pdall, t src/shell/mklib/pdall, q 0: }
+A: NR 530, n 0, f 0, b 1, c 0, p 0, r pdall, t src/shell/mklib/pdall, q 0: pdall () 
+A: NR 531, n 1, f 0, b 0, c 0, p 0, r pdall, t src/shell/mklib/pdall, q 0: { 
+A: NR 532, n 1, f 0, b 0, c 0, p 0, r pdall, t src/shell/mklib/pdall, q 0:     : pandoc the document;
+A: NR 533, n 0, f 0, b 0, c 0, p 0, r pdall, t src/shell/mklib/pdall, q 0:     : date: 2024-04-27;
+A: NR 534, n 1, f 0, b 0, c 0, p 0, r pdall, t src/shell/mklib/pdall, q 0:     foreach pdmk *.md;
+A: NR 535, n 1, f 0, b 0, c 0, p 0, r pdall, t src/shell/mklib/pdall, q 0:     ln -f {Development,index}.html;
+A: NR 536, n 0, f 0, b 0, c 0, p 0, r pdall, t src/shell/mklib/pdall, q 0:     echo index.html
+A: NR 537, n 1, f 0, b 0, c 1, p 0, r pdall, t src/shell/mklib/pdall, q 0: }

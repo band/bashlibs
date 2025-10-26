@@ -1,0 +1,9 @@
+one_tab () 
+{ 
+    : leave only the first tab, replace others with a symbol;
+    : date: 2025-02-27;
+    sed '
+        s/	/{{TAB}}/g;
+	s/{{TAB}}/	/
+    ' $*
+}

@@ -1,0 +1,7 @@
+morning_offering () 
+{ 
+    : from Daily OPen;
+    : date: 2023-08-21;
+    :;
+    ${*:-open} http://www.usccb.org/prayer-and-worship/prayers-and-devotions/prayers/morning-offering.cfm
+}

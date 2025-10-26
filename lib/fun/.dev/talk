@@ -1,0 +1,6 @@
+talk () 
+{ 
+    : crank me up again;
+    : date: 2023-09-29;
+    ${@:-echo} $APP_HOME/commonplace/talk
+}

@@ -1,0 +1,9 @@
+report_nofilefrom () 
+{ 
+    : report the command does not return a file;
+    : date: 2018-02-16;
+    set $(eval $*) /dev/null $*;
+    [[ -f $1 ]] && return 1;
+    shift;
+    report_usage \'$*\' did not return a file name.
+}

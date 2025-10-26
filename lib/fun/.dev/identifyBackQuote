@@ -1,0 +1,13 @@
+identifyBackQuote () 
+{ 
+    : back-quoted names, using STDIN;
+    : ref: https://unix.stackexchange.com/questions/128755/escaping-multiple-backticks-in-a-sed-call;
+    : date: 2023-09-26;
+    : date: 2023-10-03;
+    sed 's/[`]\([^`]*\)[`]/\
+    BACKQUOTE \1 /g' | grep BACKQUOTE | field 2 | sed '
+    
+        s/^`//
+
+    ' | sort -u | awk NF | tee $(myname).tmp
+}

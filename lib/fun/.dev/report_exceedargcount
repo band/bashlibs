@@ -1,0 +1,13 @@
+report_exceedargcount () 
+{ 
+    : report an excessive number of args;
+    : date: 2018-02-16;
+    : date: 2020-03-04;
+    : debug $*;
+    : date: 2020-11-14;
+    : date: 2022-10-11;
+    [[ $1 -gt $2 ]] && { 
+        report_usage need no more than $1 arg/s: ${*:3};
+        return 1
+    }
+}

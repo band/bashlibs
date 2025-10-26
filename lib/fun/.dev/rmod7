@@ -1,0 +1,6 @@
+rmod7 () 
+{ 
+    : random zero thru six;
+    : date: 2025-05-13;
+    expr $RANDOM % 7
+}

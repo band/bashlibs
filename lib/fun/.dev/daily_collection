@@ -1,0 +1,9 @@
+daily_collection () 
+{ 
+    : for the a.m shift;
+    : date: 2023-08-12;
+    : date: 2024-06-28;
+    : date: 2025-01-03;
+    ${*:-echo} writers_almanac \
+               rosary_{mysteries,prayers} morning_offering papal_intention
+}

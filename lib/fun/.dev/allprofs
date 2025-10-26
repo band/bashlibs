@@ -1,0 +1,12 @@
+allprofs () 
+{ 
+    : Adds Profile, local Bin to the List;
+    : related: un{refreshed,source,tidied};
+    : date: 2023-07-22;
+    : date: 2025-04-27;
+    : date: 2025-04-28;
+    local locl=$(localbin)/*lib;
+    local prof=$(localbin)/.*_profile;
+    pause;
+    ${@:-echo} $(libnames) $prof $locl
+}

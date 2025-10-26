@@ -1,0 +1,20 @@
+rand_arg () 
+{ 
+    : return a random argument;
+    : picking out just the Nth arg;
+    : date: 2024-09-14;
+    : date: 2024-11-30;
+    : date: 2025-05-16;
+    set -- $*;
+    [ -z "$*" ] && return 1;
+    :;
+    local Nth;
+    Nth=$(( $RANDOM % $# ));
+    (( Nth+=1 ));
+    debug List: $@;
+    debug Nth: $Nth;
+    pause;
+    local pick=${@:$Nth:1};
+    debug pick: $pick;
+    echo $pick
+}

@@ -1,0 +1,7 @@
+quiet () 
+{ 
+    : silence the STDERR;
+    : date: 2023-09-11;
+    : date: 2023-12-19;
+    eval $@ 2> /dev/null
+}

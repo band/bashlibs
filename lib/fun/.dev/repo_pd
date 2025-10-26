@@ -1,0 +1,18 @@
+repo_pd () 
+{ 
+    : update all MD to HTML in the REPO;
+    : date: 2024-11-14;
+    : date: 2024-11-30;
+    function _new_pd () 
+    { 
+        : local until it is ready for general use;
+        : newest pdmd;
+        debug ENTRY $# $@;
+        report_notfile $1 && return 1;
+        set $1 ${1%.*}.html;
+        newest $2 $1 || pdmd $1
+    };
+    debug ENTRY $# $@;
+    foreach _new_pd $(repo_md);
+    unset _new_pd
+}

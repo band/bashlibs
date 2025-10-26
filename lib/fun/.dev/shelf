@@ -1,0 +1,11 @@
+shelf () 
+{ 
+    : former location of the Shelf document;
+    : obsolete:;
+    : date: 2024-05-06;
+    : date: 2024-05-07;
+    : date: 2024-11-12;
+    pushd "$(quine)" > /dev/null;
+    cdx > /dev/null;
+    ${@:-echo} "${PWD}/shelf.html"
+}

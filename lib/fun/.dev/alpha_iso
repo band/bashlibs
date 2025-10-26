@@ -1,0 +1,6 @@
+alpha_iso () 
+{ 
+    : return unique alpha-numeric tokens from stdin to stdout, one per line;
+    : date: 2024-04-13;
+    tr -s "(){}{}<>|,.;:=-$^~/*'\'\" \t\\" '\n' | sort -u
+}

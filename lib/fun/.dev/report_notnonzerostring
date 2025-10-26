@@ -1,0 +1,7 @@
+report_notnonzerostring () 
+{ 
+    : Fails if the string argument is a Zero length String;
+    : date: 2023-08-27;
+    [[ -n $1 ]] && return 1;
+    report_usage $1 "ISN'T" a nonzerolengthstring
+}

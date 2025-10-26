@@ -1,0 +1,7 @@
+report_notexactcount () 
+{ 
+    : report the callers argument count is not the expoected number;
+    : date: 2023-08-27;
+    [[ $2 -eq $1 ]] && return 1;
+    report_usage need exactly $1 arg/s: ${*:3}
+}

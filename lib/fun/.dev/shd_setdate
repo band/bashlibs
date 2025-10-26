@@ -1,0 +1,55 @@
+shd_setdate () 
+{ 
+    : appends date tag to function, avoiding redundancy;
+    : as last line among leading shdoc comments;
+    : -----;
+    : this uses the local function trick. trailing UNSET;
+    : date: 2016-09-30;
+    : date: 2016-10-01;
+    : update: change date from comment to shd_ tag;
+    : uses: awk declare foreach fun_allnames uniq;
+    : args: .. function .. library ..;
+    : stdout: function_body ...;
+    : date: 2016-03-30;
+    : date: 2018-01-03;
+    : date: 2024-01-05;
+    : date: 2024-02-08;
+    : date: 2024-05-19;
+    : date: 2024-05-24;
+    : date: 2024-06-29;
+    : date: 2025-05-06;
+    debug ENTRY $# $@;
+    function _dffx () 
+    { 
+        debug ENTRY $# $@;
+        awk -v date=$(date +%F) '
+
+        BEGIN       { code = 0 }
+        
+        NR < 3 || ( \
+        NR > 2 && !code && $1 ~ /^:$/ \
+	          ) {
+	              print; next
+		    }
+        !code       {
+	              printf "    : date: %s;\n", date
+		      code = 1
+		    }
+		    { print }
+
+     ' | uniq | tee .$(myname).out
+    };
+    : ------------------ limitation, only ONE function on Stdin --;
+    :;
+    [[ -p /dev/stdin ]] && { 
+        _dffx;
+        return
+    };
+    :;
+    : --------------- or otherwise, multiple Command line names --;
+    for fun in $*;
+    do
+        report_notfunction $fun && return 2;
+        declare -f $fun | _dffx;
+    done
+}

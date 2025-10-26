@@ -1,0 +1,25 @@
+rand_func () 
+{ 
+    : display the definition of a random shell function;
+    : condition the data, only 2 tab-separated fields;
+    : todo: write an n_tabs function;
+    : date: 2024-09-14;
+    : date: 2024-11-30;
+    : date: 2025-02-27;
+    local func_name;
+    func_name=$(random_function);
+    :;
+    local func_dirs;
+    func_dirs=~/marty3/lib/dir/*;
+    :;
+    find $func_dirs -type f -name "$func_name";
+    echo =====;
+    type -a "$func_name";
+    echo ===== function used ====;
+    fuse $func_name | one_tab | top_rdbhdr name context | justify;
+    echo ===== function home ====;
+    whsrc $func_name;
+    : "locate function file name";
+    : "local func_dirs";
+    : "func_dirs -  a list of dirs containg func definitions"
+}

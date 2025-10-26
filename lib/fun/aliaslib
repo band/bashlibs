@@ -1,0 +1,194 @@
+alias_libheader () 
+{ 
+    "name           	abstract                                                              ";
+    "----           	--------                                                              ";
+    "alias_libheader	This is the aliaslib Function Library Comment Header                  ";
+    "al_ags         	grep the args for aliases                                             ";
+    "al_b1          	testal inital al_ function                                            ";
+    "al_funs        	functions used by a grep-determining selection of aliases, default ALL";
+    "al_generate    	collect aliases for a library, function family, ...                   ";
+    "al_isdone      	alias names in a library function                                     ";
+    "al_list        	Crunched al_list                                                      ";
+    "al_names       	cleans a/an alias definition/s from Stdin, returning the Names        ";
+    "al_type        	returns Object Type pair                                              ";
+    "al_undone      	Undone Aliases, no assigning function                                 ";
+    "al_used        	list words used in aliases on Stdin                                   ";
+    "alias_help     	alias abstracts                                                       ";
+    "alias_lengths  	display Alias length, name, length, text                              ";
+    "alias_list     	of alias functions                                                    ";
+    "alias_tbl      	display Alias length, name, length, text                              "
+}
+al_ags () 
+{ 
+    : grep the args for aliases;
+    : date: 2024-06-12;
+    : date: 2024-06-14;
+    : date: 2025-05-10;
+    debug ENTRY $# $*;
+    pause;
+    for arg in $*;
+    do
+        debug arg: $arg;
+        alias $(al_undone) | grep "$arg" | tee /dev/tty;
+        pause;
+    done
+}
+al_b1 () 
+{ 
+    : testal inital al_ function;
+    : date: 2024-06-07;
+    : date: 2025-03-20;
+    : date: 2025-05-10;
+    debug ENTRY $#: $*;
+    pause;
+    $(al_used $*) | all_types | grep function$
+}
+al_funs () 
+{ 
+    : functions used by a grep-determining selection of aliases, default ALL;
+    : date: 2024-06-06;
+    : date: 2024-06-07;
+    : date: 2024-06-09;
+    : date: 2025-03-20;
+    : date: 2025-05-10;
+    debug ENTRY $#: $*;
+    pause;
+    fun_names $(al_used)
+}
+al_generate () 
+{ 
+    : collect aliases for a library, function family, ...;
+    : usage: ~ Libname alias ... writes the assigning function;
+    : date: 2024-06-07;
+    : date: 2024-06-09;
+    : date: 2024-06-12;
+    : date: 2024-06-14;
+    : date: 2025-05-10;
+    if_missingargs 2 $* && return;
+    debug Entry $# "$*";
+    local fam=$1;
+    shift;
+    debug fam: $fam;
+    debug args: $*;
+    eval "${fam}_al () { : aliases -- $fam "$*"; $(al_ags "$*" | sort -u); }";
+    declare -f ${fam}_al
+}
+al_isdone () 
+{ 
+    : alias names in a library function;
+    : date: 2024-06-07;
+    : date: 2025-05-10;
+    fbdy $(sfg _al$) | al_names | sort -u
+}
+al_list () 
+{ 
+    : Crunched al_list;
+    : date: 2025-05-10;
+    ${@:-echo} \
+               al_{ags,b1,funs,generate,isdone,list,names,type,undone,used} \
+               alias_{help,lengths,libheader,list,tbl}
+}
+al_names () 
+{ 
+    : cleans a/an alias definition/s from Stdin, returning the Names;
+    : date: 2024-06-07;
+    : date: 2025-05-10;
+    report_notpipe && return 1;
+    sed 's/=.*//' | awk '$1 ~ /^alias$/ { print $2 }'
+}
+al_type () 
+{ 
+    : returns Object Type pair;
+    : date: 2024-06-07;
+    : date: 2025-03-20;
+    : date: 2025-05-10;
+    debug ENTRY $#: $*;
+    pause;
+    type -a $1 2> /dev/null | sed 1q | sed '
+        s/ to .*/ /
+        s/ is / / 
+        s/ a / / 
+     '
+}
+al_undone () 
+{ 
+    : Undone Aliases, no assigning function;
+    : date: 2024-06-09;
+    : date: 2025-05-10;
+    comm -13 <(al_isdone) <(alias | al_names) | awk 'length($1) >1'
+}
+al_used () 
+{ 
+    : list words used in aliases on Stdin;
+    : date: 2024-06-07;
+    : date: 2024-06-09;
+    : date: 2025-05-10;
+    report_notpipe && return 1;
+    debug ENTRY $#: $*;
+    pause;
+    local out=$(myname).out;
+    local tmp=$(myname).tmp;
+    grep ${*:-.} | tr -C 'a-zA-Z0-9./' '\n' | grep -v .bak | grep -v / | grep -v ^[.0-9] | awk 'length($1) > 1' | sort | uniq -c | tee $tmp | field 2;
+    comment $(cat $tmp | awk '$1 > 1' | tee $out | wc | grep -v total)
+}
+alias_help () 
+{ 
+    : alias abstracts;
+    : date: 2024-10-16;
+    : date: 2025-05-10;
+    alias_list abstracts | justify
+}
+alias_lengths () 
+{ 
+    : display Alias length, name, length, text;
+    : date: 2024-08-31;
+    : date: 2025-05-10;
+    alias | sed '
+    
+        s/ /	 /;
+	s/=/	/
+	
+    ' | awk -F\t '
+
+        { printf "%3d\t%s\t%d\t%s\n", length($2), $2, length($3), $3 }
+	
+    ' | sort -n
+}
+alias_list () 
+{ 
+    : of alias functions;
+    : list: a;
+    : date: 2024-10-15;
+    : date: 2025-01-18;
+    : date: 2025-05-10;
+    ${*:-echo} $(sfg ali)
+}
+alias_tbl () 
+{ 
+    : display Alias length, name, length, text;
+    : date: 2024-08-31;
+    : date: 2024-09-26;
+    : date: 2025-01-22;
+    : date: 2025-05-05;
+    : date: 2025-05-10;
+    local name=alias.rdb;
+    local dir=$(homed);
+    local tbl=$dir/$name;
+    debug dir, tbl: $dir, $tbl;
+    pause;
+    backup $tble;
+    ( alias;
+    echo alias ) > ~/.alias.rc;
+    alias | sed '
+    
+        s/ /	/;
+	s/=/	/
+	
+    ' | awk -F\t '
+
+        { printf "%3d\t%s\t%3d\t%s\n", length($2), $2, length($3), $3 }
+	
+    ' | tee ~/tmp/alias.out | sort -k4 | top_rdbhdr lename name lentext text | tee $tbl | justify;
+    indir $dir rdupdate $tbl;
+    echo
+}

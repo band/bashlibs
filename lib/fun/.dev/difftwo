@@ -1,0 +1,12 @@
+difftwo () 
+{ 
+    : labels a Diff listing with the "< >" for the two files;
+    : date: 2023-09-29;
+    : date: 2024-02-16;
+    : date: 2024-07-01;
+    debug ENTRY $# $@;
+    report_notfile $1 && return 1;
+    report_notfile $2 && return 2;
+    diff $1 $2 && return;
+    printf "< $1\n> $2\n\n"
+}

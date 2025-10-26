@@ -1,0 +1,7 @@
+getawk () 
+{ 
+    : find the preferred awk program;
+    : date: 2024-05-28;
+    debug $*;
+    which gawk || which awk || which nawk
+}

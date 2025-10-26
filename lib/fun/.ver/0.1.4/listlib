@@ -1,0 +1,408 @@
+list_libheader () 
+{ 
+    : " This is the listlib Function Library Comment Header";
+    : "Copyright 2025, Marty McGowwan @ Shell Functions";
+    : date: 2025-05-01;
+    :;
+    : " This program is free software: you can redistribute it and/or modify";
+    : "it under the terms of the GNU General Public License as published by";
+    : "the Free Software Foundation, either version 3 of the License, or";
+    : "(at your option) any later version.";
+    :;
+    : " This program is distributed in the hope that it will be useful,";
+    : "but WITHOUT ANY WARRANTY; without even the implied warranty of";
+    : "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the";
+    : "GNU General Public License for more details.";
+    :;
+    : " You should have received a copy of the GNU General Public License";
+    : "along with this program.  If not, see <http://www.gnu.org/licenses/>.";
+    :;
+    : date: 2025-05-08 - even headers need a date;
+    :;
+    :;
+    : " name            	abstract ";
+    : " ----            	-------- ";
+    : " list_append     	~ listname new_member ... ";
+    : " list_create     	~ listname listmember ... ";
+    : " list_crunch     	collapse a list into crunched format ";
+    : " list_eg2        	add to a list ";
+    : " list_example    	repair punch_list, remove _next ";
+    : " list_libheader  	This is the listlib Function Library Comment Header ";
+    : " list_list       	Crunched list_list ";
+    : " list_next       	collect the next list PIPED in ";
+    : " list_remove     	~ listname remove_member ... ";
+    : " list_review     	compare with List and args ... ";
+    : " list_subtraction	discourage use outside removal ";
+    : " list_test       	love those testcases. "
+}
+backup_list () 
+{ 
+    : Crunched backup_list;
+    : date: 2025-05-01;
+    ${@:-echo} backup \
+               backup_{abstracts,all,allfiles,bottom,clean,copyright,deepdir,directories,dirs} \
+               backup_{files,here,init,list,need,one,onlyfiles,outdated,sync,synced,top,ver} backuplib_header
+}
+callstack_list () 
+{ 
+    : local the callstack functions;
+    : list: a;
+    : date: 2024-09-21;
+    : date: 2025-01-18;
+    ${*:-echo} \
+               callstack_{list,demo,trace}
+}
+changeBak_list () 
+{ 
+    : the most recent BACKUP in any Directory in the tree;
+    : list:;
+    : date: 2023-10-23;
+    : date: 2025-01-18;
+    find . -type f | grep .bak/ | grep -v .bak/.bak/ | grep -v .dev/
+}
+chapter_list () 
+{ 
+    : the copy_specific source file chapters textfile list;
+    : the table lists the un-suffexed file names to join;
+    : with the Chapter Sequence, producing the included file;
+    : the STDOUT produces the Markdown file list to format;
+    : list:;
+    : date: 2024-05-28;
+    : date: 2024-06-28;
+    : date: 2025-01-18;
+    debug ENTRY $@;
+    bashlib_src pushd;
+    set -- $(docopy)/chapters.txt ./ChSequence.rdb;
+    comment ? ./docCopy.rdb;
+    newest $1 $2 || { 
+        column file title comment < $2 | tee $1
+    };
+    local copy=$(docopy).rdb;
+    debug $(llrt $@ $copy);
+    pause;
+    ls -alrt ${*:-.} $*;
+    return;
+    newest $@ || { 
+        debug TOC $@;
+        pause;
+        cat $2 | rowhas copy $(docopy) | ncolumn copy > $copy;
+        jointable ChSequence $3 $copy | md_chapter > $1
+    };
+    column file < $copy | headoff | sed 's/$/.md/'
+}
+clean_list () 
+{ 
+    : Crunched clean_list;
+    : list:;
+    : date: 2024-11-12;
+    : date: 2025-01-18;
+    ${@:-echo} clean \
+               clean_{help,list,orkeep} debug \
+               debug_{off,on} myname namedfiles pause \
+               pause_{off,on} toclean
+}
+csv_list () 
+{ 
+    : more than a FAMily;
+    : list: a;
+    : date: 2024-05-25;
+    : date: 2025-01-18;
+    sfg csv
+}
+docopy_list () 
+{ 
+    : available copies;
+    : list:;
+    : date: 2025-01-18;
+    column copy < $(bashlibs)/src/docCopy.rdb | headoff | sort -u
+}
+fuse_list () 
+{ 
+    : Crunched fuse_list;
+    : date: 2024-06-04;
+    : date: 2025-01-18;
+    ${@:-echo} fuse \
+               fuse_{collect,count,list,none,state} fused : list:;
+    \
+               fused_{none}
+}
+g3_list () 
+{ 
+    : think Grep Piped to Grep;
+    : list: a;
+    : date: 2025-01-14;
+    : date: 2025-01-18;
+    ${*:-echo} $(sfg ^g..$)
+}
+graf_list () 
+{ 
+    : entry points to GRAF APP;
+    : where TAPP is "The APP";
+    : date: 2020-01-22;
+    : date: 2024-09-27;
+    : date: 2025-01-18;
+    ${*:-echo} \
+               graf_{copy,entry,init,list,tapp,scenario,version}
+}
+grep_list () 
+{ 
+    : functions with a GREP centerpiece, where g?? are recursive;
+    : date: 2024-09-17;
+    : date: 2025-01-18;
+    ${*:-echo} \
+               grep_{help,list} gpg gmv cgrep
+}
+jday_list () 
+{ 
+    : julian day number - NNN functions;
+    : list: a;
+    : date: 024-09-27;
+    : date: 2025-01-18;
+    ${*:-echo} $(sfg jday)
+}
+list_append () 
+{ 
+    : ~ listname new_member ...;
+    : date: 2024-01-04;
+    list_create $1 $($1) ${@:2}
+}
+list_create () 
+{ 
+    : ~ listname listmember ...;
+    : date: 2024-01-04;
+    : date: 2024-01-05;
+    : date: 2024-01-06;
+    : date: 2024-02-25;
+    local message=": mfg by list_create; ";
+    debug message: $message;
+    eval "$1 () { $message \${@:-echo} ${@:2}; }";
+    local lib=$(whsrc $1);
+    debug lib: $lib;
+    lib=${lib:-$(libfun)/cmdlinelib};
+    debug lib: $lib;
+    pause;
+    lfs $lib $1;
+    backup $lib
+}
+list_crunch () 
+{ 
+    : collapse a list into crunched format;
+    : todo: fix list_next??, test on version_list;
+    : date: 2024-01-23;
+    : date: 2024-01-25;
+    : date: 2024-09-02;
+    : date: 2024-10-18;
+    : date: 2025-05-01;
+    : date: 2025-05-16;
+    report_notfunction $1 && return 1;
+    local nextlist=$($1 | list_next);
+    debug nextlist: $nextlist;
+    pause;
+    eval "$1 () { : Crunched $1; \${@:-echo} $nextlist; }";
+    declare -f $1
+}
+list_eg2 () 
+{ 
+    : add to a list;
+    : date: 2025-03-17;
+    list_list | tr ' ' '\n' > .list;
+    ( cat .list;
+    echo share_list_test \
+               list_{example,eg2} ) | tpl | sort | list_crunch list_list
+}
+list_example () 
+{ 
+    : repair punch_list, remove _next;
+    : date: 2025-03-17;
+    set punch_list;
+    $1 | tpl | grep -v _next | list_crunch $1
+}
+list_list () 
+{ 
+    : mfg by list_create;
+    : date: 2025-05-01;
+    ${@:-echo} list_append list_create list_crunch list_list list_remove list_review list_subtraction list_test list_eg2 list_example list_libheader list_next
+}
+list_remove () 
+{ 
+    : ~ listname remove_member ...;
+    : todo: reject list duplicates;
+    : date: 2024-01-04;
+    : date: 2025-05-06;
+    comment NOT yet Working, use manual editing;
+    return;
+    list_create $1 $(list_subtraction $($1) - ${@:2})
+}
+list_review () 
+{ 
+    : compare with List and args ...;
+    : todo: eliminate TMP files?;
+    : date: 2024-01-30;
+    report_notfunction $1 && return 1;
+    debug ENTRY $@;
+    local fam=${1%_list};
+    debug fam: $fam;
+    $1 | tpl | sort -u > .lst.tmp;
+    ( sfg ^$fam;
+    ( echo ${@:2} | tpl ) ) | sort -u > .who.tmp;
+    debug tmp, who: $(wc .{lst,who}.tmp);
+    pause;
+    comm .{lst,who}.tmp
+}
+list_subtraction () 
+{ 
+    : discourage use outside removal;
+    : related: list_remove;
+    : todo: reject list duplicates;
+    : date: 2024-01-04;
+    : date: 2024-06-19;
+    : date: 2025-05-06;
+    comment NOT yet Working, use manual editing;
+    return;
+    awk -f $INSTALL_HOME/lib/awk/list_subtraction.awk $@ 2> ~/tmp/$(myname).err;
+    comment $HOME/tmp/$(myname).err
+}
+list_test () 
+{ 
+    : love those testcases.;
+    : remove now gratuitiously avoids non list entries;
+    : date: 2024-01-04;
+    :;
+    echo CREATE;
+    list_create test_list a b c 3 2 1;
+    echo;
+    echo APPEND;
+    list_append test_list how now cow;
+    echo;
+    echo REMOVE;
+    list_remove test_list now joe 2 c;
+    echo;
+    echo LIST;
+    list_list;
+    echo;
+    echo LIST_LIST;
+    list_create list_list $(comm -12 <(functions listlib | sort) <(list_list))
+}
+local_list () 
+{ 
+    : all local;
+    : date: 2024-07-30;
+    : date: 2025-01-18;
+    locallib functions
+}
+math_init () 
+{ 
+    : show off the math_list;
+    : date: 2025-04-09;
+    : date: 2025-04-11;
+    math_list $@
+}
+math_list () 
+{ 
+    : math functions and the list;
+    : date: 2024-01-25;
+    : date: 2025-04-09;
+    ${@:-echo} \
+               math_{init,list} bcl div ebcl minus pct pi radian sum times twoplaces
+}
+pdmd_list () 
+{ 
+    : Crunched pdmd_list;
+    : list:;
+    : date: 2024-01-25;
+    : date: 2024-06-29;
+    : date: 2025-01-18;
+    ${@:-echo} bashlibs changelog \
+               common_{md} \
+               doc_{functions,types} f1file f2file fbdy \
+               fun_{source} libfun \
+               md_{include} \
+               old_{now} pdmd quthl quthl s2d \
+               shd_{setdate} \
+               version_{diff} whlib
+}
+punch_list () 
+{ 
+    : Crunched punch_list;
+    : lesson: at dir, dir_name;
+    : date: 2024-09-02;
+    : date: 2024-12-29;
+    : date: 2025-01-18;
+    : date: 2025-02-08;
+    : date: 2025-02-20;
+    : date: 2025-03-17;
+    ${@:-echo} clock \
+               clock_{clean,dir,dir_name,emin,init,next,onday,tally,tasks,update,week} punch \
+               punch_{abstract,cat,clock,hdr,help,list,next,now,pair,sample,trio,update} \
+               proj_{count,few,more,names,sparse,tally,uniq}
+}
+rd_list () 
+{ 
+    : Crunched rd_list;
+    : date: 2024-01-25;
+    : date: 2025-01-18;
+    ${@:-echo} \
+               rd_{addf,awk,base,before,cat,checkwords,cmd,columns,copyright,data,datarow,devlist,devstate,doundelete,duplicates,firsttime,fun,global,help,implementd,implemented,init,initcopy,list,locality,lslt,newhistory,nontoday,nospace,packed,popular,printfirst,printlast,reorder,rulehdr,schema,settings,since,spaceclean,stat,syncf,table,tallycolumn,undated,undeleted,undeletenxt,unimplemented,unrecorded,variable}
+}
+rd_listfmt () 
+{ 
+    comment TRACE $# rd_listfmt ARGS $*;
+    quietly comment Relational Data LIST ForMaT;
+    [[ -z "$HEAD" ]] && { 
+        echo $0 $* 1>&2;
+        ( echo $DASH;
+        cat ) | listtotable | $0 $*;
+        return 0
+    }
+}
+repo_list () 
+{ 
+    : Crunched repo_list;
+    : date: 2024-11-14;
+    : date: 2025-01-22;
+    ${@:-echo} repo \
+               repo_{files,list,md,pd}
+}
+share_list () 
+{ 
+    : the share local files, named relative to HOME;
+    : date: 2023-12-19;
+    : date: 2025-01-22;
+    indir $HOME ${@:-echo} .share.rc $(< ~/.share.rc)
+}
+share_list_test () 
+{ 
+    : date: 2021-12-29;
+    : date: 2025-01-22;
+    set -- $(share_list);
+    : list:;
+    doit indir $HOME ls -lrt $*;
+    doit indir "$(share_home)" ls -lrt $*
+}
+table_list () 
+{ 
+    : list:;
+    : check likely tables for format;
+    : date: 2023-08-07;
+    : date: 2025-01-22;
+    set *.{rdb,nxt,lst};
+    [[ $# -gt 1 ]] || return;
+    tableorlist $@ | tee $(myname).rdb | justify | more
+}
+tick_list () 
+{ 
+    : list of ticks;
+    : list:;
+    : date: 2024-10-27;
+    : date: 2025-01-22;
+    ${*:-echo} `sfg ^tick` genlog
+}
+version_list () 
+{ 
+    : Crunched version_list;
+    : list:;
+    : date: 2024-10-18;
+    : date: 2025-01-22;
+    ${@:-echo} latest_version list_versions mmp_version my_versions next_version \
+               version_{files,fundiff,list} where_versions
+}

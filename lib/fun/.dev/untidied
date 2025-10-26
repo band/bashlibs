@@ -1,0 +1,12 @@
+untidied () 
+{ 
+    : names of the untidied libraries;
+    : date: 2023-08-06;
+    : date: 2024-08-05;
+    : date: 2025-04-28;
+    ls -t .tidied $(allprofs) 2> /dev/null | awk '
+
+        $1 ~ /^.tidied$/ { exit };
+	                 { print }
+    '
+}

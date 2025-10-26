@@ -1,0 +1,8 @@
+md_quote () 
+{ 
+    : wrap stdin with markdown quote;
+    : date: 2023-12-26;
+    echo '```';
+    cat ${@:--};
+    echo '```'
+}

@@ -1,0 +1,107 @@
+math_libheader () 
+{ 
+    : " This is the mathlib Function Library Comment Header";
+    : "Copyright 2025, Marty McGowwan @ Shell Functions";
+    : date: 2025-04-27;
+    : date: 2025-05-07;
+    :;
+    : " This program is free software: you can redistribute it and/or modify";
+    : "it under the terms of the GNU General Public License as published by";
+    : "the Free Software Foundation, either version 3 of the License, or";
+    : "(at your option) any later version.";
+    :;
+    : " This program is distributed in the hope that it will be useful,";
+    : "but WITHOUT ANY WARRANTY; without even the implied warranty of";
+    : "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the";
+    : "GNU General Public License for more details.";
+    :;
+    : " You should have received a copy of the GNU General Public License";
+    : "along with this program.  If not, see <http://www.gnu.org/licenses/>.";
+    :;
+    : "name          	abstract                                           ";
+    : "----          	--------                                           ";
+    : "math_libheader	This is the mathlib Function Library Comment Header";
+    : "bcl           	binary calculator command -- BC{1}                 ";
+    : "div           	DIVide                                             ";
+    : "ebcl          	Echo contents to BC                                ";
+    : "minus         	subtract 2nd from First                            ";
+    : "pct           	convert the fraction to a Percent                  ";
+    : "pi            	value of PI                                        ";
+    : "radian        	degrees per Radian                                 ";
+    : "sum           	add the arguments                                  ";
+    : "times         	multiply the arguments                             ";
+    : "twoplaces     	reduce the fraction to Two Places                  ";
+    : "math_help     	helper messages                                    "
+}
+bcl () 
+{ 
+    : binary calculator command -- BC{1};
+    report_notargcount 3 $# && return 1;
+    "$@" | bc -l
+}
+div () 
+{ 
+    : DIVide;
+    report_notargcount 2 $# && return 1;
+    bcl echo $1 / $2
+}
+ebcl () 
+{ 
+    : Echo contents to BC;
+    debug $*;
+    echo $@ | bc -l
+}
+math_help () 
+{ 
+    : helper messages;
+    : do not need a math_list now, yet?;
+    : date: 2025-02-08;
+    function comment () 
+    { 
+        echo $* 1>&2
+    };
+    comment pi, radian are constants;
+    comment div minus take two args. times, sum take N
+}
+minus () 
+{ 
+    : subtract 2nd from First;
+    report_notargcount 2 $# && return 1;
+    bcl echo $1 - $2
+}
+pct () 
+{ 
+    : convert the fraction to a Percent;
+    debug $*;
+    times 100. $1 | twoplaces
+}
+pi () 
+{ 
+    : value of PI;
+    debug $*;
+    ebcl "scale=10; 4*a(1)"
+}
+radian () 
+{ 
+    : degrees per Radian;
+    debug $*;
+    div 180 $(pi)
+}
+sum () 
+{ 
+    : add the arguments;
+    report_notargcount 2 $# && return 1;
+    echo "$@" | bcl tr ' ' '+'
+}
+times () 
+{ 
+    : multiply the arguments;
+    report_notargcount 2 $# && return 1;
+    echo "$@" | bcl tr ' ' '*'
+}
+twoplaces () 
+{ 
+    : reduce the fraction to Two Places;
+    debug $*;
+    sed 's/\(.*\...\).*/\1/'
+}

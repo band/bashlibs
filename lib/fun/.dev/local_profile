@@ -1,0 +1,6 @@
+local_profile () 
+{ 
+    : non-version, non sync-conflict profiles;
+    : date: 2024-07-01;
+    find ${1:-.} -type f -name '.*profile' | egrep -e '.(bash|user)_profile' | egrep -v '(sync-conflict|.bak/.bak|.ver)'
+}

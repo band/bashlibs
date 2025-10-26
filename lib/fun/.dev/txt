@@ -1,0 +1,7 @@
+txt () 
+{ 
+    : smart directory;
+    : mfg: smart_dir;
+    : date: 2025-03-16;
+    ${@:-echo} "/Users/martymcgowan/marty3/lib/txt"
+}

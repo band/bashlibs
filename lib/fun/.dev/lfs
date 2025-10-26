@@ -1,0 +1,44 @@
+lfs () 
+{ 
+    : library functions ..;
+    : the first function defines the library;
+    : todo: big lift. libraries movr to NAME.lib, w/SUFFIX;
+    : usage: ~ [library] function ...;
+    : date: 2023-11-11;
+    : date: 2024-05-01;
+    : date: 2024-05-02;
+    function _funs_lib () 
+    { 
+        library=$(whlib $1);
+        [[ -s $library ]] || { 
+            comment no LIBRARY found for $1;
+            return 1
+        };
+        debug RECURSE: $library;
+        pause;
+        lfs $library $*
+    };
+    debug ENTRY $@;
+    local file library;
+    isfunction $1 && { 
+        _funs_lib $*;
+        return
+    };
+    case $1 in 
+        *lib | *_profile)
+            library=$1;
+            shift;
+            debug library: $library;
+            report_notfile $library && return;
+            debug usage: $# $@;
+            pause;
+            shd_setdate $@ | tee -a $library;
+            pause;
+            backup $library
+        ;;
+        *)
+            _funs_lib $*;
+            return
+        ;;
+    esac
+}

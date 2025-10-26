@@ -1,0 +1,13 @@
+hry () 
+{ 
+    : smart History name for Tables;
+    : may only ECHO the name, Args are not working;
+    : related: rdupdate;
+    : date: 2024-02-16;
+    debug ENTRY $@;
+    local dir file;
+    dir=$(dirname $1);
+    file=$(basename $1);
+    debug SET dir: $dir, file: $file;
+    echo $dir/.hry/$file
+}

@@ -1,0 +1,78 @@
+smartlist_libheader () 
+{ 
+    : " This is the smartlistlib Function Library Comment Header";
+    : "Copyright 2025, Marty McGowwan @ Shell Functions";
+    : date: 2025-05-08;
+    :;
+    : " This program is free software: you can redistribute it and/or modify";
+    : "it under the terms of the GNU General Public License as published by";
+    : "the Free Software Foundation, either version 3 of the License, or";
+    : "(at your option) any later version.";
+    :;
+    : " This program is distributed in the hope that it will be useful,";
+    : "but WITHOUT ANY WARRANTY; without even the implied warranty of";
+    : "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the";
+    : "GNU General Public License for more details.";
+    :;
+    : " You should have received a copy of the GNU General Public License";
+    : "along with this program.  If not, see <http://www.gnu.org/licenses/>.";
+    :;
+    : date: 2025-05-08 - even libheaders need a date;
+    :
+}
+list_next () 
+{ 
+    : collect the next list PIPED in;
+    : date: 2024-09-02;
+    report_notpipe && return;
+    set -- $(tpl | sort | collect_suffix | tpl | sort);
+    debug $# $@;
+    pause;
+    echo $@
+}
+smart_def () 
+{ 
+    : ~ name arg ... , defines smart function NAME which returns its ARGS;
+    : date: 2023-07-22;
+    report_notargcount 2 $# listName member ... && return 1;
+    : ${SMART_DEF_DATE:=2018-12-31};
+    local myname=$(myname 2);
+    local boiler=": mfg: $myname;: date: ${SMART_DEF_DATE}";
+    eval "$1 () { $boiler; \${@:-echo} $(args_uniq ${*:2}); }"
+}
+smart_dir () 
+{ 
+    : simple Smart Directory;
+    : date: 2023-08-21;
+    : date: 2023-09-29;
+    : date: 2023-11-08;
+    : date: 2023-11-13;
+    : date: 2024-04-13;
+    : date: 2024-04-30;
+    : date: 2024-09-27;
+    debug ENTRY $# $@ $PWD;
+    set -- ${1:-$(basename "$PWD")};
+    local name=$(echo $1 | alpha_iso);
+    iscmd $name && { 
+        comment "$name is a command, a function, alias or file";
+        return
+    };
+    eval "$name () { : smart directory; : mfg: $(myname); \${@:-echo} \"$PWD\"; }" 1>&2;
+    debug name: $name;
+    pause;
+    declare -f $name
+}
+smart_dir_test () 
+{ 
+    : date: 2024-09-27;
+    set -- reltest;
+    unset $1;
+    debug_off;
+    pause_off;
+    mkdir -p .$1;
+    sf smart_dir;
+    pushd .$1/;
+    smart_dir 2> /dev/null;
+    popd;
+    cdx
+}

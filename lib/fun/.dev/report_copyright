@@ -1,0 +1,8 @@
+report_copyright () 
+{ 
+    : a suitable copyright label;
+    : date: 2019-04-22;
+    : date: 2019-03-31;
+    comment "Copyright (C) 2015-2024, JYATL - Just Yet Another Testing Lab";
+    email_comment
+}

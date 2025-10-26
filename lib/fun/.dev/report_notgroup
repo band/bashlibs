@@ -1,0 +1,7 @@
+report_notgroup () 
+{ 
+    : True if file exists OR its group matchs the effective group id of this process;
+    : date: 2023-08-27;
+    [[ -G $1 ]] && return 1;
+    report_usage $1 "ISN'T" a file with group or egid
+}

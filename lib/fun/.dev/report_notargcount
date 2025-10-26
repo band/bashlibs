@@ -1,0 +1,8 @@
+report_notargcount () 
+{ 
+    : report an insufficient number of args from the calling function;
+    : date: 2023-01-01;
+    debug ENTRY $@;
+    [[ $2 -ge $1 ]] && return 1;
+    report_usage need at least $1 arg/s: ${*:3}
+}

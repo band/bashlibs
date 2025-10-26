@@ -1,0 +1,108 @@
+weekday () 
+{ 
+    : what is the Weekday for Month dayN Year;
+    : e.g. ~ Sept 22 2022;
+    : date: 2022-09-22;
+    : date: 2022-10-01;
+    : date: 2023-03-29;
+    if_missingargs 3 $* && return 1;
+    local mn;
+    case $1 in 
+        Jan* | May*)
+            mn=5
+        ;;
+        Feb* | Jun*)
+            mn=1
+        ;;
+        Mar* | Nov*)
+            mn=0
+        ;;
+        Apr* | Jul*)
+            mn=3
+        ;;
+        Aug*)
+            mn=6
+        ;;
+        Sep* | Dec*)
+            mn=2
+        ;;
+        Oct*)
+            mn=4
+        ;;
+        *)
+            comment "bad Month: $1" && return 1
+        ;;
+    esac;
+    debug mn: $mn;
+    local yr;
+    : consider January, February as part of the prior Year.;
+    case $1 in 
+        Jan* | Feb*)
+            let yr=$(( $3 - 1 ))
+        ;;
+        *)
+            yr=$3
+        ;;
+    esac;
+    :;
+    local cy=${yr:0:2};
+    local yr=${yr:2:2};
+    debug cy: $cy;
+    :;
+    local cn;
+    case $cy in 
+        17 | 21)
+            cn=7
+        ;;
+        18 | 22)
+            cn=5
+        ;;
+        19 | 23)
+            cn=3
+        ;;
+        20)
+            cn=2
+        ;;
+        *)
+            comment "bad Century: $3, $cn" && return 2
+        ;;
+    esac;
+    debug cn: $cn;
+    case $yr in 
+        0*)
+            yr=${yr:1:1}
+        ;;
+    esac;
+    debug yr: $yr;
+    :;
+    let yn=$(( ($yr + ($yr / 4)) % 7 ));
+    debug yn: $yn;
+    let dw=$(( ($yn + $cn + $mn + $2) % 7 ));
+    debug dw: $dw;
+    case $dw in 
+        0)
+            echo Sunday
+        ;;
+        1)
+            echo Monday
+        ;;
+        2)
+            echo Tuesday
+        ;;
+        3)
+            echo Wednesday
+        ;;
+        4)
+            echo Thursday
+        ;;
+        5)
+            echo Friday
+        ;;
+        6)
+            echo Saturday
+        ;;
+        *)
+            comment "Bad Day-of_week, $dw" && return 1
+        ;;
+    esac
+}

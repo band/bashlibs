@@ -1,0 +1,7 @@
+report_notcommand () 
+{ 
+    : report the argument is not a Command type;
+    : date: 2018-02-16;
+    type -a $1 > /dev/null 2> /dev/null && return 1;
+    report_usage $1 "ISN'T" a command
+}

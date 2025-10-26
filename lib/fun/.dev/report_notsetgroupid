@@ -1,0 +1,7 @@
+report_notsetgroupid () 
+{ 
+    : Fails if file exists and its set group ID flag is set;
+    : date: 2023-08-27;
+    [[ -g $1 ]] && return 1;
+    report_usage $1 "ISN'T" a file with setgroupid
+}

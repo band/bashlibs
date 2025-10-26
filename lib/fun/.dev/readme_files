@@ -1,0 +1,6 @@
+readme_files () 
+{ 
+    : a smart README list of FILE names;
+    : date: 2025-05-21;
+    ${*:-echo} {README,readme,Changelog,index}{.{html,txt,org,m{,k}d},}
+}

@@ -1,0 +1,10 @@
+tblsed () 
+{ 
+    : the lone RDB to an NXT;
+    : date: 2024-09-21;
+    local rdb=*.rdb;
+    local nxt=${rdb%.rdb}.nxt;
+    ls -alrt $ddb $nxt;
+    sed "s/$1/$2/" < $rdb > $nxt;
+    update_option $rdb $nxt
+}

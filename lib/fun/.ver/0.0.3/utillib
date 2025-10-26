@@ -1,0 +1,1663 @@
+Sync () 
+{ 
+    : smart directory;
+    : mfg: dir_smart;
+    : date: 2023-09-14;
+    ${@:-pushd} ${HOME}/Sync;
+    pickd 1>&2
+}
+abstracts () 
+{ 
+    : collect function abstracts;
+    : note is use of TOP_RDBHDR and /rdbs COMPUTE;
+    : date: 2023-07-22;
+    : date: 2025-04-19;
+    foreach abstract $@ | top_rdbhdr name abstract | compute 'sub(/^ */,"",abstract)'
+}
+argnumber () 
+{ 
+    : ~ N a b c d ... return the Nth arg in the list;
+    : todo: needs debug;
+    : related sorttable $!;
+    : date: 2023-07-22;
+    let i=0;
+    for a in ${@:2};
+    do
+        let i=$i+1;
+        [[ $a == $1 ]] && { 
+            echo $i;
+            return
+        };
+    done;
+    echo 0
+}
+args_uniq () 
+{ 
+    : return one instance of each uniqe argument;
+    : usage: ~ a b c a d e b;
+    : hint: eval_example ... show_example args_example;
+    : date: 2023-07-22;
+    : date: 2023-10-29;
+    awk '
+    BEGIN {
+	    for (i=1; i < ARGC; i++) {
+                 j = ARGV[i];
+                 if (!printed[j]++) {
+                     printf "%s ", j;
+		 }
+	     }
+	     printf "\n"
+	  }
+    ' $*
+}
+bashlib_src () 
+{ 
+    : the document source files;
+    : date: 2024-06-28;
+    ${@:-echo} $(bashlibs)/src
+}
+bashlibs () 
+{ 
+    : smart directory;
+    : mfg: dir_smart;
+    : date: 2023-09-19;
+    : date: 2023-09-29;
+    : date: 2024-05-28;
+    : date: 2024-06-28;
+    ${@:-echo} $APP_HOME/bashlibs
+}
+canon_functions () 
+{ 
+    : put an existing _libheader function first;
+    debug ENTRY $# $@;
+    local bna=~/tmp/$(basename $1);
+    local tmp=$bna.tmp;
+    local txt=$bna.txt;
+    debug tmp, txt: $tmp, $txt;
+    functions $1 > $tmp;
+    debug $(wc -l $tmp);
+    pause;
+    grep _libheader $tmp;
+    grep -v _libheader $tmp
+}
+cdx () 
+{ 
+    : Uniquely Clear Directory Stack;
+    : date: 2023-07-22;
+    : date: 2024-06-29;
+    : date: 2025-05-22;
+    : date: 2025-06-02;
+    : date: 2025-06-08;
+    function _cds () 
+    { 
+        awk '
+    	 !p[$0]++ {
+            gsub(/\\*  */,"\\ ")
+	    line[nr++] = $0
+	    }
+        END {
+	      # pre-decrement since post increment
+	      # GT 0 since dirs -c leaves the 0th directory
+	      while(--nr > 0) print line[nr]
+	    }
+    '
+    };
+    function _esc () 
+    { 
+        fbdy \
+               pause_{on,off};
+        awk '
+        BEGIN { printf "pause_off\n" }
+              { printf "pushd %s > /dev/null; pushd > /dev/null; pause\n", $0 }
+        END   { printf "dirs; pause_off\n" }	
+    '
+    };
+    debug BEGIN $# $*;
+    pause;
+    [[ -d ~/tmp ]] || mkdir ~/tmp;
+    set -- ~/tmp/.{dirs,source};
+    : debug 1, 2: $1, $2;
+    dirs -p -l | _cds | tee $1 | _esc > $2;
+    dirs -c > /dev/null;
+    : debug STUDY $2;
+    : pause;
+    command source $2;
+    unset _{cds,esc};
+    : debug $(wc $1 $2 > /dev/null);
+    rm -f $1 $2;
+    debug END;
+    : pause
+}
+collect_suffix () 
+{ 
+    : parameter expansion format, LIST of objects, e.g. FAM_SUBA ...;
+    : return collapsed format FAM{,_{SUBA, ... }};
+    : date: 2024-01-25;
+    :;
+    awk -F_ '
+        # basename and suba ...
+    NF == 1 { print; next }
+            { n[$1] = n[$1] $2 " "; }
+
+    END { for (i in n) print i, n[i]; }
+    ' | awk '
+
+           
+    NF == 1 {
+               # its only a base name, no subs
+       	       printf "%s ", $1;
+	       next;
+	    }
+            {
+	      # basename with a ist of sub names ...
+	      printf "%\
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               \
+               s_{", $1
+	      c = ""
+              for ( i = 2; i <= NF; i++) {	     
+	          printf "%s%s", c, $i
+		  c = ","
+		  }
+	      printf "} "
+	    }
+    END   { printf "\n" }	   
+    '
+}
+de_json () 
+{ 
+    : remove JSON syntax towards a TSV;
+    : date: 2023-07-22;
+    : date: 2023-11-12;
+    sed 's/{{*/\
+&/g; s/","/",\
+    "/g; s/\\n/\
+/g'
+}
+devdir () 
+{ 
+    : sets and fetches the DEV_DIR;
+    : usage: ~ $PWD - sets to the current directory;
+    : ...: ~ .... - returns the most recent setting;
+    : date: 2019-01-23;
+    : date: 2022-02-25;
+    : date: 2024-09-07;
+    : date: 2025-03-03;
+    : date: 2025-03-16;
+    local dat=$(devdir_dat);
+    local nxt=${dat%.txt}.nxt;
+    debug ENTRY $#;
+    [[ $# -ge 1 ]] && { 
+        debug Sufficent Args: $1;
+        pause;
+        [[ -d $1 ]] && cd $1;
+        setenv DEV_DIR $PWD;
+        ( cat $dat;
+        echo $PWD ) > $nxt;
+        debug $(ls -l $dat $nxt);
+        : distinguishing feature;
+        upd_1fm2 $dat $nxt
+    };
+    echo $DEV_DIR
+}
+devdir_dat () 
+{ 
+    : list DEV Directories;
+    : date: 2025-03-03;
+    ${*:-echo} $(devdir_dir)/devdir.txt
+}
+devdir_dir () 
+{ 
+    : the data directory;
+    : date: 2025-03-03;
+    ${*:-echo} $(lib)/devdir
+}
+devdir_fix () 
+{ 
+    : retain remaining directories;
+    : date: 2025-03-03;
+    : date: 2025-03-04;
+    local dat nxt;
+    dat=$(devdir_dat);
+    nxt=${dat%.txt}.nxt;
+    debug $(wc $dat);
+    pause;
+    for dir in $(devdir_dat cat);
+    do
+        debug dir: $dir;
+        [[ -d $dir ]] && { 
+            echo $dir
+        } || { 
+            debug NOT $dir
+        };
+        pause;
+    done > $nxt;
+    debug $(wc $dat $nxt);
+    pause;
+    backup $dat;
+    pause;
+    upd_1fm2 $dat $nxt
+}
+email_comment () 
+{ 
+    : cryptic email address as comment;
+    : date: 2023-07-22;
+    comment "mailto:edu <dot> MIT {dot} alum {aT} martymcgowan"
+}
+epoch () 
+{ 
+    : of a file;
+    : date: 2023-07-22;
+    [[ -f $1 ]] || return;
+    set $(stat -r $1);
+    echo ${10}
+}
+exists () 
+{ 
+    : shorthand for TRUE if the file exists and is ANY Type;
+    : date: 2023-07-22;
+    [[ -e $1 ]]
+}
+f2file () 
+{ 
+    : copy a function library or Dot Profile into files for each function;
+    : the destination directory is an optional 2nd argument;
+    : the default directory id the DFG_DB, the Function Database;
+    : date: 2023-07-22;
+    : date: 2023-08-06;
+    : date: 2023-08-12;
+    : date: 2023-12-19;
+    : date: 2024-04-29;
+    : date: 2024-06-28;
+    debug ENTRY $PwD $# $@;
+    :;
+    if_missingargs 1 $@ && return 1;
+    report_notexecutable $1 && return 2;
+    report_notfile $1 && return 1;
+    local file=$1;
+    local name=$(basename $file);
+    local dfdr=${2:-$(dfg_db echo)}/$name;
+    local err=$PWD/$(needir .err)/f2file.$name;
+    debug file: $file;
+    debug name: $name;
+    debug err: $err;
+    debug dfdr: $dfdr;
+    pause;
+    :;
+    local awkf=/Users/martymcgowan/marty3/lib/awk/f2file.awk;
+    [[ -d $dfdr ]] && { 
+        rm -fr $dfdr/*
+    };
+    mkdir -p $dfdr;
+    debug cat $file PIPE awk -v dir=$dfdr -v quote="'" -f $awkf TOerr $err;
+    pause;
+    cat $file | awk -v dir=$dfdr -v quote="'" -f $awkf 2> $err;
+    indir $dfdr pwd
+}
+field () 
+{ 
+    : show the Nth field of the STDIN;
+    : date: 2023-07-22;
+    awk "{ print \$$1 }"
+}
+fieldsof () 
+{ 
+    : list the FIELSs of TABLEs or LISTs;
+    : date: 2023-09-05;
+    report_notfile ${1:-/dev/null} && return 1;
+    set -- $(tableorlist $1);
+    case $1 in 
+        table)
+            set -- $(sed 1q $2);
+            echo $*
+        ;;
+        list)
+            awk '
+	        BEGIN    { print }
+		!p[$1]++ { print };
+		END      { print }
+	    '
+        ;;
+    esac
+}
+file_missing () 
+{ 
+    : name of non-existant file;
+    : date: 2024-06-28;
+    [[ -f $1 ]] || echo $1
+}
+files () 
+{ 
+    : from here, No Spaces in the name;
+    : date: 2025-01-06;
+    find . -type f $* | grep -v ' '
+}
+fmdos () 
+{ 
+    : remove trailing MS-DOS CR characters;
+    : date: 2023-07-22;
+    cat ${*:--} | tr -d '\015'
+}
+for_nomar () 
+{ 
+    : recursive function to collect uniq arguments;
+    : related: app_fun;
+    : date: 2023-07-22;
+    local cmmd=$1;
+    shift;
+    while true; do
+        local num=$#;
+        set $(args_uniq $* $($cmmd $*));
+        debug While $CMMD "num: $num, $#";
+        [[ $num -eq $# ]] && break;
+    done;
+    echo $*
+}
+foreach () 
+{ 
+    : TCL legacy, FOREACH function Arg ...;
+    : date: 2023-07-22;
+    : date: 2024-04-29;
+    debug ENTRY $# $1;
+    [[ $# -lt 2 ]] && return;
+    local cmd="$1";
+    local arg;
+    shift;
+    debug SET $# $@;
+    pause;
+    for arg in $@;
+    do
+        : debug RUN $cmd "$arg";
+        $cmd "$arg";
+    done
+}
+fun_alltype () 
+{ 
+    : reprot a function or files TYPE;
+    : date: 2023-07-22;
+    printf "%s\t%s\n" $(type -t $1) $1
+}
+fun_callgraf () 
+{ 
+    : produce a Call Graph for a Function;
+    : date: 2023-07-22;
+    function app_funcall () 
+    { 
+        app_funuses $1 | awk "
+            \$1 ~ /^$1$/ { next }; 
+	    	         { print \"$1\", \$1 }
+        "
+    };
+    report_notargcount 1 $# && return 1;
+    rm -f .funuses.out;
+    foreach app_funcall $* | tee $(home)/lib/$1.gin | callgraph
+}
+fun_decomment () 
+{ 
+    : used by fun_words to inspect the functions text;
+    : todo: a stronger assertion;
+    : date: 2023-07-22;
+    debug ENTRY $# $@;
+    awk -v prt=1 '
+
+        $1 ~ /^:$/           { next; }
+	$2 ~ /<<EOF$/        { prt = 0 };
+	/, /                 { print $3 " TODO: Work this line" > "/dev/stderr" }
+	!prt  && $1 ~ /\047/ { prt = 1 }
+	NF && prt            { print }
+	/awk.*\047/          { prt = 0 }
+	$1 ~ /^EOF$/         { prt = 1}
+    '
+}
+fun_file () 
+{ 
+    : this is a fun_file or file_function;
+    : TRUE for a single function in its named file;
+    : date: 2023-11-09;
+    : date: 2024-06-28;
+    : date: 2024-09-18;
+    : date: 2024-09-21;
+    : date: 2024-09-26;
+    debug ENTRY $# $@;
+    report_notfile $1 && return 1;
+    file=$1;
+    set -- $(functions $file);
+    debug SET $# $*;
+    pause;
+    case $# in 
+        0)
+            printf "%s\thas No Functions\n" $file 1>&2;
+            return 3
+        ;;
+        1)
+            true
+        ;;
+        *)
+            printf "$file\tmore Functions\t$*\n" 1>&2;
+            return 2
+        ;;
+    esac
+}
+fun_files () 
+{ 
+    : ARGs which are file_functions or FILES in the Directory;
+    : example: "comm [-23] <(namedfiles) <(fun_files)";
+    : date: 2023-11-09;
+    : date: 2024-04-30;
+    : date: 2024-09-02;
+    : date: 2024-09-21;
+    : date: 2024-09-26;
+    : date: 2025-01-22;
+    : date: 2025-03-17;
+    for fun in ${@:-$(namedfiles)};
+    do
+        case $fun in 
+            *~ | *# | .*.* | *.md | *.org | *.txt)
+                continue
+            ;;
+        esac;
+        debug fun: $fun;
+        pause;
+        quiet fun_file $fun && echo $fun;
+    done
+}
+fun_words () 
+{ 
+    : extracts symbols, here files, returns possible function names from functions;
+    : date: 2023-07-22;
+    debug ENTRY $# $@;
+    declare -f $* | awk -v prt=1 '
+
+        $1 ~ /^:$/           { next; }
+	$2 ~ /<<EOF$/        { prt = 0 };
+	/, /                 { print $0 " TODO: Work this line" > "/dev/stderr" }
+	!prt  && $1 ~ /\047/ { prt = 1 }
+	NF && prt            { print }
+	/awk.*\047/          { prt = 0 }
+	$1 ~ /^EOF$/         { prt = 1}
+
+    ' | sed '
+
+        s/[(=/)]/ & /g
+
+    ' | tr -s ' \t' '\n' | grep '^[a-zA-Z0-9_]' | sed 's/;$//' | sort -u
+}
+func_args () 
+{ 
+    : simulates declare -f to identify functions;
+    : todo: consider replacing with command ...;
+    : date: 2023-08-02;
+    type -a ${@:-/dev/null} 2> /dev/null | awk '
+        $2$3$4 ~ /isafunction/ && \
+	$1 ~ /^[.a-zA-Z0-9][.a-zA-Z0-9_]*$/ { print $1 }
+    '
+}
+fuse_count () 
+{ 
+    : how many functions FUSE this arg;
+    : date: 2023-07-22;
+    : date: 2024-03-16;
+    set ${@:-debug};
+    sdf $(fuse $1 | field 1 | uniq | wc -l) $1;
+    recursive $@
+}
+fused () 
+{ 
+    : list of FUNCTION and where USED;
+    : date: 2023-07-22;
+    : date: 2024-05-03;
+    : date: 2024-05-05;
+    : date: 2024-05-07;
+    fuse $1 | field 1 | sed "s/^/$1	/";
+    recursive $*
+}
+gather_whlib () 
+{ 
+    : lists functions and library file;
+    : usage: ~ library_file ...;
+    : date: 2023-09-05;
+    debug ENTRY $@;
+    do_whlib $(pififuset $@ | functions | grep -v '^\.')
+}
+if_missingargs () 
+{ 
+    : returns the source of the calling function for any missing argumpents;
+    : usage: ~ "{ Minimum Arg Count } $@";
+    : date: 2023-07-10;
+    : date: 2024-02-23;
+    :;
+    : ------- Save the Minimum Arg Count, shift to see the callers Args --;
+    :;
+    local shouldHave=$1;
+    shift;
+    : ---------------- demonstration use of debug, whose default is OFF --;
+    :;
+    debug "$#: $@";
+    :;
+    report_notargcount $shouldHave $# || return 1;
+    declare -f $(myname 2);
+    return
+}
+include_mdfiles () 
+{ 
+    : list names of files included in MD sources;
+    : related: pandoc-include;
+    : date: 2024-06-28;
+    foreach included *.md | field 2 | sort -u
+}
+indir () 
+{ 
+    : run the commands IN the first DIRectory argument;
+    : warning -- do not create functions in a sub-shell;
+    : lesson: the whole idea behind the Sub-shell;
+    : todo: fix all _notdirectory calls;
+    : date: 2023-07-22;
+    : date: 2025-04-27;
+    : date: 2025-05-14;
+    : date: 2025-06-08;
+    debug ENTRY $# "$@";
+    report_notdirectory "$1" && return 1;
+    ( pushd "$1" > /dev/null;
+    debug EVAL ${@:2};
+    eval ${@:2} );
+    debug EXIT. $# "$@"
+}
+justascii () 
+{ 
+    : many CSV files have a leading non-ascii marker. Why?;
+    : date: 2023-07-22;
+    perl -pi -e 's/[^[:ascii:]]//g' $1
+}
+latest_version () 
+{ 
+    : most recent in numero-alphic order;
+    : date: 2023-09-26;
+    : date: 2023-09-30;
+    : date: 2024-06-19;
+    my_versions | sed 1q
+}
+lft () 
+{ 
+    : local TMP file, captures flow thru PIPEs;
+    : related: dotty declare;
+    : e.g. ... lft NN | ...;
+    : todo: see if testing for call is still needed;
+    : date: 2025-02-06;
+    debug ENTRY $*;
+    local tmp=$(needir ~/tmp);
+    local call=$(myname 2);
+    debug call: $call;
+    pause;
+    case $call in 
+        ...)
+            call=$(myname 3)
+        ;;
+    esac;
+    debug call: $call;
+    pause;
+    local file=$call.$1;
+    debug TEE file: $tmp/$file;
+    pause;
+    tee $tmp/$file
+}
+lib_incommon () 
+{ 
+    : list libraries with matching functions;
+    : date: 2024-09-26;
+    set -- *lib;
+    debug ENTRY $# $*;
+    while [[ $# -gt 0 ]]; do
+        local lib=$1;
+        shift;
+        debug lib, remain: $lib: $*;
+        for l in $*;
+        do
+            local count=$(flcomm -12 $lib $l | wc -l);
+            debug count: $count;
+            [[ $count -gt 0 ]] && { 
+                printf "%s\t%s\n" $lib $l
+            };
+        done;
+    done
+}
+lib_nonfuns () 
+{ 
+    : Lib without Functions;
+    : usage: lib_nonfuns '$(which SomeLib) $(app_fun SomeAppLikeFunction)';
+    : date: 2024-09-26;
+    local lib=$(which ${1:-/dev/null});
+    report_notfile $lib && return 1;
+    shift;
+    do_whlib $(comm -23 <(echo $* | tpl) <(functions $lib | sort))
+}
+lib_tidy () 
+{ 
+    : all shell function sourceing should be done in a sub_shell!;
+    : todo: check on it.;
+    : date: 2023-07-10;
+    : date: 2023-11-09;
+    debug ENTRY $# $@;
+    report_notfile $1 && return 1;
+    backup $1;
+    local txt=~/tmp/$(basename $1).txt;
+    debug txt: $txt;
+    local out=~/tmp/$(myname).out;
+    debug out: $out;
+    function _source_canon () 
+    { 
+        : the subshell to source;
+        ( source $1;
+        local funs=$(canon_functions $1);
+        debug funs: $funs;
+        pause;
+        declare -f $funs )
+    };
+    _source_canon $1 > $txt;
+    [[ $(cat $txt | wc -l) -gt 0 ]] || { 
+        comment $(myname) has an EMPTY replacement for $file;
+        return 1
+    };
+    cp $txt $1;
+    chmod +x $1;
+    backup $1;
+    find . -name $1 | xargs wc -l 1>&2
+}
+libfun () 
+{ 
+    : where function EDITING and MAINTENACE takes place;
+    : date: 2023-07-22;
+    : date: 2024-01-05;
+    : date: 2025-03-23;
+    ${*:-echo} $(marty3)/bashlibs/lib/fun
+}
+libshar () 
+{ 
+    : where function EDITING and MAINTENACE takes place;
+    : date: 2023-07-22;
+    : date: 2024-01-05;
+    : date: 2024-10-10;
+    ${*:-echo} $(marty3)/lib/shar
+}
+modate () 
+{ 
+    : returns quoted ISO modification data;
+    : date: 2023-07-22;
+    report_notfile $1 && return 1;
+    stat -t %Y-%m-%d $1 | field 10
+}
+my_versions () 
+{ 
+    : list local directory version numbers from the most recent;
+    : versions must begin with 1 or more digits;
+    : related: backup_ver to set the x.y.z nums;
+    : date: 2023-09-26;
+    : date: 2023-09-30;
+    : date: 2023-12-15;
+    : date: 2024-01-06;
+    : date: 2024-06-19;
+    : date: 2024-07-13;
+    debug ENTRY $@;
+    local dir=$(basename $PWD);
+    debug dir: $dir;
+    [[ $dir = ".ver" ]] && { 
+        indir .. $(myname);
+        return
+    };
+    indir .ver ls -at1 | grep '^[0-9][0-9]*[.]'
+}
+nava () 
+{ 
+    : Name Value;
+    : date: 2023-07-22;
+    : date: 2023-10-03;
+    : date: 2024-03-15;
+    eval ssf $1 \$$1 1>&2;
+    recursive $@
+}
+needir () 
+{ 
+    : creats a non-existing directory, returning its name;
+    : date: 2023-07-22;
+    : date: 2024-04-29;
+    : date: 2025-02-09;
+    : date: 2025-05-20;
+    report_notargcount 1 $# needed_directory && return 1;
+    debug ENTRY $1;
+    pause;
+    [[ -d "$1" ]] || mkdir -p "$1";
+    echo "$1"
+}
+newest () 
+{ 
+    : TRUE if the first arg is NEWEST file;
+    : date: 2023-08-02;
+    local caller=$(myname 2);
+    [[ -f "$1" ]] || { 
+        comment $caller NO TARGET $1;
+        return 1
+    };
+    local target=$1;
+    shift;
+    while [[ -n "$1" ]]; do
+        [[ "$target" -ot "$1" ]] && { 
+            comment $caller NEWER DEPENDENT $1 than $target;
+            return 1
+        };
+        shift;
+    done;
+    comment $caller NEWEST TARGET $target;
+    return 0
+}
+nf () 
+{ 
+    : little language Number of Fields;
+    : e.g. nf LT, GT, EQ, NE, HELP;
+    : date: 2023-08-02;
+    case $1 in 
+        *awk)
+            AWK=$1;
+            shift
+        ;;
+        *)
+            AWK=$(which gawk || which nawk || which awk)
+        ;;
+    esac;
+    case $1 in 
+        lt)
+            $AWK "NF < ${2:-5}"
+        ;;
+        gt)
+            $AWK "NF > ${2:-1}"
+        ;;
+        eq)
+            $AWK "NF == ${2:-5}"
+        ;;
+        ne)
+            $AWK "NF != ${2:-5}"
+        ;;
+        help)
+            comment $0 "[lt|gt|eq|ne||* [NN]]"
+        ;;
+        "")
+            $AWK NF
+        ;;
+        *)
+            $AWK '{ print NF, $0}'
+        ;;
+    esac
+}
+nprov () 
+{ 
+    : newest provenance;
+    : date: 2023-09-13;
+    debug $# $@;
+    echo "$ $1";
+    eval "$1";
+    [[ $# -gt 1 ]] && { 
+        shift;
+        $(myname) "$@"
+    }
+}
+nsf () 
+{ 
+    : Number, String format;
+    : date: 2023-09-05;
+    printf "%6d\t%s\n" $1 $2
+}
+obsolete_function () 
+{ 
+    : shows its caller, ....;
+    : date: 2023-08-07;
+    : date: 2023-09-05;
+    debug ENTRY;
+    printf "%-21s\t%-21s\t%-21s\n" "OBSOLETE: ${FUNCNAME[2]}" "Called By: ${FUNCNAME[3]}" "itself Byd ${FUNCNAME[4]}"
+}
+one_ver () 
+{ 
+    : in backup parent;
+    : date: 2023-10-23;
+    [[ -d $1 ]] && { 
+        pushd $1 > /dev/null;
+        pwd;
+        backup_ver $(next_version);
+        pause
+    } || { 
+        echo no dir $1;
+        echo ---;
+        ls -alrt ${*:-.};
+        echo ---;
+        pwd
+    };
+    echo ====;
+    pushd;
+    cdx;
+    pushd > /dev/null;
+    popd > /dev/null;
+    pickd 1>&2
+}
+onlyChanged () 
+{ 
+    : ONLY update the FILE argument from STDIN, if Changed;
+    : date: 2023-08-02;
+    debug ENTRY $*;
+    report_notpipe && return 1;
+    report_notargcount 1 $# && return 2;
+    local temp=$(needir $HOME/tmp)/$(basename $1);
+    debug temp: $temp;
+    cat - > $temp;
+    exists $1 || touch $1;
+    cmp $1 $temp > /dev/null && rm -f $temp || mv $temp $1;
+    debug RETURN
+}
+pause_ison () 
+{ 
+    : TRUE if PAUSE is ON;
+    : date: 2023-08-02;
+    [[ $(def pause | wc -c) -gt 151 ]]
+}
+pdlmd () 
+{ 
+    : pandoc MarkDown, Author and Date;
+    : local direcory Markdown;
+    : date: 2023-08-25;
+    : date: 2023-09-26;
+    : date: 2023-12-15;
+    : date: 2024-03-15;
+    :;
+    debug ENTRY $# $@;
+    if_missingargs 1 $@ && return;
+    :;
+    local doc=./${1%.*}.html;
+    :;
+    local hoy="$(date "+%B %e, %Y")";
+    debug SET $@, hoy: $hoy;
+    debug SET $@, doc: $doc;
+    pandoc -s \
+        --quiet \
+        --filter pandoc-include \
+        --toc $1 -o $doc \
+        --variable "author=Marty McGowan" \
+        --variable "date=$hoy";
+    :;
+    echo $doc;
+    recursive $@
+}
+pick () 
+{ 
+    : return first field of USER responses to each ARG;
+    : y -- collects responses;
+    : Y - delivers resonses thru latest;
+    : q, @ - delivers prior responses;
+    : { empty } - keeps on looking;
+    : date: 2025-05-19;
+    :;
+    : date: 2023-08-02;
+    : date: 2025-05-19 - Return, rather than break;
+    for a in $*;
+    do
+        printf "%s\t?: " "$a" > /dev/tty;
+        read response < /dev/tty;
+        case $response in 
+            y*)
+                echo "$a" | field 1
+            ;;
+            Y*)
+                echo "$a" | field 1;
+                return
+            ;;
+            q* | Q*)
+                return
+            ;;
+            *)
+
+            ;;
+        esac;
+    done
+}
+pickd () 
+{ 
+    : pick the Zero-based directory to the Top of the Directory Stack;
+    : date: 2023-08-26;
+    : date: 2024-11-03;
+    : date: 2025-04-27;
+    : date: 2025-06-02;
+    debug ENTRY $# $@;
+    pause;
+    set -- ${1:-0};
+    case $1 in 
+        0)
+            debug ZERO $# $@;
+            pause
+        ;;
+        1)
+            debug ONE $# $@;
+            pause;
+            pushd > /dev/null
+        ;;
+        2)
+            debug TWO $# $@;
+            pause;
+            rotd > /dev/null
+        ;;
+        *)
+            debug STAR $# $@;
+            pause;
+            local depth=$1;
+            debug DIRS $# $@;
+            pause;
+            set -- "$(dirs +$depth -l -p)";
+            report_notargcount 1 $# && return 1;
+            debug PUSHD $# $@;
+            pause;
+            pushd "$1" > /dev/null
+        ;;
+    esac;
+    cdx > /dev/null;
+    debug PVLDIRS $# $@;
+    pause;
+    dirs -p -v -l;
+    debug ENTRY $# $@;
+    pause
+}
+pififuset () 
+{ 
+    : accept function input from PIpe on stdin, name FIle, FUnction args;
+    : related: shd_setdate pipe functions;
+    : lesson: Else-If syntax is ELIF, each requires FI;
+    : url: https://linuxhandbook.com/if-else-bash/;
+    : date: 2023-08-06;
+    : date: 2023-08-21;
+    : date: 2023-09-05;
+    : date: 2023-10-05;
+    : date: 2023-11-08;
+    : date: 2025-02-20;
+    : date: 2025-03-02;
+    debug ENTRY $@;
+    :;
+    set -- ${1:-/dev/null} ${@:2};
+    :;
+    debug SET $@;
+    pause;
+    :;
+    [[ -p /dev/stdin ]] && { 
+        debug STDIN;
+        pause;
+        cat -
+    } || { 
+        [[ -f $1 ]] && { 
+            :;
+            debug FILES $# $@;
+            pause;
+            cat $@
+        } || { 
+            debug isfunction $1 $(isfunction $1);
+            isfunction $1 && { 
+                :;
+                debug FUNCTIONS $# $@;
+                pause;
+                declare -f $@
+            } || { 
+                comment "TRY: set | functions";
+                pause
+            }
+        }
+    }
+}
+pifufiset () 
+{ 
+    : input from the PIpe, list of FUnctions or FIle arguments;
+    : todo: find a way to accomodate Zero, no arguments w/o dumping the SET list;
+    : suggest, stop to read and recurse.;
+    : date: 2023-08-06;
+    : date: 2025-04-11;
+    set ${1:-/dev/null} ${@:2};
+    debug ENTRY $@;
+    pause;
+    [[ -p /dev/stdin ]] && { 
+        debug STDIN;
+        : assume all args are Function Bodies;
+        cat -;
+        return
+    } || { 
+        declare -f $1 > /dev/null && { 
+            debug FUNCTIONS $# $@;
+            pause;
+            : assume all args are FUnctions;
+            declare -f $@;
+            return
+        }
+    } || [[ -f $1 ]] && { 
+        debug FILES $# $@;
+        pause;
+        : assume all args are FIles;
+        cat $@;
+        return
+    } || { 
+        comment No PIpes, FUnctions, nor FIles;
+        debug ENVIRONMENT $# $@;
+        : ..... MyName or arg .....;
+        pause;
+        return 1
+    }
+}
+printfirst () 
+{ 
+    : PRINT the FIRST occurence of the Nth, default 1, FIELD of STDIN;
+    : date: 2023-08-02;
+    debug ENTRY $*;
+    report_notpipe && return 1;
+    local nth=${1:-1};
+    awk "!printed[\$$nth]++"
+}
+proc_parent () 
+{ 
+    : calling function can be an APP;
+    : related: app_isa;
+    : date: 2023-08-02;
+    case $0 in 
+        -bash)
+            echo ${1:-$(myname 2)}
+        ;;
+        *)
+            basename $0
+        ;;
+    esac
+}
+ranum8 () 
+{ 
+    : an eight-digit random number;
+    : date: 2023-10-29;
+    set ${RANDOM}${RANDOM}${RANDOM}${RANDOM};
+    echo ${1:7:8}
+}
+rdb_lines () 
+{ 
+    : collect FIELDS for the TABLE of tables;
+    : related: tables;
+    : date: 2023-08-02;
+    awk -F'\t' '
+    BEGIN { lmax = 64 }
+          {
+            # add a blank at line end, defend against late trim
+            line = $2 " "
+            while (length(line) > lmax) {
+                this = substr(line,1,lmax)
+		line = substr(line,lmax+1)
+		pfrg = index(line," ")
+		if (pfrg) {
+		    # undefended line
+		    this = this substr(line,1,pfrg)
+		    line = substr(line,pfrg+nn1)
+		}
+                printf "%s\t%s\n", $1, this		
+            }
+	    if (length(line) ) {
+                printf "%s\t%s\n", $1, line
+	    }
+          }
+      '
+}
+rotd () 
+{ 
+    : ROTate the directory stack, a b c ... To c a b ...;
+    : date: 2023-08-29;
+    set -- "$(dirs +2 -p -l)";
+    report_notargcount 1 $# && return 1;
+    pushd "$1" > /dev/null;
+    cdx > /dev/null;
+    dirs -p
+}
+runfrom () 
+{ 
+    : ~ Directory Command ... with NO Wildcards;
+    : date: 2023-07-22;
+    debug ENTRY $*;
+    pause;
+    local caller=$(myname 2);
+    [[ $(myname 3) == "indir" ]] && { 
+        debug LEAVING;
+        return
+    };
+    [[ $(caller) == "indir" ]] || { 
+        indir $1 $caller ${@:2};
+        return 1
+    };
+    debug LONG LEFT
+}
+runhere () 
+{ 
+    : replacing run_from, same idea;
+    : use with arg coming in. none leaving;
+    : date: 2025-01-22;
+    : date: 2025-05-22;
+    pushd "$1" > /dev/null;
+    cdx > /dev/null
+}
+rwd () 
+{ 
+    : return the Relative Working Directory;
+    : related: smart_dir;
+    : date: 2023-09-10;
+    set $HOME $(echo $HOME | tr A-Z a-z);
+    echo $PWD | sed "s@^$1@@; s@^$2@@; s=^/=="
+}
+sdf () 
+{ 
+    : date: 2024-05-02;
+    : date: 2024-05-13;
+    debug ENTRY $# $*;
+    printf "%7d\t%s\n" $1 $2
+}
+select_first () 
+{ 
+    : select the first ROW from the Argument FIELD;
+    : from the STDIN;
+    : date: 2023-08-02;
+    :;
+    report_notpipe && { 
+        cat -;
+        return 1
+    };
+    report_notargcount 1 $# && { 
+        cat -;
+        return 2
+    };
+    row "!selected[$1]++"
+}
+setenv () 
+{ 
+    : set the First ARG in the ENVironment to the value of the remaining;
+    : related: setget;
+    : date: 2023-08-02;
+    : debug ENTRY $# $*;
+    : date: 2024-04-29;
+    if_missingargs 1 $* && return;
+    local na=$1;
+    : debug na: $na;
+    shift;
+    : debug ASSIGN $na=\"$*\";
+    eval $na=\"$*\";
+    export $na;
+    : debug RETURN $na
+}
+show_nprov () 
+{ 
+    : example of nprov ...;
+    : date: 2023-09-13;
+    nprov "wc *.rdb; declare -f pipeFileOrNot show_nprov";
+    echo =====;
+    nprov 'pipeFileOrNot *.rdb';
+    nprov 'pipeFileOrNot < *.rdb';
+    nprov 'cat *.rdb | pipeFileOrNot';
+    nprov 'pipeFileOrNot foo bar zot < *.rdb'
+}
+spaceit () 
+{ 
+    : see the related -- pififuset;
+    : related: pififuset;
+    : date: 2023-08-26;
+    function ispipe () 
+    { 
+        [[ -p /dev/stdin ]]
+    };
+    case $# in 
+        0)
+            ispipe && cat || set
+        ;;
+        *)
+            cat $*
+        ;;
+    esac
+}
+specialDotDirs () 
+{ 
+    : the names of generid directories, e.g. .save, .hold. ...;
+    : date: 2023-09-05;
+    ${@:-echo} $HOME/lib/$(myname).txt
+}
+ssf () 
+{ 
+    : tab separated Arguments, String String Format;
+    : date: 2023-08-02;
+    : date: 2024-04-29;
+    : date: 2024-06-28;
+    local name=$1;
+    shift;
+    local valu="$*";
+    debug ENTRY $# "$name" "$valu";
+    printf "%s\t%s\n" "$name" "$valu"
+}
+table_fields () 
+{ 
+    : the FIELDS of the TABLE of tables;
+    : date: 2023-08-02;
+    ${*:-echo} table nrecrds modate fields
+}
+table_record () 
+{ 
+    : to build the table of tables, ...;
+    : related: tables;
+    : date: 2023-08-07;
+    report_notfile $1 && return 1;
+    local records=$(expr $(cat $1 | wc -l) - 2);
+    local fields=$(echo $(fieldsof $1));
+    local modate=$(stat -t %Y%m%d $1 | field 10);
+    printf "%s\t" $1;
+    printf "%7d\t" $records;
+    printf "%s\t" "${modate//\"/}";
+    printf "%s\n" "$fields"
+}
+tables () 
+{ 
+    : in this directory;
+    : date: 2023-08-07;
+    : date: 2023-09-05;
+    local ltf=.$(myname);
+    rm -f $ltf.*;
+    local tbla=$ltf.a;
+    local tblb=$ltf.b;
+    local eror=$ltf.err;
+    rm -f table.?.out;
+    ( table_fields rdb_hdr;
+    foreach table_record ${*:-*.rdb} 2> /dev/null ) |
+    ... tee $tbla | ncolumn fields > $tblb;
+    column table fields < $tbla | rdb_lines | jointable $tblb - |
+    ... sorttable | row 'fields !~ /^ *$/' | tee $(myname).rdb | justify
+}
+task_json2tsv () 
+{ 
+    : convert a JSON file to a TSV;
+    : date: 2023-07-22;
+    : date: 2023-11-12;
+    debug ENTRY $@;
+    cat $1 | de_json | lft 00 | sed '
+
+        s/.*<//;
+	s/>/	/;
+	s/^\/.*//;
+
+    ' | lft 01 | awk '
+
+       gsub(/ *\\"/,"")
+       /"created"/     { next }
+       /"creator"/     { next }       
+       /"modified"/    { next }
+       /"modifier"/    { next }              
+       /"title":/      { next }
+
+    ' | lft 02 | sed '
+
+        s/:/	/g
+	s/;/	/
+	s/ *[)]//
+	s/(\([^)]\)/	\1/
+        s/,$// 
+
+    '
+}
+task_tsv () 
+{ 
+    : convert a JSON ToDo file into a TSV with header;
+    : date: 2023-07-22;
+    report_notfile $1 && return;
+    set $1 $(basename $1);
+    debug ENTRY $@;
+    file=$1;
+    tsv=$(lib)/todo/${2%.json}.tsv;
+    task_json2tsv $file | top_rdbhdr time task subtask delta | tee $tsv
+}
+tblfields () 
+{ 
+    : Table Fields of tables;
+    rdb_hdr table fields;
+    for f in *.rdb;
+    do
+        ssf $f "$(echo $(sed 1q $f))";
+    done
+}
+th () 
+{ 
+    : tail of History;
+    : date: 2023-08-26;
+    history | awk '$2 !~ /^th$/' | tail -${1:-$(expr ${LINES:-27} - 3)}
+}
+timestamp () 
+{ 
+    : date: 2023-08-07;
+    report_notfile $1 && return 1;
+    touch -t $(date -r $(epoch $1) +%Y%m%d%H%M.%S) $2
+}
+top_rdbhdr () 
+{ 
+    : preface OUTPUT with /RDB header fields, default is name abstract;
+    : favoring frequent use by ABSTRACT;
+    : example: "cat * | abstract | top_rdbhdr";
+    : date: 2023-08-07;
+    : date: 2023-09-26;
+    : date: 2025-03-02;
+    debug ENTRY $# $@;
+    report_notpipe && return 1;
+    [[ $# -lt 1 ]] && { 
+        set name abstract
+    };
+    debug SET $# $@;
+    pause;
+    rdb_hdr $*;
+    cat -
+}
+tpl () 
+{ 
+    : date: 2023-08-07;
+    cat ${*:--} | tr -s ' \t' '\n'
+}
+tuniq () 
+{ 
+    : tabs, and spaces separate;
+    : date: 2023-07-22;
+    tr -s ' \t' '\n' | awk '!p[$1]++'
+}
+type_word () 
+{ 
+    : date: 2023-08-07;
+    report_notfunction ${1:-/dev/null} && return 1;
+    foreach fun_alltype $(fun_words $*) | nf gt 1
+}
+upd_1fm2 () 
+{ 
+    : "for file of unique lines, update 1st if Diff 2nd";
+    : lesson: If you think youve updated the function Lib,;
+    : Check AGAIN, this was worked out a few days ago.;
+    : date: 2025-03-03;
+    : date: 2025-03-16;
+    debug ENTRY $# $@;
+    local nxt=~/tmp/$(myname);
+    sort -u $2 > $nxt;
+    debug $(wc -l $1 $2 $nxt);
+    diff $1 $nxt 1>&2 && { 
+        debug SAME;
+        pause;
+        rm -f $nxt
+    } || { 
+        backup $1;
+        debug DIFF;
+        pause;
+        mv $nxt $1
+    }
+}
+usefulfiles () 
+{ 
+    : when searching, remove DOT-AlphaNumeric and Space names;
+    : date: 2023-08-05;
+    : date: 2023-10-03;
+    : date: 2025-01-26;
+    gmv [.]{err,tmp,bak,dev,ver,txt,tst}/ ~$
+}
+util_libheader () 
+{ 
+    : " This is the utillib Function Library Comment Header";
+    : "Copyright 2025, Marty McGowwan @ Shell Functions";
+    :;
+    : " This program is free software: you can redistribute it and/or modify";
+    : "it under the terms of the GNU General Public License as published by";
+    : "the Free Software Foundation, either version 3 of the License, or";
+    : "(at your option) any later version.";
+    :;
+    : " This program is distributed in the hope that it will be useful,";
+    : "but WITHOUT ANY WARRANTY; without even the implied warranty of";
+    : "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the";
+    : "GNU General Public License for more details.";
+    :;
+    : " You should have received a copy of the GNU General Public License";
+    : "along with this program.  If not, see <http://www.gnu.org/licenses/>.";
+    :;
+    : date: 2025-05-08 - even libheaders need a date;
+    :
+}
+wcf () 
+{ 
+    : Line Count Functions;
+    : date: 2023-08-07;
+    [[ $# -lt 1 ]] && return;
+    local lc=$(fbdy $1 | wc -l);
+    printf "%4d\t%4s\n" $lc $1;
+    debug Recurse: $# $@;
+    wcf ${@:2}
+}
+whf () 
+{ 
+    : Where is the Function in its library?;
+    : date: 2023-08-07;
+    : date: 2024-09-29;
+    debug ENTRY $# $@;
+    pause;
+    ignore pushd $(dfg_db);
+    ignore cdx;
+    local fun=$1;
+    set -- */$fun;
+    debug SET a: $# $@;
+    [[ $# -gt 1 ]] && { 
+        echo $fun $@ >> $(marty3)/lib/err/whf.err
+    };
+    [[ -f $1 ]] && { 
+        which $(dirname $1)
+    };
+    set -- $1 $(which $(dirname $1));
+    ignore pushd
+}
+whsrc () 
+{ 
+    : obsolete: in behalf of whlib;
+    : date: 2024-08-03;
+    whlib $1
+}
+wpl () 
+{ 
+    : Word Per Line;
+    : date: 2023-07-22;
+    cat ${@:--} | tr -cs 'A-Za-z0-9_' '\n'
+}
+xs () 
+{ 
+    : Source and Echo;
+    : date: 2023-08-06;
+    [[ -f $1 ]] || return;
+    debug ENTRY $PWD $@;
+    pause;
+    source $1;
+    echo === $1 ===;
+    debug DONE $PwD $# $@;
+    pause
+}

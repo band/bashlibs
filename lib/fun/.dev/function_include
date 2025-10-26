@@ -1,0 +1,16 @@
+function_include () 
+{ 
+    : write the INCLUDE Block for a function;
+    : date: 2024-04-29;
+    : date: 2024-04-30;
+    : date: 2024-06-28;
+    debug ENTRY $# $*;
+    local lim="\`\`\`";
+    set $lim sh $1 $lim;
+    debug SET $# $*;
+    local txt=$(bashlibs)/src/txt/$3;
+    debug txt: $txt;
+    pause;
+    printf '%s%s\n!include ./src/shell/%s\n%s\n\n' "$@" > $txt;
+    echo $txt
+}

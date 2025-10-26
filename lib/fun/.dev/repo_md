@@ -1,0 +1,8 @@
+repo_md () 
+{ 
+    : Only index.md files in the REPO;
+    : other MD files are included by Pandoc-include;
+    : date: 2024-11-14;
+    report_notdirectory .git && return 1;
+    find . -name index.md | grep -v '/[.][a-z]'
+}

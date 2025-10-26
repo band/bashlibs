@@ -1,0 +1,684 @@
+function_libheader () 
+{ 
+    : " This is the functionlib Function Library Comment Header";
+    : "Copyright 2025, Marty McGowwan @ Shell Functions";
+    :;
+    : " This program is free software: you can redistribute it and/or modify";
+    : "it under the terms of the GNU General Public License as published by";
+    : "the Free Software Foundation, either version 3 of the License, or";
+    : "(at your option) any later version.";
+    :;
+    : " This program is distributed in the hope that it will be useful,";
+    : "but WITHOUT ANY WARRANTY; without even the implied warranty of";
+    : "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the";
+    : "GNU General Public License for more details.";
+    :;
+    : " You should have received a copy of the GNU General Public License";
+    : "along with this program.  If not, see <http://www.gnu.org/licenses/>.";
+    :;
+    : date: 2025-05-08 - even libheaders need a date;
+    :
+}
+... () 
+{ 
+    $@
+}
+abstract () 
+{ 
+    : a functions ABSTRACT, if non-tagged, the first line of SHDOC;
+    : shows non-tagged With One Field, the Function Name;
+    : use Little nr, not NR for record number in function;
+    : accepts FILE and FUNCTION arguments;
+    : e.g. this line is part of the DOC, not part of the abstract;
+    : date: 2023-03-07;
+    : date: 2023-08-27;
+    : date: 2024-05-19;
+    : date: 2024-06-26;
+    : date: 2025-04-11;
+    debug ENTRY $@;
+    pififuset $@ | awk '
+    
+        function clean_abstract ( abstract )
+	{
+
+        # printf "1: <%s>\t2:<%s>\t3:<%s>\n", $1, $2, $3 > "/dev/stderr"
+        sub(/ *: "*/,"",abstract)  # trim leading :.*"
+	sub(/"*;$/,"",abstract)    # and trailing "*;
+        return abstract
+	}
+
+       $2 ~ /[(][)]/ {
+
+          nr = 0
+       	  name = $1;
+
+	  }
+  
+               {
+	         nr++                  # each line at start
+	         tag = $2 ~ /:;*$/     # its a tab
+		 abl = nr == 3         # the astract line
+		 shd = $1 ~ /^:$/      # a null-command, Abstract elligible
+		 # 
+		 # printf "tag: %d\t abl %d\t shd %d\n", tab,abl,shd  >  "/dev/stderr"
+		 #
+		 abstract = (( abl && shd && !tag ) ? clean_abstract($0) : "" )
+               }
+      nr == 3  && name !~ /^$/  {
+      
+                 printf "%s\t%s\n", name, abstract;      
+               }
+'
+}
+applemcg () 
+{ 
+    : github things;
+    : date: 2023-08-25;
+    : date: 2023-09-29;
+    ${*:-echo} $APP_HOME/git/applemcg.github.io
+}
+backup_directories () 
+{ 
+    : ${USER_BACKUP_AREA:=/dev/null};
+    : ${ALTERNATE_BACKUP_DIRS:=back version};
+    set .bak .ver ${ALTERNATE_BACKUP_DIRS};
+    case $PWD in 
+        */WantaNonDotName* | *${USER_BACKUP_AREA}*)
+            shift 2
+        ;;
+    esac;
+    setenv BACKUP_DIRECTORY $1 > /dev/null;
+    setenv VERSION_DIRECTORY $2 > /dev/null
+}
+book_page () 
+{ 
+    : tiddly book;
+    : date: 2023-08-25;
+    : date: 2023-09-29;
+    ${*:-echo} $APP_HOME/git/applemcg.github.io/reading/$(myname).rdb
+}
+civility () 
+{ 
+    : Forni and GWK;
+    : textfile: from the Band;
+    : date: 2023-08-12;
+    : date: 2024-06-19;
+    : date: 2024-06-29;
+    : date: 2024-10-02;
+    set -- ${1:-$INSTALL_HOME/lib/txt/civilityrules.txt};
+    cat "$1" | awk -v today=$(date +%j) -v rnum=${RANDOM} -f $INSTALL_HOME/lib/awk/civility.awk
+}
+collecton_2nd () 
+{ 
+    : the second argument is an array of names in the first argument;
+    : date: 2023-08-29;
+    awk -F'\t' '
+    $2 !~ /^$/ {
+	        c[$2] = c[$2] " " $1;
+	       }
+    END        {
+                 for (i in c)
+                 {
+	           printf "%s\t%s\n",  i, c[i]	  
+                 }
+              }
+   '
+}
+daily_open () 
+{ 
+    : get it started;
+    : date: 2023-08-12;
+    function _dopn () 
+    { 
+        :;
+        foreach eval $*;
+        comment daily_collection: $*
+    };
+    _dopn $(daily_collection);
+    unset _dopn
+}
+daily_reading () 
+{ 
+    : the epistle, psalms, 2nd if needed, gospel;
+    : date: 2024-06-26;
+    ${*-open} http://usccb.org/bible/readings/$(date '+%m%d%y').cfm
+}
+date_help () 
+{ 
+    : Date time format keys;
+    : date: 2024-12-26;
+    man strftime | grep 'is replaced' | sed 's/is replaced by //';
+    comment hint: date_fmt
+}
+do_do () 
+{ 
+    : ~ arg generates a recursive do_arg function;
+    : date: 2023-07-10;
+    : date: 2024-05-07;
+    local fun=do_$1;
+    isfunction $fun && return;
+    local boiler=": mfg: do_do;: date: 2020-05-01";
+    eval "$fun () { $boiler; [[ \$# -lt 1 ]] && return; ssf \$1 \$($1 \$1); do_$1 \${*:2}; }"
+}
+doit () 
+{ 
+    : report the command, and Doit;
+    : lesson: distinguish between $;
+    : date: 2023-01-10;
+    : date: 2023-11-18;
+    : date: 2025-03-02;
+    debug ENTRY $# $@;
+    printf "\n=====\t%s\t=====\n" "$*";
+    pause;
+    $@
+}
+dup_funs () 
+{ 
+    : identify dupliact functions in the Function Dataase, e.g. dfg_db;
+    : date: 2025-05-05;
+    : date: 2025-05-10 - update awk GT 1 filter;
+    function _dup_funs () 
+    { 
+        set ~/tmp/$(myname).{txt,out};
+        debug SET $# $*;
+        pause;
+        ls */* | tee $1 | awk -F/ '{ print $2 }' | sort | uniq -c | awk '$1 > 1 { printf "/%s$\n", $2 }' > $2;
+        [[ -s $2 ]] && { 
+            debug wc: $(wc $*);
+            debug 1: $1 $(cat $1 | wc);
+            debug 2: $2 $(cat $2 | wc);
+            debug grep -f $2 $1;
+            pause;
+            grep -f $2 $1
+        }
+    };
+    indir $(dfg_db) _dup_funs
+}
+eec () 
+{ 
+    : ee Cummings archive;
+    : date: 2023-08-25;
+    : date: 2023-09-29;
+    ${*:-echo} $APP_HOME/bitmeld/src/eec
+}
+fourColumnTiddly () 
+{ 
+    : convert an rdb table into a 4-column tiddly table;
+    : date: 2020-07-04;
+    report_notpipe && return 1;
+    sed 's/|/\&#124;/g' | awk -F"\t" '        
+    BEGIN   { left = "|%s "
+              rite = "| %s"
+	      line = "|\n"
+              defl = left left left left line
+	    }
+    NR == 1 { printf "| !%s | !%s | !%s | !%s |\n", $1, $2, $3, $4}
+     NR < 3 { next };
+            { printf defl, $1, $2, $3, $4 }
+   '
+}
+fun () 
+{ 
+    : home of the development Library;
+    : obsolescent;
+    : date: 2023-08-25;
+    : date: 2023-09-10;
+    : date: 2023-12-19;
+    pptlog $@;
+    libfun $@
+}
+function_truth () 
+{ 
+    : return Function IS OR NOT;
+    : date: 2024-01-25;
+    set ${1:-$(myname)};
+    ssf $1 $(isfunction $1 && echo IS || echo NOT)
+}
+hibernate () 
+{ 
+    : where the retirees go to ...;
+    : date: 2023-08-25;
+    : date: 2023-09-29;
+    ${*:-echo} $APP_HOME/lib/hibernate
+}
+home () 
+{ 
+    : like HOME allows some mobility;
+    : date: 2024-05-19;
+    :;
+    ${*:-echo} ${APP_HOME:=$HOME}
+}
+homed () 
+{ 
+    : a pseudo-home for aliases, ...;
+    : date: 2024-09-13;
+    ${1:-echo} $(marty3)/$(uname -n)
+}
+icloud () 
+{ 
+    : go to the iCloud documents;
+    : date: 2019-10-09;
+    pushd $HOME/Library/Mobile\ Documents
+}
+issues () 
+{ 
+    : smart directory;
+    : mfg: smart_dir;
+    : date: 2025-02-01;
+    ${@:-echo} "/Users/martymcgowan/marty3/lib/issues"
+}
+libmd () 
+{ 
+    : smart directory;
+    : mfg: smart_dir;
+    : date: 2024-11-10;
+    ${@:-echo} "/Users/martymcgowan/marty3/lib/md"
+}
+load_local () 
+{ 
+    : local load;
+    : date: 2024-07-31;
+    pushd $APP_HOME;
+    for f in bin/*lib;
+    do
+        source $f;
+        echo $f;
+    done;
+    cdx > /dev/null;
+    pickd
+}
+localbin () 
+{ 
+    : smart directory;
+    : mfg: smart_dir;
+    : date: 2024-07-30;
+    : date: 2024-09-12;
+    : date: 2024-09-14;
+    ${@:-echo} "/Users/martymcgowan/marty3/bin"
+}
+loglib () 
+{ 
+    ${@:-echo} $(home)/lib/log
+}
+mit () 
+{ 
+    : for the club;
+    : date: 2023-08-25;
+    : date: 2023-09-29;
+    ${*:-echo} $APP_HOME/mit
+}
+mv2upd () 
+{ 
+    : mv out to tbl, aka rdb, remove tmp, upadate history;
+    : date: 2024-09-18;
+    : date: 2024-11-12;
+    : date: 2024-11-16;
+    : date: 2024-12-13;
+    : date: 2025-01-22;
+    set -- $(punch_trio);
+    debug ENTRY $# $@;
+    report_notfile $1 && return 3;
+    newest $3 $1 $2 || { 
+        debug update $3;
+        pause;
+        cat $1 $2 > $3
+    };
+    debug FOUR $(wc $*);
+    debug mv $3 $1;
+    pause;
+    mv $3 $1;
+    debug rm -f $2;
+    rm -f $2;
+    debug rdupdate $1;
+    pause;
+    echo $# $* $* 1>&2;
+    rdupdate $1;
+    echo $# $* 1>&2
+}
+object () 
+{ 
+    : smart directory;
+    : mfg: smart_dir;
+    : date: 2025-01-22;
+    ${@:-echo} "/Users/martymcgowan/marty3/lib/object"
+}
+onlyfiles () 
+{ 
+    : list the file in directory, default .;
+    : date: 2023-07-10;
+    foreach name_existing ${1:-.}/*
+}
+princeton () 
+{ 
+    : smart directory;
+    : mfg: smart_dir;
+    : date: 2025-02-02;
+    ${@:-echo} "/Users/martymcgowan/marty3/lib/princeton"
+}
+reference () 
+{ 
+    : a LIST of references;
+    : example: 'reference cat|rowhas name null|column url|headoff';
+    : related: alias crgi;
+    : date: 2016-06-09;
+    : date: 2022-11-18;
+    ${@:-echo} $(lib)/rdb/reference.rdb
+}
+safe_name () 
+{ 
+    : is the file a safe, i.e. no-spaces in the Name;
+    : date: 2023-09-08;
+    : date: 2024-03-03;
+    : date: 2025-02-05;
+    echo -n $1 | tr "[ ']" _ | safe_url
+}
+safe_url () 
+{ 
+    : translate non-aphaNumeric characters to underscore;
+    : date: 2023-09-08;
+    tr -cs "A-Za-z0-9/._'-" _
+}
+sfl () 
+{ 
+    : smart directory;
+    : mfg: smart_dir;
+    ${@:-echo} "/Users/martymcgowan/marty3/src/sfl"
+}
+shd_latest () 
+{ 
+    : latest DATE tag for functions on STDIN, args, files or SET;
+    : date: 2022-11-17;
+    : date: 2023-06-08;
+    : date: 2023-08-11;
+    pifufiset $@ | awk '
+        # ---------------------------- only alpha-numeric names	--
+	#
+        $2 ~ /[(][)]/ && $1 ~ /^[A-Za-z]/ {
+	                                    name = $1
+					    date = ""
+					  }
+	#
+	# ---------------------------------------- 21st C dates	--
+	#
+	/: date:/ && $3 ~ /^20/           { date = $3 }
+	#
+	# ---------------------------------- make sure of entry	--
+	#
+        NF == 1 && /^}$/ && name && date {
+            sub(/;/,"",date)
+	    printf "%s\t%s\n", date, name
+	    name = ""       # print only once?
+        }    
+    '
+}
+shdoc () 
+{ 
+    : functions SHell DOCumnetation, the leading null-commands;
+    : e.g. this line is part of the DOC;
+    : functions on the command line are directed to the STDIN;
+    : related: abstract;
+    : todo: fix for both Pipes and Args;
+    : date: 2023-03-07;
+    : date: 2023-07-10;
+    : date: 2024-05-07;
+    : date: 2024-10-18;
+    :;
+    isfunction ${1:-/dev/null} && { 
+        command declare -f $@ | shdoc;
+        return
+    };
+    :;
+    report_notpipe && return 1;
+    :;
+    awk '
+                      # the function name
+$2 ~ /[(][)]/       {
+     		      printf "\nFUNCTION %s\n", $1
+		      prtln = 1
+		      next
+		    }
+                      # skip the leading brace
+prtln && $1 ~ /^{$/ { next; }
+
+                      # its no longer part of the DOC
+$2 ~ /.*:/          { prtln = 0 };
+
+prtln               {
+		      sub(/: /,"");
+		      sub(/ *; */,"")
+		      print
+		    }
+   '
+}
+shellfunctions () 
+{ 
+    : book chapter, manuscript;
+    : date: 2023-08-25;
+    : date: 2023-09-29;
+    ${*:-echo} $APP_HOME/git/shellfunctions
+}
+shlib () 
+{ 
+    : date: 2023-07-27;
+    : date: 2023-08-07;
+    : date: 2023-09-29;
+    ${*:-echo} $APP_HOME/shlib
+}
+software () 
+{ 
+    : the document?;
+    : date: 2023-08-25;
+    : date: 2023-09-29;
+    ${*:-echo} $APP_HOME/commonplace/software
+}
+stouffer () 
+{ 
+    : smart directory;
+    : mfg: smart_dir;
+    : date: 2025-03-06;
+    ${@:-echo} "/Users/martymcgowan/marty3/markpub/stouffer"
+}
+tiddly_month () 
+{ 
+    : writes the Month Year tiddler;
+    : usage: ~ [month {current} [year {current{}] ];
+    : date: 2022-10-01;
+    : date: 2023-07-10;
+    : date: 2023-10-03;
+    : date: 2024-12-02;
+    function february_days () 
+    { 
+        local year=$1;
+        local last=28;
+        local ly=$(( $year % 4 ));
+        local lc=$(( $year % 400 ));
+        [[ $ly -eq 0 ]] && last=29;
+        [[ $lc -eq 0 ]] || last=28;
+        debug LY: $ly, LC: $lc;
+        debug === year: $year, last: $last ====;
+        echo $last
+    };
+    debug ENTRY $@;
+    pause;
+    local month=${1:-$(date +%B)};
+    local year=${2:-$(date +%Y)};
+    local past=$year;
+    local next=$year;
+    local monn;
+    : ------------- default calendar is 31 days --;
+    local last="";
+    debug nonth: $month;
+    case $month in 
+        Jan*)
+            let past=$(($year-1));
+            month=January;
+            monn=01;
+            set -- December February
+        ;;
+        Feb*)
+            month=February;
+            set -- January March;
+            monn=02;
+            last=$(february_days $year)
+        ;;
+        Mar*)
+            set -- February April;
+            month=March;
+            monn=03
+        ;;
+        Apr*)
+            set -- March May;
+            month=April;
+            monn=04;
+            last=30
+        ;;
+        May)
+            set -- April June;
+            month=May;
+            monn=05
+        ;;
+        Jun*)
+            set -- May July;
+            month=June;
+            monn=06;
+            last=30
+        ;;
+        Jul*)
+            set -- June August;
+            month=July;
+            monn=07
+        ;;
+        Aug*)
+            set -- July September;
+            month=August;
+            monn=08
+        ;;
+        Sep*)
+            set -- August October;
+            month=September;
+            monn=09;
+            last=30
+        ;;
+        Oct*)
+            set -- September November;
+            month=October;
+            monn=10
+        ;;
+        Nov*)
+            set -- October December;
+            month=November;
+            monn=11;
+            last=30
+        ;;
+        Dec*)
+            set -- November January;
+            month=December;
+            monn=12;
+            let next=$(($year+1))
+        ;;
+        *)
+            comment Bad Month: $month;
+            return 1
+        ;;
+    esac;
+    : ----------------------- resisting the temptation to further generalize 2022-10-03 --;
+    :;
+    local cald=$(weekday $month 01 $year);
+    local wi="https://en.wikipedia.org/wiki/Portal:Current_events";
+    debug "Month: $month, Years: $past, $year, $next";
+    : -------------------------------------------- two-column, three rows table --;
+    printf "\n";
+    printf "| [[%s %s]] | [[%s %s]] |\n" $1 $year $2 $year;
+    printf "| [[%s]]    | [[%s]]    |\n" $(($year - 1)) $(($year + 1));
+    printf "| [[%s|%s]] | [[Diary]] |\n" "Current Events" $wi/${month}_$year;
+    : ------------------------------------------------ Label for the Month Year --;
+    printf "\n; %s %d\n" $month $year;
+    : ------------------------------------------------ Coffee or Tea schedule --;
+    : comment local coffee=Even;
+    : comment local tea=Odd;
+    : comment printf "\n//Coffee on ''%s'' days, tea on ''%s'' ones//\n" $coffee $tea;
+    : ---------------------------------------------------- the Monthly Calendar --;
+    printf "\n{{%s}}\n" $cald${last:+_$last};
+    : ------------------------------------------------- filter each daily entry --;
+    printf "\n<<list-links filter:\"[prefix[%s-%s-]]\">>\n" $year $monn;
+    printf "\n"
+}
+tidy_untidied () 
+{ 
+    : "tidy up all the untidied libraries";
+    : sourcing and refreshing come later;
+    : date: 2023-07-12;
+    for file in $(untidied);
+    do
+        comment lib_tidy $file;
+        lib_tidy $file;
+    done;
+    touch .tidied
+}
+timimi () 
+{ 
+    : the universal Firefox TiddlyWiki backup location;
+    : lesson: smart_dir should DEFAULT to Echo;
+    : date: 2023-11-17;
+    ${@:-echo} /Users/martymcgowan/Sync/timimi
+}
+twoColumnTiddly () 
+{ 
+    : convert an rdb table into a 2-column tiddly table;
+    : date: 2020-07-04;
+    report_notpipe && return 1;
+    sed 's/|/\&#124;/g' | awk -F"\t" '    
+    
+    NR == 1 { printf "| !%s | !%s |\n", $1, $2}
+     NR < 3 { next };
+            { printf "|%s |%s |\n", $1, $2}
+   '
+}
+util_init () 
+{ 
+    : date: 2023-08-07;
+    : date: 2025-05-16;
+    dotty
+}
+weekday_fallson () 
+{ 
+    : given Weekday, Month, Day#, year ..., when do they align;
+    : date: 2023-03-16;
+    : date: 2023-04-03;
+    if_missingargs 4 $@ && return;
+    :;
+    case $1 in 
+        Sun* | Mon* | Tue* | Wed* | Thu* | Fri* | Sat*)
+            : good weekdays
+        ;;
+        *)
+            : bad weekday, show me;
+            $(myname);
+            return
+        ;;
+    esac;
+    :;
+    case $2 in 
+        Jan* | Feb* | Mar* | Apr* | May* | Jun* | Jul* | Aug* | Sep* | Oct* | Nov* | Dec*)
+            : good months
+        ;;
+        *)
+            : bad Month, show me;
+            $(myname);
+            return
+        ;;
+    esac;
+    :;
+    local dow=$1;
+    local mon=$2;
+    local day=$3;
+    for yr in ${*:4};
+    do
+        echo $(weekday $mon $day $yr), $mon $day $yr;
+    done | grep $dow
+}
+weekday_lastfell () 
+{ 
+    : surrogate for TEST case, to use the more appropiate function name;
+    weekday_fallson $@
+}

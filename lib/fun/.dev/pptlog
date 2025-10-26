@@ -1,0 +1,9 @@
+pptlog () 
+{ 
+    : record my CALLER and THEIR caller;
+    : date: 2023-09-10;
+    : date: 2024-09-13;
+    local caller=$(myname 2);
+    local theirs=$(myname 3);
+    date "+%F%t%a %b %d%t%T%t$1%t${*:2} $theirs" >> $(loglib)/$caller.log
+}

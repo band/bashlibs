@@ -1,0 +1,39 @@
+fixfile () 
+{ 
+    : One Function to One File to LIBFUN/.dev;
+    : IS not used to avoid extra function dip;
+    : related: devdir;
+    : history: f1file;
+    : date: 2023-09-08;
+    : date: 2024-09-22;
+    : date: 2025-05-16;
+    : date: 2025-06-13;
+    function _fixfile () 
+    { 
+        debug ISFUNCTION $1;
+        pause;
+        debug PWD .... $PWD;
+        pause;
+        declare -f $1 | tee ./$1;
+        chmod +x ./$1;
+        ls -lrt | tail -4 1>&2;
+        pause
+    };
+    function _dofix () 
+    { 
+        isfunction $1 && { 
+            debug $1 IS a FUNCTION;
+            pause;
+            _fixfile $1
+        } || { 
+            debug $1 IS NOT a FUNCTION;
+            fbdy $1
+        }
+    };
+    debug ENTRY $# $@;
+    local dev=$(needir $(libfun)/.dev);
+    debug dev: $dev;
+    pause;
+    indir $dev _dofix $1;
+    recursive $@
+}

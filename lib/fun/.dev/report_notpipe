@@ -1,0 +1,9 @@
+report_notpipe () 
+{ 
+    : returns: TRUE when STDIN is Not a pipe;
+    : or FALSE if stdin is a pipe;
+    : date: 2018-02-16;
+    : date: 2025-01-22;
+    [[ -p /dev/stdin ]] && return 1;
+    report_usage is Not reading a pipe
+}

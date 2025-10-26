@@ -1,0 +1,9 @@
+awk_file () 
+{ 
+    : Full Path to an Awk file, defaults to the Calling Function;
+    : date: 2024-04-13;
+    set ${1:-$(myname 2)}.awk;
+    set $1 $(marty3)/awk/$1;
+    report_notfile $2 && return 2;
+    echo $2
+}

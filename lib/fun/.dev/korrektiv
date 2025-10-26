@@ -1,0 +1,7 @@
+korrektiv () 
+{ 
+    : the website;
+    : date: 2023-08-21;
+    :;
+    ${*:-open} http://korrektivpress.com/category/life/
+}

@@ -1,0 +1,6 @@
+random_function () 
+{ 
+    : from the environment;
+    : date: 2024-12-02;
+    rand_arg $(declare -F | awk '{ print $3 }') 2> /dev/null
+}

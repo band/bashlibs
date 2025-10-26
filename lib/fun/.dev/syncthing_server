@@ -1,0 +1,7 @@
+syncthing_server () 
+{ 
+    : the syncthing server;
+    : date: 2023-09-08;
+    : date: 2024-05-15;
+    ${@:-echo} $HOME/marty3/FILE/syncthing
+}

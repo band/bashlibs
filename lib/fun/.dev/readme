@@ -1,0 +1,56 @@
+readme () 
+{ 
+    : is Now a SMART Readme, i.e. takes Arugments;
+    : date: 2025-02-02;
+    : date: 2025-02-09;
+    : date: 2025-05-21;
+    :;
+    : Show the Name, or e.g. CAT, OPEN or ECHO, depending on type,;
+    : the nearest README, readme, Changelog, or index file;
+    : of the files returned by the candidate README_LIST;
+    : "nearest" in the sense of crawling up the directory stack;
+    :;
+    : First, to display the file names,;
+    : "source the LIST function, either as a file or in a library";
+    : "and execute the README_LIST function";
+    :;
+    : Then, to find or view your appropriate, or "nearest",;
+    : "execute the README function";
+    :;
+    : date: 2023-07-10;
+    : date: 2024-10-10;
+    : date: 2025-01-02;
+    debug ENTRY $# $@;
+    for d in . .. ../.. ../../..;
+    do
+        debug directory: $(indir $d pwd);
+        pause;
+        : test suffixes before suffix-less;
+        for f in $d/$(readme_files);
+        do
+            debug dir: $d;
+            debug File: $f;
+            pause;
+            [[ -f $f ]] && { 
+                debug PWD, f: $PWD, $f;
+                case $f in 
+                    *.txt)
+                        ${@:-cat} $f
+                    ;;
+                    *.html)
+                        ${@:-open} $f
+                    ;;
+                    *.md)
+                        ${@:-open} $(pdmd $f)
+                    ;;
+                    *)
+                        ${@:-echo} $f
+                    ;;
+                esac;
+                return
+            };
+        done;
+    done;
+    debug Exhausted EMPTY;
+    return 1
+}

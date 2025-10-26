@@ -1,0 +1,6 @@
+retired () 
+{ 
+    : where all old functions go to be remembered;
+    : date: 2024-06-29;
+    ${*:-echo} $(hibernate)/retiredlib
+}

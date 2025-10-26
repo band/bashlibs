@@ -1,0 +1,1168 @@
+upgrade_libheader () 
+{ 
+    : " This is the upgradelib Function Library Comment Header";
+    : "Copyright 2025, Marty McGowwan @ Shell Functions";
+    : date: 2025-08-31;
+    :;
+    : " This program is free software: you can redistribute it and/or modify";
+    : "it under the terms of the GNU General Public License as published by";
+    : "the Free Software Foundation, either version 3 of the License, or";
+    : "(at your option) any later version.";
+    :;
+    : " This program is distributed in the hope that it will be useful,";
+    : "but WITHOUT ANY WARRANTY; without even the implied warranty of";
+    : "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the";
+    : "GNU General Public License for more details.";
+    :;
+    : " You should have received a copy of the GNU General Public License";
+    : "along with this program.  If not, see <http://www.gnu.org/licenses/>.";
+    :;
+    : date: 2025-08-31 - even libheaders need a date;
+    :;
+    "name               	abstract                                                                 ";
+    "----               	--------                                                                 ";
+    "function_libheader 	template goes here                                                       ";
+    "addresses          	personal, family address book                                            ";
+    "archive_tidy       	assure Library.s libheader is first                                      ";
+    "active_libshell    	collect functions from dfg_db to bashlibs/lib to format in Doc           ";
+    "allprofs           	Adds Profile, local Bin to the List                                      ";
+    "backup_files       	only immediate backups                                                   ";
+    "civility           	Forni and GWK                                                            ";
+    "cloudlib           	Library Maintenance in the Cloud                                         ";
+    "count_fields       	count backup directory depth                                             ";
+    "devdir_dir         	the data directory                                                       ";
+    "dfg                	Directory Function Grep                                                  ";
+    "dfg_db             	where the DFG data is kept,                                              ";
+    "dfg_mjm            	DFG subordinate to MJM                                                   ";
+    "dfg_rd             	search in DIR and Dot.DIR files for the argument                         ";
+    "dfg_unique         	unique functions, incl retired                                           ";
+    "dup_funs           	identify dupliact functions in the Function Dataase, e.g. dfg_db         ";
+    "duplicated_function	??                                                                       ";
+    "f2file             	copy a function library or Dot Profile into files for each function      ";
+    "fun_callgraf       	produce a Call Graph for a Function                                      ";
+    "fun_history        	function arguments modification history, on Storing in Function Data Base";
+    "fun_ncopies        	make separate TMP copies now a BAKup tree                                ";
+    "function_history   	from the Function Database                                               ";
+    "functions_home     	from the function Data Base, list the homr library and function          ";
+    "funload            	load local and global functions                                          ";
+    "indir              	run the commands IN the first DIRectory argument                         ";
+    "libnames           	Active, Public libraries No profiles                                     ";
+    "listtotable        	reads stdin or named files in LIST format, converting to TABLE           ";
+    "localbin           	smart directory                                                          ";
+    "qf                 	                                                                         ";
+    "rand_func          	display the definition of a random shell function                        ";
+    "refreshed          	names of the REFRESH locks                                               ";
+    "refreshedlib       	names of a REFRESH locks                                                 ";
+    "txt_libshell       	link the data base of functions to libshell                              ";
+    "unrefreshed        	the unrefreshed librarys                                                 ";
+    "whf                	Where is the Function in its library?                                    ";
+    "whlib              	WHere is the SouRCe of the function, including Retired                   ";
+    "whsrc              	                                                                         ";
+    "wrap_functions     	collect functions from dfg_db to bashlibs/lib to format in Doc           ";
+    "wrapup             	updated libraries, profiles thru to database                             ";
+    "xx                 	                                                                         ";
+    "random_alias       	                                                                         ";
+    "one_alias          	                                                                         ";
+    "rand_alias         	                                                                         ";
+    "AcademicPaper      	smart directory                                                          ";
+    "Documents          	smart directory                                                          ";
+    "Shell              	smart directory                                                          ";
+    "family             	smart directory                                                          ";
+    "fmNotes            	smart directory                                                          ";
+    "html_sync          	sync the Cloud-active HMTL with ftphome                                  ";
+    "icloud             	Documents in the Cloud                                                   ";
+    "m3                 	smart directory                                                          ";
+    "mcorg              	smart directory                                                          ";
+    "obsidian           	smart directory                                                          ";
+    "quine              	go to the Quine hub                                                      ";
+    "marty3wiki         	current Marty3, Friends, Family, Community                               ";
+    "quinedoc           	marty3wiki                                                               ";
+    "mobiledocs         	the title says it all                                                    ";
+    "libtxt             	where text, templates are stored                                         ";
+    "todays_isodate     	in ceiu formats, computer european, iso {default}, US, YYYYmmdd: 8       ";
+    "replace_isodate    	replace EVERY ISO date Tag with today.s date                             "
+}
+function_libheader () 
+{ 
+    : template goes here
+}
+addresses () 
+{ 
+    : personal, family address book;
+    : date: 2023-08-25;
+    : date: 2023-09-29;
+    debug ENTRY $# $@;
+    ${*:-echo} "$(mjm)/family/$(myname).rdb"
+}
+archive_tidy () 
+{ 
+    : "assure Library.s libheader is first";
+    debug ENTRY $# $@;
+    set -- ${1:-functionlib};
+    debug Lib: $1;
+    [[ -f $1 ]] || { 
+        comment No Libary
+        return
+    };
+    backup $1;
+    debug sedscript: sed "s/TEMPLATE/$1/" "$(libtxt)/template.txt";
+    pause;
+    lib_inparts $1 > $1.new;
+    mv $1.new $1;
+    lib_tidy $1
+}
+
+lib_inparts ()
+{
+    : first the dummy function, then copyright, abstracs,;
+    : then the whole file, and the replacement;
+    local short=$(echo $1 | sed 's/lib$//');
+    : --------------------------------------- dummy --;
+    printf "%s_libheader () \n{\n    : placeholder; \n}\n" $short;
+    : -------------------------- existing functions --;
+    cat $1;
+    : ------------------------ copyright, abstracts --;
+    printf "%s_libheader () \n{\n" $short;
+    sed "s/TEMPLATE/$1/" "$(libtxt)/template.txt" | replace_isodate;
+    abstracts $(functions $1) | column | justify | more | sed 's/^/    "/; s/$/"/';
+    printf "\n}\n"
+}
+active_libshell () 
+{ 
+    : collect functions from dfg_db to bashlibs/lib to format in Doc;
+    : lib: cmdlinelib;
+    : date: 2025-03-20;
+    : date: 2025-03-23;
+    : date: 2025-05-05;
+    function _cknn () 
+    { 
+        : debug peek;
+        ls */.bak/* | grep -v .bak/.bak/ | grep -v retired
+    };
+    function _active_libshell () 
+    { 
+        debug ENTRY $# $*;
+        report_notdirectory $1 && return 1;
+        case $1 in 
+            *bashlibs/lib/*)
+                debug GOOD: $1;
+                pause
+            ;;
+            *)
+                debug Bad: $1;
+                return 2
+            ;;
+        esac;
+        : unretired functions to the bashlib directory;
+        debug dirs: ls *;
+        pause;
+        debug wc: $(_cknn | wc);
+        ln -f $(_cknn) $1
+    };
+    indir "$(dfg_db)" _active_libshell $(needir $(wrap_lib));
+    unset _active_libshell _cknn
+}
+profs_libs () 
+{ 
+    : Adds Profile, local Bin to the List;
+    : related: un{refreshed,source,tidied};
+    : lib: programlib;
+    : date: 2023-07-22;
+    : date: 2025-04-28;
+    debug ENTRY $# $@
+    get_profs
+    pause;
+    get_profs "$(mjm)/bin"
+    pause
+    libnames ls | grep lib$ | awk -v dir="$(libfun)" '{ printf "%s/%s\n", dir, $1 }'
+}
+unset allprofs
+localbin () 
+{ 
+    : smart directory;
+    : mfg: smart_dir;
+    : date: 2024-07-30;
+    : date: 2024-09-12;
+    : date: 2024-09-14;
+    indir "$(mjm)/bin" ls | grep .*profile
+}
+get_profs () 
+{ 
+    : profiles in First Arg directory;
+    set -- ${1:-~};
+    debug ENTRY $# $@;
+    indir "$*" ls -a | grep .*profile$ | awk -v dir="$1" '{ printf "%s/%s\n", dir, $1 }'
+}
+backup_files () 
+{ 
+    : only immediate backups;
+    : gratuitiously create _and_ remove if empty!;
+    : date: 2023-10-21;
+    : date: 2025-05-20;
+    mkdir -p .bak;
+    comm -12 <(ls -a) <(indir .bak ls -a)
+}
+civility () 
+{ 
+    : Forni and GWK;
+    : textfile: from the Band;
+    : date: 2023-08-12;
+    : date: 2024-06-19;
+    : date: 2024-06-29;
+    : date: 2024-10-02;
+    local rules="$(mjm)/lib/txt/civilityrules.txt";
+    cat "$rules" | awk -v today=$(date +%j) -v rnum=${RANDOM} -f "$(mjm)/lib/awk/civility.awk"
+}
+cloudlib () 
+{ 
+    : Library Maintenance in the Cloud;
+    ${*:-echo} "$(icloud)/mjm/bashlibs/lib/fun"
+}
+count_fields () 
+{ 
+    : count backup directory depth;
+    : now at Three thru N, defaulting to DFG_DB;
+    : lib: cmdlinelib;
+    :;
+    function fields_fm () 
+    { 
+        debug ENTRY $# $@;
+        awk -F/ '
+
+        {
+	    for (i = 3; i < NF; i++ )
+	    {
+	        printf "%s ", $i;
+	    }
+	    printf "\n";
+        }
+    ';
+        debug EXIT. $# $@
+    };
+    debug ENTRY $# $@;
+    local dir="${1:-$(dfg_db)}";
+    indir $dir find . -type f | grep .bak | fields_fm | awk '
+
+        { print NF }
+    
+   ' | sort -n | uniq -c;
+    debug EXIT. $# $@
+}
+devdir_dir () 
+{ 
+    : the data directory;
+    : lib: utillib;
+    : date: 2025-03-03;
+    : date: 2025-08-11;
+    ${*:-echo} "$(icloud)/mjm/devdir"
+}
+dfg () 
+{ 
+    : Directory Function Grep;
+    : related: f2file dfg .;
+    : example: 'dfg | row "fun !~ /dfg/" | justify';
+    : lesson: quoted examples need to have SINGLE quotes?!;
+    : date: 2020-10-03;
+    : date: 2021-08-02;
+    : lesson: dont PAUSE in here;
+    : date: 2022-05-14;
+    : date: 2022-10-03;
+    debug ENTRY $*;
+    local dir="$(dfg_db)";
+    debug dir: "$dir";
+    : debug PWD $PWD pause;
+    : only files -- functions -- in library directories;
+    find "$dir"/*/* -type d 1>&2;
+    pause;
+    dfg_rd "${1:-dfg}" | column | sorttable fun
+}
+dfg_db () 
+{ 
+    : where the DFG data is kept,;
+    : a directory of functionlib directories,;
+    : each with a file for each function.;
+    : date: 2022-01-02;
+    : date: 2025-08-11;
+    debug ENTRY $*;
+    ${*:-echo} "$(icloud)/mjm/lib/dir"
+}
+dfg_mjm () 
+{ 
+    : DFG subordinate to MJM;
+    ${*-echo} "$(dfg_db)" | sed 's/.*\/mjm/./'
+}
+dfg_rd () 
+{ 
+    : search in DIR and Dot.DIR files for the argument;
+    : date: 2022-10-03;
+    : date: 2025-04-23;
+    : date: 2025-05-16;
+    debug ENTRY $*;
+    function _dfgs1 () 
+    { 
+        : preserve 2 Tabs, iconify the others;
+        sed '
+            s/\//	/;  # separate library / functions
+            s/: */	/;  # TAB for grep.s colon separator
+            s/	/<TAB>/g;   # iconify ALL tabs
+    	    s/<TAB>/	/;  # restore 1st Tab
+    	    s/<TAB>/	/;  # restore 2nd Tab	
+        ' $*
+    };
+    function _dfg_rd () 
+    { 
+        : Yet Another use of the _underscore function;
+        debug pwd: $PWD;
+        pause;
+        dfg_fields rdb_hdr;
+        debug $(dfg_fields rdb_hdr);
+        pause;
+        grep -i "$1" ~/.*profile/* */* | lft 00 |
+    ... _dfgs1 | lft 01
+    };
+    indir "$(dfg_db)" _dfg_rd "$1"
+}
+dfg_unique () 
+{ 
+    : unique functions, incl retired;
+    : example: data file, history file;
+    : date: 2025-04-19;
+    : date: 2025-04-27;
+    local dir file name hry;
+    name=fununique.rdb;
+    dir=$(needir $(dfg_db)/.lib);
+    hry=$(needir $dir/.hry)/${name%.*}.nxt;
+    file=$dir/$name;
+    debug dir: $dir;
+    debug file: $file;
+    debug hry: $hry;
+    debug IS hry an NXT file?;
+    pause;
+    dfg . | row '!p[fun]++' > $file;
+    debug $(wc $file $hry);
+    pause;
+    indir $dir rdupdate $name
+}
+dup_funs () 
+{ 
+    : identify dupliact functions in the Function Dataase, e.g. dfg_db;
+    : date: 2025-05-05;
+    : date: 2025-05-10 - update awk GT 1 filter;
+    function _dup_funs () 
+    { 
+        set ~/tmp/$(myname).{txt,out};
+        debug SET $# $*;
+        pause;
+        ls */* | tee $1 | awk -F/ '{ print $2 }' | sort | uniq -c | awk '$1 > 1 { printf "/%s$\n", $2 }' > $2;
+        [[ -s $2 ]] && { 
+            debug wc: $(wc $*);
+            debug 1: $1 $(cat $1 | wc);
+            debug 2: $2 $(cat $2 | wc);
+            debug grep -f $2 $1;
+            pause;
+            grep -f $2 $1
+        }
+    };
+    indir "$(dfg_db)" _dup_funs
+}
+duplicated_function () 
+{ 
+    : ??;
+    : lib: cmdlinelib;
+    : date: 2023-08-12;
+    ssf $1 "$(indir "$(dfg_db)" echo */$1)" | sed s=/$1==g
+}
+f2file () 
+{ 
+    : copy a function library or Dot Profile into files for each function;
+    : the destination directory is an optional 2nd argument;
+    : the default directory id the DFG_DB, the Function Database;
+    : lib: utillib;
+    : date: 2023-07-22;
+    : date: 2024-06-28;
+    debug ENTRY $PwD $# $@;
+    :;
+    if_missingargs 1 $@ && return 1;
+    report_notexecutable $1 && return 2;
+    report_notfile $1 && return 1;
+    local file=$1;
+    local name=$(basename $file);
+    local dfdr="${2:-$(dfg_db echo)}/$name";
+    local err=$PWD/$(needir .err)/f2file.$name;
+    debug file: $file;
+    debug name: $name;
+    debug err: $err;
+    debug dfdr: $dfdr;
+    pause;
+    :;
+    local awkf="$(mjm)/lib/awk/f2file.awk";
+    [[ -d $dfdr ]] && { 
+        rm -fr $dfdr/*
+    };
+    mkdir -p $dfdr;
+    debug cat $file PIPE awk -v dir=$dfdr -v quote="'" -f $awkf TOerr $err;
+    pause;
+    cat $file | awk -v dir=$dfdr -v quote="'" -f $awkf 2> $err;
+    indir $dfdr pwd
+}
+fun_history () 
+{ 
+    : function arguments modification history, on Storing in Function Data Base;
+    : related: dfg_refresh unrefreshed;
+    : idiom: pushd, cdx, pushd;
+    : alias: topNN;
+    : date: 2024-01-07;
+    : date: 2024-09-29;
+    : date: 2025-02-05;
+    ignore pushd $(dfg_db);
+    ignore cdx;
+    find . -type f | grep ${@:-fun_} | xargs ls -ltd | awk -F/ "!p[\$NF]++";
+    ignore pushd
+}
+fun_ncopies () 
+{ 
+    : make separate TMP copies now a BAKup tree;
+    : date: 2023-09-30;
+    report_notfunction $1 && return 1;
+    mkdir .tmp;
+    rm -f .tmp/$1.*;
+    local file=.copies.sh;
+    find "$(dfg_db)" $(libfun) -type f -name $1 | xargs ls -al | awk -v fun=$1 '
+ 
+    !p[$5]++   {
+            # printf "%s\t%d\n",  $NF, $5
+	    printf "ln -f %s .tmp/%s.%d\n", $NF, fun, $5
+        }
+    ' | tee $file;
+    chmod +x $file;
+    comment source $file
+}
+function_history () 
+{ 
+    : from the Function Database;
+    : date: 2024-10-10;
+    find "$(dfg_db)" -name "${1:-dfg_db}" | xargs ls -alr
+}
+functions_home () 
+{ 
+    : from the function Data Base, list the homr library and function;
+    : also Tail Pipe sort -k2 by Function;
+    : lesson: gmv Grep Mulit-minus V;
+    : lib: cmdlinelib;
+    : date: 2025-02-10;
+    ignore pushd "$(dfg_db)";
+    find . | one_backup | awk -F/ '
+
+            length($NF) > 1 { printf "%s   \t%s\n", $2, $4 }
+    ';
+    comment ' $      !!  2>/dev/null | sort -k2 ';
+    ignore cdx;
+    ignore pushd
+}
+funload () 
+{ 
+    : load local and global functions;
+    : date: 2025-08-24;
+    for file in bashlibs/lib/fun/*;
+    do
+        source $file;
+        set | functions | wc;
+    done;
+    for file in bin/*lib;
+    do
+        source $file;
+        set | functions | wc;
+    done
+}
+indir () 
+{ 
+    : run the commands IN the first DIRectory argument;
+    : warning -- do not create functions in a sub-shell;
+    : lesson: the whole idea behind the Sub-shell;
+    : todo: fix all _notdirectory calls;
+    : date: 2023-07-22;
+    : date: 2025-04-27;
+    : date: 2025-05-14;
+    : date: 2025-06-08;
+    debug ENTRY $# "$@";
+    report_notdirectory "$1" && return 1;
+    ( pushd "$1" > /dev/null;
+    debug EVAL ${@:2};
+    eval ${@:2} );
+    debug EXIT. $# "$@"
+}
+libnames () 
+{ 
+    : Active, Public libraries No profiles;
+    : related: allprofs;
+    : todo: anticipate moving function libraries to files with lib SUFFIX;
+    : lib: programlib;
+    : date: 2023-07-22;
+    : date: 2025-04-27;
+    local lib="$(libfun)";
+    debug lib: "$lib";
+    pause;
+    indir "$lib" pwd;
+    indir "$lib" ls '*lib';
+    return;
+    debug libs $libs;
+    pause;
+    ${@:-echo} $libs
+}
+listtotable () 
+{ 
+    : reads stdin or named files in LIST format, converting to TABLE;
+    : to relieve a possible non-EMPTY Line at the END of the file, added flushed;
+    : an awkism "!flushed" is not the same as "flushed > 0";
+    : related: lib_faulty;
+    : todo: functions totable and tolist, take either, convert only as required;
+    : todo: move to an awk file, defense against lib_faulty;
+    : lib: rdlib;
+    : 2020-09-06: added flushed. still needs a separate test .;
+    : date: 2016-06-09;
+    : date: 2024-04-14;
+    : date: 2024-06-19;
+    awk -f "$(mjm)/lib/awk/listtotable.awk" "$*" | awk NF
+}
+qf () 
+{ 
+    libfun pushd;
+    for file in *lib;
+    do
+        source $file;
+        printf "%s\t%5d\n" $file $(set | functions | wc -l);
+    done
+}
+rand_func () 
+{ 
+    : display the definition of a random shell function;
+    : condition the data, only 2 tab-separated fields;
+    : todo: write an n_tabs function;
+    : lib: programlib;
+    : date: 2024-09-14;
+    : date: 2024-11-30;
+    : date: 2025-02-27;
+    debug ENTRY $# $@;
+    local func_name;
+    func_name=$(random_function);
+    debug func_name: $func_name;
+    :;
+    local func_dir;
+    func_dir="$(mjm)/lib/dir";
+    debug func_dir: $func_dir;
+    pause;
+    :;
+    find "$func_dir"/* -type f -name "$func_name";
+    pause;
+    echo =====;
+    type -a "$func_name";
+    echo ===== function used ====;
+    fuse $func_name | one_tab | top_rdbhdr name context | justify;
+    echo ===== function home ====;
+    whsrc $func_name;
+    : "locate function file name";
+    : "local func_dirs";
+    : "func_dirs -  a list of dirs containg func definitions"
+}
+refreshed () 
+{ 
+    : names of the REFRESH locks;
+    : date: 2023-09-05;
+    : date: 2024-08-12;
+    ${@:-echo} "$(dfg_db)/*/.refreshed"
+}
+refreshedlib () 
+{ 
+    : names of a REFRESH locks;
+    : date: 2023-09-05;
+    : date: 2024-08-12;
+    case $1 in 
+        *lib | *_profile)
+            lib=$(basename $1);
+            shift
+        ;;
+        *)
+            report_notfile $1 && return 1
+        ;;
+    esac;
+    ${@:-echo} "$(dfg_db)/$lib/.refreshed"
+}
+txt_libshell () 
+{ 
+    : link the data base of functions to libshell;
+    : todo: "the including syntax [name](../lib/shell/name.txt)";
+    : lib: cmdlinelib;
+    : date: 2025-05-21;
+    function _tolibshell () 
+    { 
+        : each one;
+        ln -f "$(dfg_db)/*/$1" "$dir/$1.txt"
+    };
+    local dir="$(Shell)/lib/shell/";
+    rm -f "$dir"/*;
+    ls "$dir" | wc;
+    pause;
+    foreach _tolibshell $(functions $(libprofs));
+    ls -lrt | wc;
+    pwd
+}
+unrefreshed () 
+{ 
+    : the unrefreshed librarys;
+    : related: unsourced;
+    : todo: indir $(libfun) newme libaries_profiles;
+    : date: 2023-08-06;
+    : date: 2025-04-28;
+    debug ENTRY $PWD $# $@;
+    local libs="${*:-$(profs_libs)"};
+    debug libs: $libs;
+    pause;
+    for lib in $libs;
+    do
+        local refmark=$(lib)/dir/$(basename $lib)/.refreshed;
+        [[ -f $refmark ]] || touch -t 197001010101 $refmark;
+        set -- $refmark $lib;
+        debug $(ls -l $1);
+        debug $(ls -l $2);
+        pause;
+        newest $refmark $lib 2> /dev/null && continue;
+        debug UPDATE $lib;
+        pause;
+        echo $lib;
+    done
+}
+whf () 
+{ 
+    : Where is the Function in its library?;
+    : date: 2023-08-07;
+    : date: 2024-09-29;
+    debug ENTRY $# $@;
+    pause;
+    ignore pushd $(dfg_db);
+    ignore cdx;
+    local fun=$1;
+    set -- */$fun;
+    debug SET a: $# $@;
+    [[ $# -gt 1 ]] && { 
+        echo $fun $@ >> $(marty3)/lib/err/whf.err
+    };
+    [[ -f $1 ]] && { 
+        which $(dirname $1)
+    };
+    set -- $1 $(which $(dirname $1));
+    ignore pushd
+}
+whlib () 
+{ 
+    : WHere is the SouRCe of the function, including Retired;
+    : lib: cmdlinelib;
+    : date: 2023-07-10;
+    : date: 2025-05-05 added Retired;
+    debug ENTRY: $*;
+    local arg=$1;
+    grep -l "^$arg [(][)]" "$(profs_libs)" $(retired)
+}
+whsrc () 
+{ 
+    : obsolete: in behalf of whlib;
+    : date: 2024-08-03;
+    whlib $1
+}
+wrap_functions () 
+{ 
+    : collect functions from dfg_db to bashlibs/lib to format in Doc;
+    : lib: cmdlinelib;
+    : date: 2025-03-20;
+    : date: 2025-03-23;
+    local shflib=$(wrap_lib);
+    rm -fr $shflib/*;
+    indir "$(dfg_db)";
+    : collect all the backed-up functions in Wrap_LIB;
+    ln -f $(find . -type f | grep .bak/ | grep -v .bak/.bak) $shflib;
+    wrap_lib cd;
+    : remove the Retired Functions;
+    rm -f $(comm -12 <(ls) <(functions $(retired) | tpl | sort));
+    ignore cdx;
+    : count the active functions;
+    comment $(ls | wc);
+    pickd
+}
+wrapup () 
+{ 
+    : updated libraries, profiles thru to database;
+    : lib: cmdlinelib;
+    : date: 2023-08-13;
+    : date: 2025-05-05;
+    debug "Turn Pause a/o Debug OFF? ";
+    pause;
+    comment -- About to tidy, source, the un{tidi,sourc}ed;
+    tidy_untidied;
+    source_unsourced;
+    comment -- About to chmod +x, and dfg_refresh UNREFRESHED;
+    chmod +x "$(profs_libs)";
+    foreach dfg_refresh $(unrefreshed);
+    comment -- --------------------------- About to DUP_FUNS;
+    dup_funs;
+    comment -- ------------ About to save Active for Bashlibs;
+    active_libshell;
+    comment -- ------------ About to compare LIBSwith RETIRED;
+    libs_withretired | top_rdbhdr count library
+}
+unset xx
+random_alias () 
+{ 
+    set -- {$1:-5};
+    echo;
+    while [[ $# -gt 0 ]]; do
+        one_alias;
+        shift;
+    done
+}
+one_alias () 
+{ 
+    alias | awk -v na=$(rand_alias) 'NR == na { print }'
+}
+rand_alias () 
+{ 
+    rand_arg $(alias_names | pr -tn)
+}
+AcademicPaper () 
+{ 
+    : smart directory;
+    : mfg: smart_dir;
+    : list: B;
+    : date: 2024-02-05;
+    ${@:-echo} "/Users/martymcgowan/Documents/AcademicPaper"
+}
+Documents () 
+{ 
+    : smart directory;
+    : mfg: smart_dir;
+    : date: 2025-03-06;
+    ${@:-echo} "/Users/martymcgowan/Documents"
+}
+Shell () 
+{ 
+    : smart directory;
+    : mfg: smart_dir;
+    : date: 2025-04-09;
+    ${@:-echo} "/Users/martymcgowan/Library/Mobile Documents/iCloud~md~obsidian/Documents/Shell"
+}
+family () 
+{ 
+    : smart directory;
+    : mfg: smart_dir;
+    : date: 2025-07-06;
+    ${@:-echo} "/Users/martymcgowan/Library/Mobile Documents/com~apple~CloudDocs/mcorg/pubs/family"
+}
+fmNotes () 
+{ 
+    : smart directory;
+    : mfg: smart_dir;
+    : date: 2025-06-02;
+    ${@:-echo} "/Users/martymcgowan/Library/Mobile Documents/com~apple~CloudDocs/Downloads/Obsidian/fmNotes"
+}
+html_sync () 
+{ 
+    : sync the Cloud-active HMTL with ftphome;
+    : date: 2024-05-24;
+    : date: 2024-05-27;
+    : date: 2024-06-18;
+    : date: 2024-08-11;
+    : date: 2024-11-12;
+    Documents;
+    set {LastThings,TTGL,shelf,Quine3,index}.html;
+    debug args: $*;
+    pwd;
+    pause;
+    ln -f $* $(ftphome) 2> /dev/null;
+    cdx;
+    clear;
+    echo;
+    ftphome pushd;
+    echo;
+    pwd;
+    ls -alrt ${*:-.}
+}
+icloud () 
+{ 
+    : Documents in the Cloud;
+    debug ENTRY $# @;
+    ${@:-echo} "$(mobiledocs)/com~apple~CloudDocs"
+}
+m3 () 
+{ 
+    : smart directory;
+    : mfg: smart_dir;
+    : date: 2025-07-06;
+    ${@:-echo} "$(mcorg)/m3"
+}
+mcorg () 
+{ 
+    : smart directory;
+    : mfg: smart_dir;
+    : date: 2025-07-06;
+    ${@:-echo} "$(mobiledocs)/com~apple~CloudDocs/mcorg"
+}
+obsidian () 
+{ 
+    : smart directory;
+    : todo: relocate to more appropriate directory;
+    : mfg: smart_dir;
+    : date: 2025-04-06;
+    ${@:-echo} "$(mobiledocs)/com~apple~CloudDocs/Downloads/Obsidian"
+}
+quine () 
+{ 
+    : go to the Quine hub;
+    : caution: do NOT quote the Document name;
+    : date: 2024-02-25;
+    : date: 2025-01-24;
+    ${*:-echo} "$(quinedoc)"
+}
+marty3wiki () 
+{ 
+    : current Marty3, Friends, Family, Community;
+    ${*:-echo} "$(quinedoc)/index.html"
+}
+quinedoc () 
+{ 
+    : marty3wiki;
+    ${*:-echo} "$(mobiledocs)/iCloud~com~cjhunt~quine/Documents"
+}
+mobiledocs () 
+{ 
+    : the title says it all;
+    ${*:-echo} "/Users/martymcgowan/Library/Mobile Documents"
+}
+todays_isodate () 
+{ 
+    : in ceiu formats, computer european, iso {default}, US, YYYYmmdd: 8;
+    : date: 2020-09-19;
+    set -- ${1:--i};
+    case $1 in 
+        -c)
+            date +%y%m%d
+        ;;
+        -e)
+            date +%d/%m/%y
+        ;;
+        -i)
+            date +%F
+        ;;
+        -u)
+            date +%x
+        ;;
+        -8)
+            date +%Y%m%d
+        ;;
+        *)
+            $(myname)
+        ;;
+    esac
+}
+replace_isodate () 
+{ 
+    : replace EVERY ISO date Tag with today.s date;
+    sed "/date:/s/20[0-9][0-9]-[01][0-9]-[0-3][0-9]/$(todays_isodate)/"
+}
+libs_withretired () 
+{ 
+    : lists LIBas with any retired functions;
+    : the special-purpose _common function captures any candidate functions,;
+    : greatly shorting the process;
+    : date: 2023-08-24;
+    : date: 2024-06-29;
+    : date: 2024-11-29;
+    : date: 2025-04-28;
+    function _common () 
+    { 
+        comm -12 <(functions $(retired) | sort) <(functions "$(profs_libs)" | sort)
+    };
+    set -- $(_common);
+    debug SET $# $*;
+    pause;
+    for f in "$@";
+    do
+        ssf $f $(whlib $f);
+    done | nf gt 1 | tee ~/tmp/$(myname).txt | field 2 | sort -u;
+    unset _common
+}
+unrefreshed () 
+{ 
+    : the unrefreshed librarys;
+    : related: unsourced;
+    : todo: indir $(libfun) newme libaries_profiles;
+    : date: 2023-08-06;
+    : date: 2025-04-28;
+    debug ENTRY $PWD $# $@;
+    local libs=${*:-"$(profs_libs)"};
+    debug libs: $libs;
+    pause;
+    for lib in $libs;
+    do
+        local refmark=$(lib)/dir/$(basename $lib)/.refreshed;
+        [[ -f $refmark ]] || touch -t 197001010101 $refmark;
+        set -- $refmark $lib;
+        debug $(ls -l $1);
+        debug $(ls -l $2);
+        pause;
+        newest $refmark $lib 2> /dev/null && continue;
+        debug UPDATE $lib;
+        pause;
+        echo $lib;
+    done
+}
+unsourced () 
+{ 
+    : those which havent been SOURCEd recenlty;
+    : related: source_unsourced;
+    : date: 2023-07-12;
+    : date: 2024-08-05;
+    : date: 2025-04-28;
+    ls -t .sourced "$(profs_libs)" 2> /dev/null | awk '
+
+        $1 ~ /^.sourced$/ { exit };
+	                  { print }
+    '
+}
+untidied () 
+{ 
+    : names of the untidied libraries;
+    : date: 2023-08-06;
+    : date: 2024-08-05;
+    : date: 2025-04-28;
+    ls -t .tidied "$(profs_libs)" 2> /dev/null | awk '
+
+        $1 ~ /^.tidied$/ { exit };
+	                 { print }
+    '
+}
+upgrade_libheader () 
+{ 
+    : " This is the upgradelib Function Library Comment Header";
+    : "Copyright 2025, Marty McGowwan @ Shell Functions";
+    : date: 2025-08-31;
+    :;
+    : " This program is free software: you can redistribute it and/or modify";
+    : "it under the terms of the GNU General Public License as published by";
+    : "the Free Software Foundation, either version 3 of the License, or";
+    : "(at your option) any later version.";
+    :;
+    : " This program is distributed in the hope that it will be useful,";
+    : "but WITHOUT ANY WARRANTY; without even the implied warranty of";
+    : "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the";
+    : "GNU General Public License for more details.";
+    :;
+    : " You should have received a copy of the GNU General Public License";
+    : "along with this program.  If not, see <http://www.gnu.org/licenses/>.";
+    :;
+    : date: 2025-08-31 - even libheaders need a date;
+    :;
+    "name               	abstract                                                                 ";
+    "----               	--------                                                                 ";
+    "function_libheader 	template goes here                                                       ";
+    "addresses          	personal, family address book                                            ";
+    "archive_tidy       	assure Library.s libheader is first                                      ";
+    "active_libshell    	collect functions from dfg_db to bashlibs/lib to format in Doc           ";
+    "allprofs           	Adds Profile, local Bin to the List                                      ";
+    "backup_files       	only immediate backups                                                   ";
+    "civility           	Forni and GWK                                                            ";
+    "cloudlib           	Library Maintenance in the Cloud                                         ";
+    "count_fields       	count backup directory depth                                             ";
+    "devdir_dir         	the data directory                                                       ";
+    "dfg                	Directory Function Grep                                                  ";
+    "dfg_db             	where the DFG data is kept,                                              ";
+    "dfg_mjm            	DFG subordinate to MJM                                                   ";
+    "dfg_rd             	search in DIR and Dot.DIR files for the argument                         ";
+    "dfg_unique         	unique functions, incl retired                                           ";
+    "dup_funs           	identify dupliact functions in the Function Dataase, e.g. dfg_db         ";
+    "duplicated_function	??                                                                       ";
+    "f2file             	copy a function library or Dot Profile into files for each function      ";
+    "fun_callgraf       	produce a Call Graph for a Function                                      ";
+    "fun_history        	function arguments modification history, on Storing in Function Data Base";
+    "fun_ncopies        	make separate TMP copies now a BAKup tree                                ";
+    "function_history   	from the Function Database                                               ";
+    "functions_home     	from the function Data Base, list the homr library and function          ";
+    "funload            	load local and global functions                                          ";
+    "indir              	run the commands IN the first DIRectory argument                         ";
+    "libnames           	Active, Public libraries No profiles                                     ";
+    "listtotable        	reads stdin or named files in LIST format, converting to TABLE           ";
+    "localbin           	smart directory                                                          ";
+    "qf                 	                                                                         ";
+    "rand_func          	display the definition of a random shell function                        ";
+    "refreshed          	names of the REFRESH locks                                               ";
+    "refreshedlib       	names of a REFRESH locks                                                 ";
+    "txt_libshell       	link the data base of functions to libshell                              ";
+    "unrefreshed        	the unrefreshed librarys                                                 ";
+    "whf                	Where is the Function in its library?                                    ";
+    "whlib              	WHere is the SouRCe of the function, including Retired                   ";
+    "whsrc              	                                                                         ";
+    "wrap_functions     	collect functions from dfg_db to bashlibs/lib to format in Doc           ";
+    "wrapup             	updated libraries, profiles thru to database                             ";
+    "xx                 	                                                                         ";
+    "random_alias       	                                                                         ";
+    "one_alias          	                                                                         ";
+    "rand_alias         	                                                                         ";
+    "AcademicPaper      	smart directory                                                          ";
+    "Documents          	smart directory                                                          ";
+    "Shell              	smart directory                                                          ";
+    "family             	smart directory                                                          ";
+    "fmNotes            	smart directory                                                          ";
+    "html_sync          	sync the Cloud-active HMTL with ftphome                                  ";
+    "icloud             	Documents in the Cloud                                                   ";
+    "m3                 	smart directory                                                          ";
+    "mcorg              	smart directory                                                          ";
+    "obsidian           	smart directory                                                          ";
+    "quine              	go to the Quine hub                                                      ";
+    "marty3wiki         	current Marty3, Friends, Family, Community                               ";
+    "quinedoc           	marty3wiki                                                               ";
+    "mobiledocs         	the title says it all                                                    ";
+    "libtxt             	where text, templates are stored                                         ";
+    "todays_isodate     	in ceiu formats, computer european, iso {default}, US, YYYYmmdd: 8       ";
+    "replace_isodate    	replace EVERY ISO date Tag with today.s date                             "
+}
+whlib () 
+{ 
+    : WHere is the SouRCe of the function, including Retired;
+    : lib: cmdlinelib;
+    : date: 2023-07-10;
+    : date: 2025-05-05 added Retired;
+    debug ENTRY: $*;
+    local arg=$1;
+    grep -l "^$arg [(][)]" "$(profs_libs)" $(retired)
+}
+wrapup () 
+{ 
+    : updated libraries, profiles thru to database;
+    : lib: cmdlinelib;
+    : date: 2023-08-13;
+    : date: 2025-05-05;
+    debug "Turn Pause a/o Debug OFF? ";
+    pause;
+    comment -- About to tidy, source, the un{tidi,sourc}ed;
+    tidy_untidied;
+    source_unsourced;
+    comment -- About to chmod +x, and dfg_refresh UNREFRESHED;
+    chmod +x "$(profs_libs)";
+    foreach dfg_refresh $(unrefreshed);
+    comment -- --------------------------- About to DUP_FUNS;
+    dup_funs;
+    comment -- ------------ About to save Active for Bashlibs;
+    active_libshell;
+    comment -- ------------ About to compare LIBSwith RETIRED;
+    libs_withretired | top_rdbhdr count library
+}
+fun_callgraf () 
+{ 
+    : produce a Call Graph for listed Function;
+    : fix: remove SED in last statememt, can PY fix an un-needed leading space?
+    : date: 2023-07-22;
+    debug ENTRY $# $
+    local inp=~/tmp/call_$1.inp
+    local out=~/tmp/call_$1.orgN
+    local err=~/tmp/call_$1.err
+    local cmd=$(which callgraph.py)
+    debug Files: $inp, $out, $err, $cmd; pause
+    report_notargcount 1 $# && return 1;
+    debug ENTER app_funcalls; pause
+    foreach  app_funcall $* > $inp
+    debug Files: $inp, $out, $err, $cmd; pause
+    python3 $cmd  < $inp 2> $err | sed 's/^ //' | tee $out
+    comment output: $out
+}
+
+app_funcalls () 
+    {
+        debug ENTER $# $@; pause
+        app_funuses $1 | awk "
+            \$1 ~ /^$1$/ { next }; 
+	    	         { print \"$1\", \$1 }
+        "
+    };
+retired () 
+{ 
+    : where all old functions go to be remembered;
+    : date: 2024-06-29;
+    ${*:-echo} $(hibernate)/retiredlib
+}
+libfun () 
+{ 
+    : home again, thx Syncthing;
+    : date: 2025-09-01;
+    ${*:-echo} $(bashlibs)/lib/fun
+}
+fun_words () 
+{ 
+    : extracts symbols, here files, returns possible function names from functions;
+    : date: 2023-07-22;
+    debug ENTRY $# $@; pause;
+    declare -f $* | tee ~/tmp/fun_words.in | awk -v prt=1 '
+
+        $1 ~ /^:$/           { next; }
+	$2 ~ /<<EOF$/        { prt = 0 };
+	/, /                 { print $0 " TODO: Work this line" > "/dev/stderr" }
+	!prt  && $1 ~ /\047/ { prt = 1 }
+	NF && prt            { print }
+	/awk.*\047/          { prt = 0 }
+	$1 ~ /^EOF$/         { prt = 1}
+
+    ' | tee ~/tmp/fun_words.mid |sed '
+
+        s/[(=/)]/ & /g
+
+    ' | tee ~/tmp/fun_words.out | tr -s ' \t' '\n' | grep '^[a-zA-Z0-9_]' | sed 's/;$//' | sort -u
+}
+
+fold_pipedots () 
+{ 
+    : RE folds line with PIPE followed by ... s;
+    : the RE allows zero or more spaces after the Pipe Symbol;
+    : .. a Dot followed by zero or more Dots or Spaces,;
+    : .. closed by a space, which separates .s from the command;
+    : also, fold --.arg arguments to a shell command;
+    : related: multisymbol;
+    : date: 2025-02-02;
+    : date: 2021-04-14;
+    : date: 2022-09-24;
+    : date: 2025-06-02;
+    debug ENTRY $# $*;
+    pause;
+    sed '
+        s/| *\([.][. ]*\) /|\
+    \1 /g; s/ \(--[a-zA-Z][a-zA-Z]*\)/ \\\
+        \1/g';
+    debug EXIT: $# $@;
+    pause
+}
+fold_pipe () 
+{ 
+    : see the fold ... to next line;
+    awk '{ print; gsub("[.][.][.]",""); }' $@
+
+}
+pipeA_test () 
+{ 
+    cat file | ... column b |    ... row 'c ~ /name/'
+}
+old_backup () 
+{ 
+    : list backups older than 2nd prior version;
+    find .ver .bak -name ${1:-upgradelib} | xargs ls -t | awk '$1 ~ /ver/ { vercount ++ }  $1 ~ /.bak/ && vercount > 1 { print }'
+}
+firstpass () 
+{ 
+    find . -type f -name $1 | xargs ls -lrt
+}
+secondpass () 
+{ 
+    find . -type f -name $1 | xargs ls -lrt | grep .bak/.bak/.bak/.bak
+}
+mjm () 
+{ 
+    : smart directory;
+    : mfg: smart_dir;
+    : date: 2025-08-11;
+    debug ENTRY $# @;
+    ${@:-echo} "$(icloud)/mjm"
+}

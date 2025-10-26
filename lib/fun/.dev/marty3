@@ -1,0 +1,9 @@
+marty3 () 
+{ 
+    : my working Home in preference to HOME;
+    : date: 2023-07-27;
+    : date: 2023-08-07;
+    : date: 2023-09-29;
+    : date: 2024-09-13;
+    ${*:-echo} $APP_HOME
+}

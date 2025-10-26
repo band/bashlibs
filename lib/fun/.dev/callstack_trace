@@ -1,0 +1,27 @@
+callstack_trace () 
+{ 
+    : traces fhe function callstack;
+    : date: 2017-06-04;
+    : date: 2017-07-18;
+    : help: shows callstack of calling function;
+    : date: 2018-02-16;
+    : date: 2024-09-21;
+    { 
+        isNotNull "$1" && isHelp "$1"
+    } && { 
+        helpShow 'callStack
+    Diagnostics regarding where the call to this function came from';
+        return
+    };
+    local T="${T}  ";
+    local STACK=;
+    i=${#FUNCNAME[@]};
+    ((--i));
+    printf "${T}Function call stack ( command.function() ) ...\n" 1>&2;
+    while (( $i >= 0 )); do
+        T="${T}  ";
+        STACK+="${T} $i: ${BASH_SOURCE[$i]}.${FUNCNAME[$i]}()\n";
+        ((--i));
+    done;
+    printf "$STACK" 1>&2
+}

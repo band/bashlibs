@@ -1,0 +1,10 @@
+report_notsizegtzero () 
+{ 
+    : report the argument is not a File;
+    : date: 2018-02-16;
+    : date: 2022-01-08;
+    : date: 2025-05-05;
+    [[ -s $1 ]] && return 1;
+    report_usage $1 "ISN'T" greater than zero length;
+    declare -f $(myname 2) 1>&2
+}

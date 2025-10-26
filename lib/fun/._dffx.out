@@ -1,0 +1,6 @@
+list_list () 
+{ 
+    : mfg by list_create;
+    : date: 2025-09-03;
+    ${@:-echo}
+}

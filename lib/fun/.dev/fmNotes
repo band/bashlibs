@@ -1,0 +1,7 @@
+fmNotes () 
+{ 
+    : smart directory;
+    : mfg: smart_dir;
+    : date: 2025-06-02;
+    ${@:-echo} "/Users/martymcgowan/Library/Mobile Documents/com~apple~CloudDocs/Downloads/Obsidian/fmNotes"
+}

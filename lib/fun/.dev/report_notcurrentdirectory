@@ -1,0 +1,9 @@
+report_notcurrentdirectory () 
+{ 
+    : report the argument is not the Current Directory;
+    : date: 2018-02-16;
+    : date: 2018-10-09;
+    : date: 2019-11-23;
+    [[ "$PWD" == "$1" ]] && return 1;
+    report_usage $1 "ISN'T" $PWD ${@:2}
+}

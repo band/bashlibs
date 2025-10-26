@@ -1,0 +1,36 @@
+remvds () 
+{ 
+    : Remove Duplicates on Directory Stack;
+    : date: 2023-07-22;
+    : date: 2023-12-18;
+    function _remvds () 
+    { 
+        awk '
+    	 !p[$0]++ {
+            gsub(/\\*  */,"\\ ")
+	    line[nr++] = $0
+	    }
+        END {
+	      # pre-decrement since post increment
+	      # GT 0 since dirs -c leaves the 0th directory
+	      while(--nr > 0) print line[nr]
+	    }
+    '
+    };
+    function _esc () 
+    { 
+        awk '
+        { printf "pushd %s > /dev/null; pushd >/dev/null\n", $0 }
+    END { printf "dirs\n" }	
+    '
+    };
+    [[ -d ~/tmp ]] || mkdir ~/tmp;
+    set -- ~/tmp/.{dirs,source};
+    debug $@;
+    pause;
+    dirs -p -l | _remvds | tee $1 | _esc > $2;
+    dirs -c > /dev/null;
+    source $2;
+    unset _{remvds,esc};
+    debug rm -f $1 $2
+}

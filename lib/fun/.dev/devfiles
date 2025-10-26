@@ -1,0 +1,26 @@
+devfiles () 
+{ 
+    : One Function to One File in DEV_DIR, default = dot DEV;
+    : user is PUSHD to the DEV_DIR, and left there;
+    : IS not used to avoid extra function dip;
+    : related: .dev;
+    : date: 2023-09-08;
+    : date: 2023-09-29;
+    : ${DEV_DIR:=$(libfun)/.dev};
+    : date: 2023-10-05;
+    : date: 2023-12-18;
+    : date: 2024-03-15;
+    : date: 2024-06-29;
+    debug DEV_DIR ${DEV_DIR};
+    pause;
+    debug ENTRY $# $@;
+    ignore pushd $(needir ${DEV_DIR});
+    remvds > /dev/null;
+    debug isfunction $(isfunction $1 && echo $1);
+    pause;
+    isfunction $1 && { 
+        declare -f $1 | tee ${DEV_DIR}/$1;
+        chmod +x ${DEV_DIR}/$1
+    };
+    recursive $@
+}

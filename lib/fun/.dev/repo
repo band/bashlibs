@@ -1,0 +1,28 @@
+repo () 
+{ 
+    : is Now a SMART Readme, i.e. takes Arugments;
+    : show, e.g. CAT or OPEN the nearest README;
+    : repo, Changelog, or index ...;
+    : lesson: how to climb the directory path ,/.. ...;
+    : related: readme;
+    : date: 2024-10-28;
+    : date: 2024-11-13;
+    debug ENTRY $# $@;
+    for d in . ..{,/..{,/..{,/..}}};
+    do
+        : unlike readme, REPO id is unique;
+        for dir in $d;
+        do
+            debug $(indir $dir pwd);
+            pause;
+            [[ -d $dir/.git ]] && { 
+                debug Directory $dir;
+                indir $dir pwd;
+                pause;
+                return
+            };
+        done;
+    done;
+    comment Exhausted EMPTY;
+    return 1
+}

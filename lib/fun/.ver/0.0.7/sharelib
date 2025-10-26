@@ -1,0 +1,133 @@
+share_libheader () 
+{ 
+    : " This is the sharelib Function Library Comment Header";
+    : "Copyright 2025, Marty McGowwan @ Shell Functions";
+    : date: 2025-05-07;
+    :;
+    : " This program is free software: you can redistribute it and/or modify";
+    : "it under the terms of the GNU General Public License as published by";
+    : "the Free Software Foundation, either version 3 of the License, or";
+    : "(at your option) any later version.";
+    :;
+    : " This program is distributed in the hope that it will be useful,";
+    : "but WITHOUT ANY WARRANTY; without even the implied warranty of";
+    : "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the";
+    : "GNU General Public License for more details.";
+    :;
+    : " You should have received a copy of the GNU General Public License";
+    : "along with this program.  If not, see <http://www.gnu.org/licenses/>."
+}
+share_does () 
+{ 
+    : default action, ECHO names a file to be copied;
+    case $#.$1 in 
+        0.*)
+            echo ${SHARE_DOES}
+        ;;
+        *.eval)
+            export SHARE_DOES=$1
+        ;;
+        *.echo)
+            export SHARE_DOES=$1
+        ;;
+        *)
+            comment share_does "[ eval | echo ]"
+        ;;
+    esac
+}
+share_fromto () 
+{ 
+    : still one @ a time;
+    ${SHARE_DOES} indir $HOME cp $1 $2
+}
+share_help () 
+{ 
+    : emulates share_list;
+    : todo: move share_list to share_files, then _help to _list;
+    : date: 2024-07-01;
+    ${*:-echo} \
+               share_{does,fromto,help,ls,list{,_test},peek,sample,hint}
+}
+share_hint () 
+{ 
+    : show basic use, since share_change puts commands on STDOUT;
+    echo "share_run 2>/dev/null | tee .sh; source .sh "
+}
+share_init () 
+{ 
+    : other share functions, test, low-level;
+    unset SHARE_DOES;
+    share_does echo;
+    share_help;
+    share_hint
+}
+share_ls () 
+{ 
+    : show full path of all the local and shared files;
+    local arg=${1:--1};
+    set -- $(share_list);
+    : turn the file args into the bash dir/{a,b,c,...} pattern;
+    string=$(echo ${*:2} | sed 's/ /,/g; s/.*/{&}/');
+    eval ls $arg $HOME/$string $1/$string 2> /dev/null
+}
+share_one () 
+{ 
+    : wrt the a file in SHARE_DIR, which may not exist, copy newer to the other;
+    : where set -- a b means to update A _from_ B;
+    : date: 2021-12-29;
+    local user=$1;
+    local shar="$(share_home)"/$1;
+    local dirn=$(dirname "$shar");
+    [[ -d "$dirn" ]] || mkdir -p "$dirn";
+    debug local $user remote $shar;
+    if [ ! -f $user ]; then
+        debug no USER: $user;
+        [[ -f "$shar" ]] && { 
+            debug SHAR, but no USER, so;
+            set -- $user "$shar"
+        };
+    else
+        debug USER $user EXISTS;
+        if [ ! -f "$shar" ]; then
+            debug SHAR $shar DOESNT;
+            set -- "$shar" $user;
+        else
+            debug they BOTH exist, return if the SAME;
+            diff $user "$shar" > /dev/null && return;
+            newest $user "$shar" && { 
+                debug use NEWER USER: $user;
+                set -- "$shar" $user
+            } || { 
+                debug use NEWER SHAR: $shar;
+                set -- $user "$shar"
+            };
+        fi;
+    fi;
+    debug $# $*;
+    [[ $# -gt 1 ]] && printf "share_fromto \"%s\" \"%s\"\n" "$2" "$1"
+}
+share_peek () 
+{ 
+    : preparation to run, new feature SHARE_DOES;
+    : date: 2024-07-01;
+    share_help;
+    share_run 2> /dev/null > .sh;
+    fbdy share_fromto;
+    cat .sh;
+    nava SHARE_DOES
+}
+share_run () 
+{ 
+    : files are named relative to HOME, _one decides TO and FROM;
+    : date: 2021-12-29;
+    : date: 2023-08-16;
+    : ----------------------------- w.r.t. HOME --;
+    :;
+    indir $HOME foreach share_one $(share_list)
+}
+share_sample () 
+{ 
+    : name, or show -- declare -f -- the useful share functions;
+    ${*:-echo} \
+               share_{one,run,list,home}
+}

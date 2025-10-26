@@ -1,0 +1,8 @@
+writers_almanac () 
+{ 
+    : locate todays;
+    : list: B;
+    : date: 2025-02-26;
+    local mon_d_year=$(date "+%B %e %Y" | tr -s 'A-Z ' a-z-);
+    ${*:-open} http://www.garrisonkeillor.com/radio
+}

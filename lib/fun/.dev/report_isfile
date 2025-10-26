@@ -1,0 +1,9 @@
+report_isfile () 
+{ 
+    : returns FALSE if the argument is a FILE;
+    : date: 2023-08-26;
+    : date: 2024-11-14;
+    [[ -f $1 ]] || return 1;
+    xs;
+    report_usage $1 IS a file and should not be ${*:2}
+}

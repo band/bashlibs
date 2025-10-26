@@ -1,0 +1,7 @@
+genlog () 
+{ 
+    : record my CALLER and THEIR caller;
+    : date: 2023-09-10;
+    : date: 2024-09-14;
+    date "+%F%t%a_%b_%d%t%T%t$*"
+}

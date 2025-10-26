@@ -1,0 +1,9 @@
+included () 
+{ 
+    : files included in the sources by pandoc-include;
+    : date: 2024-05-02;
+    debug ENTRY $# $@;
+    pause;
+    report_notfile $1 && return 1;
+    grep '^!include' $1 | sed "s/!include  */$1	/"
+}

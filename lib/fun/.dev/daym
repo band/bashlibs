@@ -1,0 +1,13 @@
+daym () 
+{ 
+    : convert HHMM into Minute number of the DAY;
+    : e.g. 1010 returns 610;
+    : date: 2024-02-08;
+    debug ENTRY $@;
+    local H=${1:0:2};
+    local M=${1:2:2};
+    debug daym: $H $M;
+    rtn=$(expr 60 '*' $H + $M);
+    debug rtn: $rtn;
+    echo $rtn
+}

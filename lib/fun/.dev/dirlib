@@ -1,0 +1,6 @@
+dirlib () 
+{ 
+    : library/function database location;
+    : date: 2024-08-05;
+    ${@:-echo} $(lib)/dir
+}

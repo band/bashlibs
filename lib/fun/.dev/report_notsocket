@@ -1,0 +1,7 @@
+report_notsocket () 
+{ 
+    : Fails if file exists and is a socket.;
+    : date: 2023-08-27;
+    [[ -S $1 ]] && return 1;
+    report_usage $1 "ISN'T" a socket
+}

@@ -1,0 +1,8 @@
+syncthing_running () 
+{ 
+    : is synthing running;
+    : date: 2023-09-08;
+    : date: 2023-11-12;
+    : date: 2024-05-15;
+    ps -ef | syncthing_server grep | grep -v grep
+}

@@ -1,0 +1,9 @@
+ignore () 
+{ 
+    : ~ cmmd args ...;
+    : returns STATUS, but not STDOUT;
+    : trace_callstack;
+    : debug $*;
+    : date: 2019-11-23;
+    $@ > /dev/null
+}

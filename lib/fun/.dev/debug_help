@@ -1,0 +1,19 @@
+debug_help () 
+{ 
+    : Debug aliases, Functions, Help, on STDOUT;
+    : date: 2024-05-28;
+    alias off='debug_off; pause_off';
+    alias on='debug_on; pause_on';
+    alias debug_comment='debug_on; pause_off';
+    alias debug_status='declare -f debug pause';
+    printf "\nDebug Aliases\n-------------\n\n";
+    alias | grep debug;
+    printf "\nDebug Status\n------------\n\n";
+    declare -f debug;
+    pause;
+    printf "\n\nDebug Abstracts\n---------------\n\n";
+    abstracts $(set | functions | egrep '^(debug|pause)') | justify;
+    printf "\nDebug Help\n----------\n";
+    echo debug_help;
+    echo
+}

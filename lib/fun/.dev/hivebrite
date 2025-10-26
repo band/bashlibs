@@ -1,0 +1,8 @@
+hivebrite () 
+{ 
+    : smart directory;
+    : mfg: smart_dir;
+    : list: B;
+    : date: 2024-03-20;
+    ${@:-echo} "/Users/martymcgowan/marty3/mit/hivebrite"
+}

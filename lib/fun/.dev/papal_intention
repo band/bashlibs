@@ -1,0 +1,7 @@
+papal_intention () 
+{ 
+    : Prayers of the Month;
+    : date: 2023-08-21;
+    :;
+    ${*:-open} http://popesprayerusa.net/popes-intentions/
+}

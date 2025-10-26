@@ -1,0 +1,8 @@
+image () 
+{ 
+    : smart directory;
+    : mfg: smart_dir;
+    : list: B;
+    : date: 2024-06-10;
+    ${@:-echo} "/Users/martymcgowan/marty3/mit/image"
+}

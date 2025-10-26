@@ -1,0 +1,7 @@
+bills_blog () 
+{ 
+    : blog;
+    : date: 2023-08-12;
+    : date: 2024-09-13;
+    ${*:-open} https://bandstands.praxis101.net/
+}

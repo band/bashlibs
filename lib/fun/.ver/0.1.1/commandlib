@@ -1,0 +1,190 @@
+command_libheader () 
+{ 
+    : " This is the commandlib Function Library Comment Header";
+    : "Copyright 2025, Marty McGowwan @ Shell Functions";
+    : date: 2025-05-08;
+    :;
+    : " This program is free software: you can redistribute it and/or modify";
+    : "it under the terms of the GNU General Public License as published by";
+    : "the Free Software Foundation, either version 3 of the License, or";
+    : "(at your option) any later version.";
+    :;
+    : " This program is distributed in the hope that it will be useful,";
+    : "but WITHOUT ANY WARRANTY; without even the implied warranty of";
+    : "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the";
+    : "GNU General Public License for more details.";
+    :;
+    : " You should have received a copy of the GNU General Public License";
+    : "along with this program.  If not, see <http://www.gnu.org/licenses/>.";
+    :;
+    : date: 2025-05-08 - even libheaders need a date;
+    :
+}
+declare () 
+{ 
+    : insert ... syntactic sugar into shell functions;
+    : date: 2021-01-03;
+    : date: 2021-03-09 the BUG was in FUNC_ARGS;
+    : date: 2023-09-13;
+    : date: 2024-06-28;
+    : date: 2025-02-02;
+    : date: 2025-06-02;
+    debug ENTRY $# $@;
+    pause;
+    case $1 in 
+        -f)
+            shift;
+            debug A: $#, $@;
+            : test for function names;
+            set -- $(func_args $@);
+            debug B: $#, $@;
+            pause;
+            [[ $# -lt 1 ]] && return 1;
+            :;
+            : there are some, proceed;
+            command declare -f $@ | fold_pipedots | fam_echosave
+        ;;
+        *)
+            debug D: $#, $@;
+            command declare $@
+        ;;
+    esac;
+    debug EXIT $# $*;
+    pause
+}
+dotfunctions () 
+{ 
+    : functions having, or aware of a leading "." in the name;
+    : date: 2021-04-14;
+    : date: 2022-09-24;
+    : date: 2023-09-10;
+    : date: 2023-09-26;
+    : date: 2025-05-16;
+    debug ENTRY $*;
+    pause;
+    ${*:-echo} $(sfg ^[.]) sfg functions declare
+}
+dotty () 
+{ 
+    : manufacture the .., ... folding functions;
+    : date: 2021-04-14;
+    : date: 2023-09-26;
+    : date: 2025-05-16;
+    eval "... () { \$@; }; ";
+    dotfunctions
+}
+fam_echosave () 
+{ 
+    : preserve the family names;
+    : related: dp_all;
+    : date: 2022-09-24;
+    : date: 2023-01-21;
+    : date: 2024-06-28;
+    : date: 2025-02-02;
+    : date: 2025-06-02;
+    debug ENTRY $# $@;
+    pause;
+    report_notpipe && return 1;
+    sed 's/[a-z][a-z]*_{/\\\
+               &/g';
+    debug EXIT: $# $@;
+    pause
+}
+flcomm () 
+{ 
+    : run COMM on Function Names in a pair of Function Libraries;
+    : help message with no arguments;
+    : date: 2017-02-05;
+    : date: 2017-07-18;
+    : date: 2023-09-30;
+    : date: 2024-02-26;
+    : date: 2024-07-28;
+    debug ENTRY $@;
+    pause;
+    report_notfile $2 && return 2;
+    case $# in 
+        2)
+            report_notfile $1 && return 1;
+            report_notfile $2 && return 2;
+            command comm <(functions $1 | sort) <(functions $2 | sort)
+        ;;
+        3)
+            report_notfile $2 && return 2;
+            report_notfile $3 && return 3;
+            command comm $1 <(functions $2 | sort) <(functions $3 | sort)
+        ;;
+        *)
+            echo $(myname) [-mn] file file
+        ;;
+    esac
+}
+fold_pipedots () 
+{ 
+    : RE folds line with PIPE followed by ... s;
+    : the RE allows zero or more spaces after the Pipe Symbol;
+    : .. a Dot followed by zero or more Dots or Spaces,;
+    : .. closed by a space, which separates .s from the command;
+    : also, fold --.arg arguments to a shell command;
+    : related: multisymbol;
+    : date: 2025-02-02;
+    : date: 2021-04-14;
+    : date: 2022-09-24;
+    : date: 2025-06-02;
+    debug ENTRY $# $*;
+    pause;
+    sed '
+        s/| *\([.][. ]*\) /|\
+    \1 /g; s/ \(--[a-zA-Z][a-zA-Z]*\)/ \\\
+        \1/g';
+    debug EXIT: $# $@;
+    pause
+}
+declare () 
+{ 
+    : insert ... syntactic sugar into shell functions;
+    : date: 2021-01-03;
+    : date: 2021-03-09 the BUG was in FUNC_ARGS;
+    : date: 2023-09-13;
+    : date: 2024-06-28;
+    : date: 2025-02-02;
+    : date: 2025-06-02;
+    debug ENTRY $# $@;
+    pause;
+    case $1 in 
+        -f)
+            shift;
+            debug A: $#, $@;
+            : test for function names;
+            set -- $(func_args $@);
+            debug B: $#, $@;
+            pause;
+            [[ $# -lt 1 ]] && return 1;
+            :;
+            : there are some, proceed;
+            command declare -f $@ | fold_pipedots | fam_echosave
+        ;;
+        *)
+            debug D: $#, $@;
+            command declare $@
+        ;;
+    esac;
+    debug EXIT $# $*;
+    pause
+}
+fam_echosave () 
+{ 
+    : preserve the family names;
+    : related: dp_all;
+    : date: 2022-09-24;
+    : date: 2023-01-21;
+    : date: 2024-06-28;
+    : date: 2025-02-02;
+    : date: 2025-06-02;
+    debug ENTRY $# $@;
+    pause;
+    report_notpipe && return 1;
+    sed 's/[a-z][a-z]*_{/\\\
+               &/g';
+    debug EXIT: $# $@;
+    pause
+}

@@ -1,0 +1,113 @@
+tag_libheader () 
+{ 
+    : taglib abstracts;
+    : date: 2025-05-07 - manually insert abstracts;
+    :;
+    : "name         	abstract                                 	";
+    : "----         	--------                                 	";
+    : "tag_libheader	taglib abstracts                         	";
+    : "tag_list     	Crunched tag_list                        	";
+    : "tag_byday    	functions tagged with ARG, sorted by date	";
+    : "tag_dateless 	table of all tags, less the Date tags    	";
+    : "tag_datetable	tagle of only Date tags                  	";
+    : "tag_each     	each dateless tag                        	";
+    : "tag_env      	the tag syntax                           	";
+    : "tag_lib      	func tags database                       	";
+    : "tag_table    	the whole table                          	"
+}
+tag_list () 
+{ 
+    : Crunched tag_list;
+    : date: 2025-05-07;
+    ${@:-echo} \
+               tag_{byday,dateless,datetable,each,env,lib{,header},list,table}
+}
+tag_byday () 
+{ 
+    : functions tagged with ARG, sorted by date;
+    : default todo;
+    : date: 2025-05-05;
+    local arg=${1:-todo};
+    shd_latest $(tag_each $arg | column fun) | sort -u;
+    comment $arg
+}
+tag_dateless () 
+{ 
+    : table of all tags, less the Date tags;
+    : date: 2025-05-05;
+    ${*:-echo} $(tag_lib)/$(myname).rdb
+}
+tag_datetable () 
+{ 
+    : tagle of only Date tags;
+    : date: 2025-05-05;
+    ${*:-echo} $(tag_lib)/$(myname).rdb
+}
+tag_each () 
+{ 
+    : each dateless tag;
+    : fields - libname fun tag argument;
+    : selection - on Tab;
+    : date: 2025-04-19;
+    : date: 2025-05-05;
+    : date: 2025-05-06;
+    : date: 2025-05-09;
+    local unretired=$(tag_lib)/undretired.rdb;
+    :;
+    tag_env | rename context tag |
+    ... tee $(tag_table) | row ' libname !~ /retired/' |
+    ... tee $unretired | rowhas tag date: > $(tag_datetable);
+    :;
+    : -------------------------------------------- add an Empty Column --;
+    local tag=${1:-.};
+    debug tag: $tag;
+    local ecolumn;
+    case $tag in 
+        .)
+            ecolumn=empty
+        ;;
+        *)
+            ecolumn=tag
+        ;;
+    esac;
+    debug ecolumn: $ecolumn;
+    pause;
+    :;
+    : ----------------------------------------- Now with the Unretired --;
+    :;
+    cat $unretired | row 'tag !~ /date:/' | addcol argument empty | compute '
+
+        tag = substr(tag,3);
+
+        c = index(tag,":")    # the closing colon, separates the Argument
+
+        argument = substr(tag,c + 2)
+	tag = substr(tag,1,c - 1)
+
+    ' | sorttable tag | tee $(tag_dateless) | row "tag ~ /$tag/" |
+    ... ncolumn $ecolumn empty | justify | more;
+    :;
+    printf "\ncomment Removed the $ecolumn column, Tag is [ $tag ]\n\n" 1>&2
+}
+tag_env () 
+{ 
+    : the tag syntax;
+    : query on Context for leading Colon;
+    : date: 2025-03-02;
+    dfg . | row 'context ~ /^: [a-zA-Z0-9_]*:/'
+}
+tag_lib () 
+{ 
+    : func tags database;
+    : tag: needir;
+    : date: 2024-10-27;
+    : date: 2025-05-06;
+    ${*:-echo} $(home)/lib/tag
+}
+tag_table () 
+{ 
+    : the whole table;
+    : date: 2025-05-05;
+    : date: 2025-05-06;
+    ${*:-echo} $(tag_lib)/$(myname).rdb
+}

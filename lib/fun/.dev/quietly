@@ -1,0 +1,9 @@
+quietly () 
+{ 
+    : ~ cmmd args ...;
+    : returns STATUS, but not STDERR;
+    : date: 2018-02-16;
+    : date: 2018-10-09;
+    : date: 2023-12-19;
+    $@ 2> /dev/null
+}

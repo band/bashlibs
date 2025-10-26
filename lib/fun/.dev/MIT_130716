@@ -1,0 +1,7 @@
+MIT_130716 () 
+{ 
+    : smart directory;
+    : mfg: smart_dir;
+    : date: 2025-04-29;
+    ${@:-echo} "/Volumes/MIT_130716"
+}

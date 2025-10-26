@@ -1,0 +1,739 @@
+app_fcg () 
+{ 
+    : fcgOrgMode link to functions App Source;
+    : date: 2021-08-28;
+    printf "#+OPTIONS: ^:nil\n\n";
+    fun_callgraf $(< $1) 2> $2 | sed '
+
+        s/\([a-zA-Z0-9-][a-zA-Z0-9_-]*\)/[[.\/src\/\1][\1]]/
+    '
+}
+app_fun () 
+{ 
+    : recursively w/for_nomar and app_funuses, find all called functions;
+    : date: 2016-11-10;
+    : date: 2018-10-05 key feature set PRIOR, add NEW;
+    : date: 2019-08-29;
+    : date: 2023-01-30;
+    set $* $(for_nomar app_funuses $*);
+    echo $* | wpl | sort -u
+}
+app_funcall () 
+{ 
+    : e.g. foreach app_funcall $* PIPE callgraph;
+    : produces pair, calling function called function, from caller.;
+    : consolidate function around FUN_USES.;
+    : date: 2017-08-16;
+    : comment $(myname 3) $(myname 2) "$(myname)( $* )";
+    : date: 2021-08-28;
+    app_funuses $1 | awk "
+            \$1 ~ /^$1$/ { next }; 
+	    	         { print \"$1\", \$1 }
+        "
+}
+app_funuses () 
+{ 
+    : names the functions the function argument uses,;
+    : omitting _ underscore names -- e.g. local functions;
+    : date: 2017-08-16;
+    : date: 2019-08-29;
+    : date: 2019-11-16 replace foreach fun_alltype RUN fun_words $* with TYPE_WORD;
+    type_word $* | awk "
+
+        \$1 !~ /^function$/ { next; }
+        \$2 !~ /^$1$/       { print \$2 }
+    "
+}
+app_isa () 
+{ 
+    : encourage FUNCTIONS to Become an APP;
+    : usage: "app_isa arg ... || return";
+    : caller may have an _INIT function, if so, call it;
+    : also, if CALLER_$1 is a function, call it with args, and return;
+    : and, if the first argument is NOT a function and;
+    : if there is a MAIN function, call it;
+    : internal -- parent_subfunction, FUNC return failure = 1.;
+    : to allow parent a default behavior of its own.;
+    : date: 2020-01-27;
+    : date: 2020-02-02 add default _MAIN function;
+    : date: 2022-02-23;
+    local parent=$(proc_parent $(myname 2));
+    : comment PARENT: $parent;
+    :;
+    : ------------------------------------------------------ any initialization --;
+    local init=${parent}_init;
+    : comment INIT: $init;
+    isfunction $init && $init 2> /dev/null;
+    :;
+    : -------------------------------------------------- any user customization --;
+    : --------- has to be an executable, not a function --;
+    :;
+    local user=$(which ${parent}_user);
+    : comment USER: $user;
+    [[ -f "$user" ]] && $user;
+    :;
+    : ------------------------------------------------------- a PARENT_function --;
+    : -------------------- is the first arg: PARENT arg --;
+    local func=${parent}_$1;
+    : comment FUNC: $func;
+    isfunction $func && { 
+        shift;
+        : comment RUN: $func $*;
+        $func $*;
+        : comment RETURN $(myname);
+        return 1
+    };
+    : ------------------------------------------------------ implicit functions --;
+    case $1 in 
+        help)
+            : ----------------------- this is the default help function --;
+            :;
+            : a user-defined parent_help overrides by calling "parent help";
+            sfg ${parent}_ | pr -t4 1>&2;
+            return 1
+        ;;
+        *)
+            : ------------------- main is surrogate for no sub-function --;
+            :;
+            local main=${parent}_main;
+            : comment MAIN: $main;
+            isfunction $main && { 
+                : comment going thru $main $@;
+                $main "$@";
+                return 1
+            };
+            comment NOT Help, PARENT: $parent, args: $*;
+            ( printf "$parent %s\n" "[ help |";
+            printf "$(app_kids ${parent}_ | pr -t4 | sed 's/^/        /') \n]\n" ) 1>&2
+        ;;
+    esac
+}
+app_kids () 
+{ 
+    : date: 2020-01-27;
+    set | grep "^$1" | sed "s/^$1//; s/^_//; s/ [(][)]//"
+}
+as_bash () 
+{ 
+    : convert args to $arg, ...;
+    : date: 2024-09-18;
+    echo $* | sed 's/^ *//; s/ *$//; s/  */, $/g; s/.*/$&/'
+}
+awk_ckhint () 
+{ 
+    : pick your poison;
+    : date: 2025-05-08;
+    dfg NR | rd grep NF | rd gmv rdlib datatype | column fun | uniq | headoff
+}
+backup_dirs () 
+{ 
+    : directories with backups;
+    : date: 2023-10-20;
+    find . -type f | grep .bak/ | grep -v .bak/.bak/ | sed 's/\/.bak.*//' | sort -u
+}
+changelog () 
+{ 
+    : compare 2nd backup, the most recent difference;
+    : date: 2023-09-30;
+    set ${1:-ADDED};
+    case $1 in 
+        ADDED)
+            set $1 13
+        ;;
+        *)
+            set DELETED 23
+        ;;
+    esac;
+    for f in *lib .*profile;
+    do
+        g=.bak/.bak/$f;
+        [[ -f $g ]] || continue;
+        flcomm -$2 $f .bak/.bak/$f > .tmp/.tmpfile;
+        [[ -s .tmp/.tmpfile ]] && { 
+            printf "\n$f\n=====\n";
+            cat .tmp/.tmpfile
+        };
+    done | tee .tmp/$1
+}
+comm3 () 
+{ 
+    : not every COMM produces three Fields;
+    : trailing TABS make up the shortfall;
+    : todo: think of an accomdating function;
+    : date: 2025-05-22;
+    awk -F'\t' '
+
+    NF == 1  { printf "%s\t\t\n", $0; next; }
+    NF == 2  { printf "%s\t\n",   $0; next; }     
+
+     	      { print }
+
+    '
+}
+diff_today () 
+{ 
+    : store recent changes to LIB/BIN file;
+    : date: 2025-03-23;
+    report_notfile $1 && return;
+    local today=$(date +%F);
+    local dir=.dif/$today;
+    [ -d $dir ] || mkdir -p $dir;
+    local file=$dif/$1;
+    diff $1 .bak/.bak | tee $file;
+    debug contents: $(wc $file)
+}
+dofuse () 
+{ 
+    : Table of used, user, context;
+    : can handle but 1 TAB in the context;
+    : lesson: how to make a table iii;
+    : date: 2024-08-20;
+    : date: 2024-09-02;
+    : date: 2024-11-30;
+    : date: 2025-05-16;
+    function _fuse_one () 
+    { 
+        fuse $1 | while read line; do
+            printf "%s\t%s\n" $1 "$line";
+        done
+    };
+    rdb_hdr used user context;
+    foreach _fuse_one $*
+}
+evfun () 
+{ 
+    : report function names and context of 1st arg;
+    : date: 2025-04-19;
+    function _xevfun () 
+    { 
+        : EV and Functions;
+        printf '$2 ~ /[(][)]/ { fun=$1; next } \n';
+        echo "/$1/ { printf \"%s\t%s\n\", fun, \$0 }"
+    };
+    debug ENTRY $# $*;
+    local lc=$(echo $1 | tr A-Z a-z);
+    debug lc: $lc;
+    local tawk=~/tmp/.$lc.awk;
+    debug tawk: $tawk;
+    _xevfun $1 | tee $tawk;
+    echo;
+    debug run: "set|awk -f $tawk";
+    pause;
+    echo;
+    set | awk -f $tawk
+}
+family_sub () 
+{ 
+    : collect family, subfunction from environment;
+    : date: 2020-01-30;
+    set -- ${1:-justify} $(myname).rdb;
+    ( rdb_hdr family subfunction;
+    sfg | grep -v '^_' | sed 's/_/	/' ) | column > $2;
+    $*
+}
+filelist () 
+{ 
+    : generic list of files;
+    : date: 2023-10-20;
+    awk '$1 ~/^#/ { next }; NF { print }' lib/filelist
+}
+fun_find () 
+{ 
+    : find function definitions;
+    : date: 2023-07-22;
+    : date: 2023-08-27;
+    : date: 2023-11-11;
+    find ${2:-.} -type f | xargs grep -l "$1 [(][)]"
+}
+functions_prep () 
+{ 
+    : date: 2023-10-20;
+    report_notfile $1 && return 1;
+    foreach source_date $(functions_same $1)
+}
+functions_same () 
+{ 
+    : identical functions local and library;
+    : date: 2023-10-20;
+    report_notfile $1 && return 1;
+    comm -12 <(functions $1 | sort) <(ls)
+}
+funs_libs () 
+{ 
+    : number, name of libs used in function args;
+    : saves all, include Homeless Functions, Displays the Homed;
+    : date: 2024-05-19;
+    : date: 2024-09-13;
+    local out=.$(myname).out;
+    do_whlib $(fun_files) | tee $out | nf gt 1 | field 2 | sort | uniq -c | sort -rn 1>&2;
+    if [ $# -gt 0 ]; then
+        grep $1 $out;
+    else
+        comment " $ quiet $(myname) taken" Searches for it.;
+    fi
+}
+fuse () 
+{ 
+    : returns function context from client functions;
+    : named for Functions which USE ..;
+    : todo: ADD RULE to preserve only the report_NAME function NEEDS work!;
+    : todo: fix NAME=, ...;
+    : ...: replace temporary awk file with shell "<( .. )";
+    : ...: add trace and leave TMP files on STDERR;
+    : usage: $ fuse pattern file ...;
+    : ... $ { collect functions on stdin } PIPE fuse pattern;
+    : ... $ fuse pattern DEFAULTS to functions in current shell;
+    : date: 2017-03-07;
+    : date: 2019-04-24;
+    : date: 2021-03-09 the sed l,r Paren discovery needed G, global;
+    : date: 2022-02-25;
+    : date: 2022-09-04;
+    : date: 2024-06-28;
+    report_isfile $HOME/tmp && return 1;
+    local tmp=$(needir $HOME/tmp);
+    local awk=$HOME/tmp/fuse.awk;
+    local patr="^-a-zA-Z0-9_";
+    local a="/[$patr$]$1[$patr\[\)=]/";
+    local b="/[$patr$]$1$/";
+    ( cat <<'EOF'
+        $2 ~ /^[(][)]$/  { f=$1; next; } 
+        $1 ~ /^:$/       { next; }
+	$1 ~ /^comment$/ { next; }
+EOF
+
+    printf '
+    f != ""  && ( %s || %s )     { printf "%%s\\t%%s\\n", f, $0 }\n
+    ' "$a" "$b" ) | tee $tmp/awk.tmp > $awk;
+    debug tmp: $tmp/awk.tmp awk: $awk;
+    pause;
+    :;
+    : SED separates "(...)d" into "( ... )";
+    spaceit ${*:2} | sed 's/\([<$]\)(\([^)]*\))/\1( \2 )/g' | tee $tmp/fuse.tmp | awk -f $awk
+}
+fuze () 
+{ 
+    : simulate FUSE with less work;
+    : date: 2024-06-29;
+    dfg "${1:-No where to be found}" | row 'context !~ /^: / && context !~ /[(][)] *$/' | column fun | rd uniq | headoff
+}
+graf_app () 
+{ 
+    : CAT the FUNCTIONS in $(graf_lib) /src/ listed in $app.fun to _APP;
+    : ---------------------------------------- LINK the .BAK to the APP_DIR --;
+    : date: 2025-04-27;
+    local app=$1;
+    shift;
+    set -- $(graf_lib)/src cat $(cat $(graf_lib)/$app.fun);
+    indir $* > ${APP_BIN}/${app}_app;
+    printf "#! /bin/bash\nsource %s\napp_isa \"\$@\"\n" ${app}_app | tee ${APP_BIN}/$app;
+    chmod +x ${APP_BIN}/${app}{,_app};
+    ls -alrt ${*:-.} ... ${APP_BIN}/${app}{,_app} 2> /dev/null
+}
+graf_copy () 
+{ 
+    : update the library functions into their API source;
+    : date: 2019-10-04;
+    : date: 2020-03-22 pulled up sub-function;
+    : date: 2024-11-01;
+    : date: 2025-05-22;
+    function _do_graf_libr () 
+    { 
+        local libr=$2;
+        local appdir=$(needir ${APP_LIB}/${1%lib}_app.d);
+        report_notdirectory $libr && { 
+            unset _do_ \
+               graf_{copy,libr};
+            return 3
+        };
+        _lib_ls $libr/.bak;
+        chmod -w $libr/.bak/*;
+        : --------------------------------------- LINK the .BAK to the API SRC --;
+        ln -f $libr/.bak/* $(graf_lib)/src;
+        _lib_ls $(graf_lib)/src
+    };
+    report_notargcount 1 $# && return 1;
+    case $1 in 
+        *lib)
+            local libr=$(which $1)
+        ;;
+        *)
+            report_usage Bad LIBRARY name: $1;
+            return 2
+        ;;
+    esac;
+    local libl=$(basename $libr);
+    runhere $(dirname $libr);
+    graf_prep $lib1 > ~/tmp/dir.$$ || { 
+        report_usage graf_prep FAILED;
+        cat ~/tmp/dir.$$ 1>&2;
+        unset _do_ \
+               graf_{copy,libr};
+        return 2
+    };
+    _do_graf_libr $libl $(tail -1 ~/tmp/dir.$$);
+    local rtn=$?;
+    runhere;
+    comment unset _do_graf_libr;
+    return $rtn
+}
+graf_lib () 
+{ 
+    : where are the GRAFs, supporting data;
+    : date: 2019-10-01;
+    : ${GRAF_LIB:=$(commonplace)/lib/graf};
+    : date: 2025-04-27;
+    ${*:-echo} ${GRAF_LIB}
+}
+graf_main () 
+{ 
+    : produces the call graph for a list of functions, the MAIN program;
+    : an optional first argument NAME.out gives the HANDLE of the output files;
+    : the list is collected by app_fun fun ... tee .fun.app;
+    : FUNS lists all the FUNCTIONS, FUSE exclude any _NAME. not sure why;
+    : date: 2021-08-28;
+    :;
+    : date: 2019-09-03;
+    report_notargcount 1 $# "[ handle.out ] function ..." && return 1;
+    local handle=$1;
+    [[ $1 = ${1%.out}.out ]] && { 
+        handle=${1%.out};
+        shift
+    };
+    report_notfunction $1 && return 1;
+    local file=${GRAF_LIB}/$handle.org;
+    local funs=${file%.org}.fun;
+    local fuse=${file%.org}.use;
+    local erro=${file%.org}.err;
+    app_fun $* | tee $funs | grep -v ^_ > $fuse;
+    app_fcg $funs $erro > $file;
+    comment $file $funs
+}
+graf_prep () 
+{ 
+    : update the library functions into NAME.D directory, retain modification time;
+    : BACKUP facilitates mod time retention;
+    : date: 2019-12-14;
+    : date: 2019-12-28;
+    report_notfile ${1:-/dev/null} && { 
+        comment run from LIBARY: $1 DIRECTORY;
+        return 1
+    };
+    graf_tidy $1;
+    _lib_ls $1;
+    : ---------------------------------------- F2FILE returns DIRectory --;
+    local dir=$(f2file $1);
+    _lib_ls $dir;
+    report_notdirectory $dir && { 
+        return 2
+    };
+    : ---------------------------------------- the Individual Functions --;
+    pushd $dir;
+    backup_allfiles;
+    popd;
+    _lib_ls $dir;
+    echo $dir
+}
+graf_tidy () 
+{ 
+    : clean duplicated functions to use latest definitions;
+    : appends any necesary initialization;
+    : date: 2020-02-20;
+    source $1;
+    { 
+        declare -f $(functions $1);
+        fun_starter $1
+    } > .l;
+    mv .l $1;
+    chmod +x $1
+}
+graf_user () 
+{ 
+    : replace THIS function with user-defined GRAF_ and APP_ environment variables;
+    : date: 2020-02-01 allow user-defined ENVIRONMENT;
+    graf_default_user
+}
+latest_functions () 
+{ 
+    : ~ creation date;
+    : date: 2025-03-21;
+    shd_latest $(set | functions) | sort -n
+}
+lib_headerneed () 
+{ 
+    : collect lib_headers by Need, Missing, Complete;
+    : todo: figure out how to avoid needin COLUMN after COMM;
+    : date: 2025-05-22;
+    function _ttab () 
+    { 
+        echo $1 | tpl | sed 's/$/	/'
+    };
+    set -- $(sfg _libheader);
+    rdb_hdr need missing complete;
+    declare -f $* | awk '
+
+        $2 ~ /[(][)]/ { name=$1 }
+	$2 ~ /name/ && $3 ~ /abstract/ { print name }
+
+   ' | sort | comm - <(echo $* | tpl | sort) | comm3
+}
+libupdate () 
+{ 
+    : ~ library function ...;
+    : todo: this is where the questions is answered,;
+    : "am I moving the function to another library?";
+    : "if so, add the From lib to a list to be updated";
+    : related: retiring;
+    : date: 2025-04-10;
+    : date: 2025-05-01;
+    debug ENTRY $# $*;
+    report_notfile ${1:-/dev/null} && return 1;
+    local lib=$1;
+    shift;
+    debug lib: $lib;
+    local upd=~/tmp/libupdate.txt;
+    rm -f $upd;
+    debug SET $# $*;
+    pause;
+    for fun in $*;
+    do
+        shd_setdate $fun 2> /dev/null >> $lib;
+        whsrc $fun >> $upd;
+    done;
+    set -- $(sort -u $upd);
+    ls -lrt $* 1>&2;
+    echo $*
+}
+lvlib () 
+{ 
+    : Local vs Lib copy of a function;
+    : date: 2024-01-03;
+    : date: 2024-05-25;
+    : date: 2025-01-26;
+    : date: 2025-04-10;
+    : date: 2025-04-11;
+    debug ENTRY $# $@;
+    report_notfunction $1 && return;
+    set $1 $(whsrc $1);
+    report_notfile $2 && { 
+        comment Function $1 Needs a Library, try lfs Libname $1;
+        return 2
+    };
+    report_notfile $1 && return 1;
+    local tmp=~/tmp;
+    local t1=$tmp/$1.old;
+    local t2=$tmp/$1.new;
+    : 2 is NEW, but Arg 1;
+    ( source $1;
+    command declare -f $1 ) > $t2;
+    debug $(wc $t2);
+    pause;
+    : 1 is OLD, but Arg 2;
+    ( source $2;
+    command declare -f $1 ) > $t1;
+    debug $(wc $t1);
+    pause;
+    indir $tmp difftwo $1.{old,new}
+}
+maint_libheader () 
+{ 
+    : " This is the maintlib Function Library Comment Header";
+    : "Copyright 2025, Marty McGowwan @ Shell Functions";
+    : date: 2025-05-08;
+    :;
+    : " This program is free software: you can redistribute it and/or modify";
+    : "it under the terms of the GNU General Public License as published by";
+    : "the Free Software Foundation, either version 3 of the License, or";
+    : "(at your option) any later version.";
+    :;
+    : " This program is distributed in the hope that it will be useful,";
+    : "but WITHOUT ANY WARRANTY; without even the implied warranty of";
+    : "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the";
+    : "GNU General Public License for more details.";
+    :;
+    : " You should have received a copy of the GNU General Public License";
+    : "along with this program.  If not, see <http://www.gnu.org/licenses/>.";
+    :;
+    : date: 2025-05-08 - even libheaders need a date;
+    :
+}
+mf_grep () 
+{ 
+    : multi-function grep, leaving function def and grep token in order;
+    : date: 2025-05-06;
+    if_missingargs 2 $* && return;
+    debug ENTRY $# $@;
+    local gname=$1;
+    debug ghame;
+    shift;
+    local file=~/tmp/mf_grep.txt;
+    fbdy $* > $file;
+    ( grep -n '[(][)]' $file;
+    grep -n "$gname" $file ) | sort -n | sed 's/[1-9][0-9]*://'
+}
+mmp_version () 
+{ 
+    : space delimited Main, Minor, point version;
+    : date: 2024-05-28;
+    : date: 2024-06-19;
+    my_versions | awk -F. '{ printf "%5d\t%5d\t%5d\n", $1, $2, $3 }' | sort -r | sed 1q
+}
+new_toback () 
+{ 
+    : where lib.new live;
+    : leave output in a .xsh;
+    : date: 2025-04-10;
+    pushd ~/tmp;
+    set -- *lib.new;
+    for f in $*;
+    do
+        l=${f%.new};
+        w=$(which $l);
+        comment f, l, w: $f, $l, $w;
+        echo "backup $w; cp $f $w; backup $w";
+    done
+}
+new_towhich () 
+{ 
+    : example of matching a subfunction name to HEAD a Function Library;
+    : date: 2025-04-10;
+    set -- $1 ${1%_header};
+    set $* ~/tmp/$2.new;
+    ( declare -f $1;
+    cat $(which $2) ) > $3;
+    wc $3
+}
+next_version () 
+{ 
+    : increment Major, minor, or patch version, default Patch;
+    : date: 2023-10-20;
+    : date: 2024-06-19;
+    local ver=$1;
+    set -- $(mmp_version) 0 0 0;
+    case $ver in 
+        M)
+            echo $(expr $1 + 1).0.0
+        ;;
+        m)
+            echo $1.$(expr $2 + 1).0
+        ;;
+        *)
+            echo $1.$2.$(expr $3 + 1)
+        ;;
+    esac
+}
+rd_awk_builtin () 
+{ 
+    : debug $*;
+    : date: 2025-05-10;
+    curl http://www.math.utah.edu/docs/info/gawk_13.html 2> /dev/null |
+    ... grep -i '<DT><CODE>.*(<VAR>' | sed 's/.*<CODE>//; s/(.*//'
+}
+rd_namedir () 
+{ 
+    : template for data table with history;
+    : example: data file, history file;
+    : todo: add command argument;
+    : related: dfg_unique;
+    : date: 2025-04-19;
+    : date: 2025-04-28;
+    function _cmd_arg () 
+    { 
+        dfg . | row '!p[fun]++'
+    };
+    if_missingargs 2 $* && return;
+    local dir file name hry;
+    name=$1;
+    dir=$(needir $2);
+    hry=$(needir $dir/.hry)/${name%.*}.nxt;
+    file=$dir/$name;
+    debug dir: $dir;
+    debug file: $file;
+    debug hry: $hry;
+    debug IS hry an NXT file?;
+    pause;
+    return;
+    _cmd_arg $dir > $file;
+    debug $(wc $file $hry);
+    pause;
+    indir $dir rdupdate $name
+}
+refreshed () 
+{ 
+    : names of the REFRESH locks;
+    : date: 2023-09-05;
+    : date: 2024-08-12;
+    ${@:-echo} $(dfg_db)/*/.refreshed
+}
+refreshedlib () 
+{ 
+    : names of a REFRESH locks;
+    : date: 2023-09-05;
+    : date: 2024-08-12;
+    case $1 in 
+        *lib | *_profile)
+            lib=$(basename $1);
+            shift
+        ;;
+        *)
+            report_notfile $1 && return 1
+        ;;
+    esac;
+    ${@:-echo} $(dfg_db)/$lib/.refreshed
+}
+s2d () 
+{ 
+    : function/s ... source to current document input folder;
+    : related: pdmd;
+    : date: 2023-09-19;
+    : date: 2023-09-26;
+    : date: 2024-03-15;
+    debug ENTRY $# $@;
+    pause;
+    pifufiset $1 | tee $(bashlibs)/src/shell/$(basename $1);
+    recursive $@
+}
+source_date () 
+{ 
+    : date-stamp local function;
+    : date: 2023-10-20;
+    report_notfile $1 && return 1;
+    source $1;
+    shd_setdate $1
+}
+syntax_error () 
+{ 
+    : search for ~;
+    : date: 2025-03-04;
+    set ${1:-dfg_abstracts};
+    quiet app_fun dfg_abstracts | tee .abs.out;
+    fuse set | field 1 | uniq | comm -1 - .abs.out
+}
+unrefreshed () 
+{ 
+    : the unrefreshed librarys;
+    : related: unsourced;
+    : todo: indir $(libfun) newme libaries_profiles;
+    : date: 2023-08-06;
+    : date: 2023-10-20;
+    : date: 2024-04-29;
+    : date: 2024-08-20;
+    : date: 2024-09-28;
+    : date: 2025-04-28;
+    debug ENTRY $PWD $# $@;
+    local libs=${*:-$(allprofs)};
+    debug libs: $libs;
+    pause;
+    for lib in $libs;
+    do
+        local refmark=$(lib)/dir/$(basename $lib)/.refreshed;
+        [[ -f $refmark ]] || touch -t 197001010101 $refmark;
+        set -- $refmark $lib;
+        debug $(ls -l $1);
+        debug $(ls -l $2);
+        pause;
+        newest $refmark $lib 2> /dev/null && continue;
+        debug UPDATE $lib;
+        pause;
+        echo $lib;
+    done
+}

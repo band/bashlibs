@@ -1,0 +1,313 @@
+dfg_abstracts () 
+{ 
+    : "abstracts of functions matching argument, default dfg";
+    : date: 2025-03-03;
+    debug ENTRY $@;
+    set -- ${1:-dfg};
+    debug SET $@;
+    pause;
+    abstracts $(dfg $1 | column fun | uniq) | justify
+}
+dfg_check () 
+{ 
+    : compare function libraries to dfg_db;
+    : date: 2024-09-07;
+    : date: 2024-09-13;
+    function _leftright () 
+    { 
+        : related: difftwo;
+        printf "< $1\n> $2\n" 1>&2
+    };
+    ignore libfun pushd;
+    ignore cdx;
+    set -- ${*:-cmdlinelib};
+    debug SET $@ $#;
+    for file in "$@";
+    do
+        debug file? $file;
+        pause;
+        report_notfile $file || { 
+            comm -3 <(ls ../dir/$file) <(functions $file | sort);
+            _leftright ../dir/$file $file
+        };
+    done
+}
+dfg_context () 
+{ 
+    : where there is a query on context;
+    : date: 2024-07-01;
+    : date: 2024-09-13;
+    : date: 2025-02-28;
+    if_missingargs 1 $* && return;
+    local query=$1;
+    local cntxt="${2:-~}";
+    dfg $query | rowhas context "$cntxt"
+}
+dfg_db () 
+{ 
+    : where the DFG data is kept,;
+    : a directory of functionlib directories,;
+    : each with a file for each function.;
+    : date: 2022-01-02;
+    : date: 2025-08-11;
+    debug ENTRY $*;
+    ${*:-echo} "$(icloud)/mjm/lib/dir"
+}
+dfg_example () 
+{ 
+    : fiddle with the OPEN and the ROW query;
+    : date: 2024-06-21;
+    : date: 2025-02-28;
+    dfg open | row 'context !~ /^[#:]/' | sorttable context | justify
+}
+dfg_ff () 
+{ 
+    : find function definitions;
+    : lesson: remove GT 3 deep backup, the 2nd has those no longer used;
+    : related: fun_find;
+    : date: 2023-07-22;
+    : date: 2025-01-24;
+    : date: 2025-03-02;
+    find $(lib)/dir -type f | grep ${1:-dfg} | grep /.bak | grep -v /.bak/.bak
+}
+dfg_fields () 
+{ 
+    : the fields of any DFG-generated Table;
+    : date: 2022-05-14;
+    : date: 2024-09-22;
+    debug ENTRY $*;
+    ${*:-echo} libname fun context
+}
+dfg_libfun () 
+{ 
+    : collect Count Lib Function for one arg;
+    : date: 2025-05-07;
+    set ${1:-dfg};
+    dfg $1 | rowhasnot libname retired | column libname fun | sorttable | rduniq
+}
+dfg_list () 
+{ 
+    : the dfg family, by SFG convention;
+    : list: a;
+    : date: 2024-05-24;
+    : date: 2024-09-22;
+    : date: 2024-11-30;
+    : date: 2025-01-18;
+    : date: 2025-02-28;
+    ${*:-echo} $(sfg ^dfg)
+}
+dfg_one () 
+{ 
+    : a testable instance;
+    : todo: workout Bashlibs w.r.t ./Includes.txt;
+    : date: 2024-03-31;
+    : date: 2024-06-28;
+    : date: 2024-09-13;
+    : date: 2025-03-20;
+    debug PAUSE for ARGCOUNT $# $@;
+    pause;
+    debug DID YOU PAUSE?;
+    pause;
+    report_notargcount 1 $# && { 
+        comment FATAL error;
+        pause;
+        return
+    };
+    : ---------------- F2FILE returns directory for the library --;
+    :;
+    touch .refreshed;
+    :;
+    debug PWD: $PWD;
+    pause;
+    set $(namedfiles | grep -v '^[.][a-zA-Z0-9_]');
+    debug SET $@;
+    pause;
+    :;
+    : ------------ BACKUP only updates changed files, functions --;
+    :;
+    debug BACKUP $@;
+    pause;
+    backup $@;
+    backup_sync
+}
+dfg_rd () 
+{ 
+    : search in DIR and Dot.DIR files for the argument;
+    : date: 2022-10-03;
+    : date: 2025-04-23;
+    : date: 2025-05-16;
+    debug ENTRY $*;
+    function _dfgs1 () 
+    { 
+        : preserve 2 Tabs, iconify the others;
+        sed '
+            s/\//	/;  # separate library / functions
+            s/: */	/;  # TAB for grep.s colon separator
+            s/	/<TAB>/g;   # iconify ALL tabs
+    	    s/<TAB>/	/;  # restore 1st Tab
+    	    s/<TAB>/	/;  # restore 2nd Tab	
+        ' $*
+    };
+    function _dfg_rd () 
+    { 
+        : Yet Another use of the _underscore function;
+        debug pwd: $PWD;
+        pause;
+        dfg_fields rdb_hdr;
+        debug $(dfg_fields rdb_hdr);
+        pause;
+        grep -i "$1" ~/.*profile/* */* | lft 00 |
+    ... _dfgs1 | lft 01
+    };
+    indir "$(dfg_db)" _dfg_rd "$1"
+}
+dfg_refresh () 
+{ 
+    : refresh a library function database;
+    : special case of the directory stack, so;
+    : lesson: indir GT runfrom;
+    : date: 2023-02-05;
+    : date: 2023-12-18;
+    : date: 2024-03-31;
+    : date: 2024-04-29;
+    : date: 2024-04-30;
+    : date: 2024-06-28;
+    : date: 2024-08-20;
+    : date: 2024-09-13;
+    : date: 2025-05-06;
+    debug ENTRY $@;
+    [[ -f ${1:-/dev/null} ]] || { 
+        comment no input files for $(myname);
+        return
+    };
+    backup $1;
+    : --------- F2FILE clears and writes the current FUNCTIONS --;
+    :;
+    pushd $(f2file $1) > /dev/null;
+    cdx > /dev/null;
+    debug Check for Files in $PWD;
+    pause;
+    dfg_one $1;
+    popd > /dev/null
+}
+dfg_sed () 
+{ 
+    : broken out for editing explanation;
+    : 1. replace the 1 Slash with a TAB;
+    : 2. ... a Colon and spaces with a TAB;
+    : 3. suppress leading TABS in Context, 240519;
+    : 4. remove mulitiple TABS or Spaces after a TAB;
+    : date: 2024-05-19;
+    : date: 2024-10-02;
+    sed '
+        s/\//	/;
+	s/: */	/;
+	s/		*[ 	]*/	/;
+    '
+}
+dfg_selection () 
+{ 
+    : select funtions from a DFG pattern;
+    : date: 2025-02-20;
+    function name_toout () 
+    { 
+        : display a function body;
+        debug_on;
+        pause_on;
+        fbdy $1;
+        pick $1 | tee -a ~/tmp/pick.out;
+        debug_off;
+        pause_off
+    };
+    rm -f ~/tmp/pick.out;
+    foreach name_toout $(dfg $* | rd_uniq fun | headoff);
+    sort -u ~/tmp/pick.out;
+    comment File: ~/tmp/pick.out
+}
+dfg_short () 
+{ 
+    : clear abstract and function definitions from CONTEXT;
+    : on pipe, argument implies DFG query;
+    : former: dfg_shortcontext;
+    : date: 2021-04-30;
+    : date: 2022-06-16;
+    : date: 2024-02-26;
+    : date: 2024-05-02;
+    case $# in 
+        0)
+            report_notpipe && return 1;
+            compute "context = substr(context,1,64)"
+        ;;
+        *)
+            dfg "$1" | $(myname);
+            return
+        ;;
+    esac
+}
+dfg_smart () 
+{ 
+    : likely smart functions;
+    : date: 2024-05-25;
+    : date: 2024-06-21;
+    : date: 2024-12-02;
+    : date: 2025-02-28;
+    dfg_short . | row 'context ~ /^.{.:-/'
+}
+dfg_summary () 
+{ 
+    : list, def less, first listing;
+    : date: 2024-08-28;
+    dfg ${1:-dfg} | row "fun "!"~ /_list$/" | justify | row "context "!"~ /[(][)] *$/" | compute 'if (c[fun]++) { next; }'
+}
+dfg_unique () 
+{ 
+    : unique functions, incl retired;
+    : example: data file, history file;
+    : date: 2025-04-19;
+    : date: 2025-04-27;
+    local dir file name hry;
+    name=fununique.rdb;
+    dir=$(needir $(dfg_db)/.lib);
+    hry=$(needir $dir/.hry)/${name%.*}.nxt;
+    file=$dir/$name;
+    debug dir: $dir;
+    debug file: $file;
+    debug hry: $hry;
+    debug IS hry an NXT file?;
+    pause;
+    dfg . | row '!p[fun]++' > $file;
+    debug $(wc $file $hry);
+    pause;
+    indir $dir rdupdate $name
+}
+dfg_unlist () 
+{ 
+    : UnList the _List functions;
+    : date: 2024-09-10;
+    dfg ${1:-dfg} | rowhasnot fun _list
+}
+dfg () 
+{ 
+    : Directory Function Grep;
+    : related: f2file dfg .;
+    : example: 'dfg | row "fun !~ /dfg/" | justify';
+    : lesson: quoted examples need to have SINGLE quotes?!;
+    : date: 2020-10-03;
+    : date: 2021-08-02;
+    : lesson: dont PAUSE in here;
+    : date: 2022-05-14;
+    : date: 2022-10-03;
+    debug ENTRY $*;
+    local dir="$(dfg_db)";
+    debug dir: "$dir";
+    : debug PWD $PWD pause;
+    : only files -- functions -- in library directories;
+    find "$dir"/*/* -type d 1>&2;
+    pause;
+    dfg_rd "${1:-dfg}" | column | sorttable fun
+}
+dfg_mjm () 
+{ 
+    : DFG subordinate to MJM;
+    ${*-echo} "$(dfg_db)" | sed 's/.*\/mjm/./'
+}

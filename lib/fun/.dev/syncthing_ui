@@ -1,0 +1,7 @@
+syncthing_ui () 
+{ 
+    : the Browser App for Syncthing;
+    : date: 2023-09-08;
+    : date: 2024-05-15;
+    ${@:-echo} http://127.0.0.1:8384/
+}

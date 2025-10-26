@@ -1,0 +1,7 @@
+ftphome () 
+{ 
+    : directory for HTML files to FTP to mcgowans/marty3;
+    : date: 2024-05-27;
+    : date: 2025-03-02;
+    ${*:-echo} $(applemcg)/marty3
+}

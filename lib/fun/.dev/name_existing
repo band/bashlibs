@@ -1,0 +1,5 @@
+name_existing () 
+{ 
+    : date: 2025-04-29;
+    [[ -f $1 ]] && echo $1
+}

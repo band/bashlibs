@@ -1,0 +1,7 @@
+thoughts () 
+{ 
+    : smart directory;
+    : mfg: smart_dir;
+    : date: 2025-04-21;
+    ${@:-echo} "/Users/martymcgowan/marty3/git/applemcg.github.io/marty3/thoughts"
+}

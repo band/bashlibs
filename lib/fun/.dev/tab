@@ -1,0 +1,6 @@
+tab () 
+{ 
+    : on the command line, to insert a tab;
+    : date: 2024-01-15;
+    echo "CTRL-V <tab>"
+}

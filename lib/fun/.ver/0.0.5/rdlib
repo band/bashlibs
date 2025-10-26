@@ -1,0 +1,773 @@
+rd_libheader () 
+{ 
+    : " This is the rdlib Function Library Comment Header";
+    : "Copyright 2025, Marty McGowwan @ Shell Functions";
+    : date: 2025-04-27;
+    : date: 2025-05-07;
+    :;
+    : " This program is free software: you can redistribute it and/or modify";
+    : "it under the terms of the GNU General Public License as published by";
+    : "the Free Software Foundation, either version 3 of the License, or";
+    : "(at your option) any later version.";
+    :;
+    : " This program is distributed in the hope that it will be useful,";
+    : "but WITHOUT ANY WARRANTY; without even the implied warranty of";
+    : "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the";
+    : "GNU General Public License for more details.";
+    :;
+    : " You should have received a copy of the GNU General Public License";
+    : "along with this program.  If not, see <http://www.gnu.org/licenses/>.";
+    :;
+    : "e.g. $ abstracts $(functions $(which rdlib))";
+    :;
+    : "name             	abstract                                                      ";
+    : "----             	--------                                                      ";
+    : "rd_libheader     	This is the rdlib Function Library Comment Header             ";
+    : "addcol           	adds columns to a table                                       ";
+    : "blank            	replace all data in records with spaces                       ";
+    : "column           	PROJECT columns from named RDB -- first Row -- FIELDS         ";
+    : "column_data      	just the data from a tables column                            ";
+    : "compute          	use AWK language, functions on named fields                   ";
+    : "hdr_row          	produce the field names from a list format                    ";
+    : "headoff          	remove the RDB header from a TABLE, see Book p. 311           ";
+    : "jointable        	join two tables into one where keys match                     ";
+    : "listtableornaught	table or list or ?? for one file or STDIN                     ";
+    : "listtotable      	reads stdin or named files in LIST format, converting to TABLE";
+    : "ncolumn          	removes columns from table, Not Column                        ";
+    : "not              	comment - logical inversion of command result                 ";
+    : "overwrite        	debug $*                                                      ";
+    : "rd               	-- allow commands to preserve Relation Data header            ";
+    : "rdb              	list all /RDB programs in rdb/bin directory                   ";
+    : "rdb_commands     	the file of BOOK command names                                ";
+    : "rdb_hdr          	first the names, then equal-width dashes,                     ";
+    : "rdb_notime       	removes insert, delete times                                  ";
+    : "rduniq           	Relational Data UNIQ                                          ";
+    : "rename           	~ fromFieldName toNewName                                     ";
+    : "row              	SELECT rows matching argument criteria,                       ";
+    : "rowhas           	a FIELD has a VALUE                                           ";
+    : "rowis            	a FIELD is exactly the VALUE                                  ";
+    : "rowisnot         	a FIELD does not have the VALUE                               ";
+    : "schema           	lists the database dictionary from tables                     ";
+    : "sortable         	shorthand for sorttable                                       ";
+    : "sorttable        	sort /RDB table according to books p. 398                     ";
+    : "tableorlist      	reports if a file is table, list or ignores non /rdb files    ";
+    : "tabletolist      	convert TABLE format to LIST format                           "
+}
+addcol () 
+{ 
+    : adds columns to a table;
+    : date: 2019-08-11;
+    : date: 2020-05-17;
+    : date: 2024-01-25;
+    read HEAD;
+    read DASH;
+    ( rdb_hdr $HEAD $@;
+    cat ) | column $HEAD $@
+}
+blank () 
+{ 
+    : replace all data in records with spaces;
+    : date: 2016-06-09;
+    ( read HEAD;
+    read DASH;
+    rdb_hdr $HEAD;
+    sed 's/[^	]/ /g' ) | tabletolist
+}
+column () 
+{ 
+    : PROJECT columns from named RDB -- first Row -- FIELDS;
+    : reads STDIN for RDB list or TABLE format,;
+    : date: 2019-07-02;
+    : date: 2019-08-14 added the BLANK columns, not yet in table;
+    : date: 2021-04-13;
+    : date: 2022-08-13;
+    : date: 2023-09-30;
+    : date: 2023-10-03;
+    : date: 2023-12-02;
+    : date: 2025-05-09;
+    :;
+    : todo: ELIMINATE the CAT Bug, see coment;
+    : todo: colllect column making, script writing into functions;
+    :;
+    : -------------------------------------- begin template.fun --;
+    debug ENTRY $@;
+    pause;
+    local HEAD;
+    local DASH;
+    local data=$(mktemp ~/tmp/column.XXXXX);
+    cat - > $data;
+    debug STORED $(wc -l $data);
+    pause;
+    read HEAD < $data;
+    [[ -z "$HEAD" ]] && { 
+        debug ABOUT to CONVERT LIST to TABLE, and Back?;
+        pause;
+        ( echo;
+        cat $data;
+        rm -f $data ) | listtotable | column "$@" | tabletolist;
+        return 0
+    };
+    read DASH < $data;
+    debug READ DASH $(wc -l $data);
+    pause;
+    :;
+    : ------------------------------------------------- CAT BUG --;
+    debug HEAD: $HEAD, DASH: $DASH;
+    : default to HEADER fields;
+    local tomatch=":";
+    for h in $HEAD;
+    do
+        tomatch=":$h:$tomatch";
+    done;
+    debug "tomatch: $tomatch";
+    set -- ${@:-$HEAD};
+    debug "ARGS: $@";
+    pause;
+    local COL="";
+    for ARG in $@;
+    do
+        local C;
+        local a=":$ARG:";
+        if [[ $tomatch == *"$a"* ]]; then
+            debug "the column is in the table, which field";
+            (( C = 1 ));
+            for I in $HEAD;
+            do
+                [[ "$I" = "$ARG" ]] && { 
+                    COL="${COL},\$$C";
+                    debug "IN Table, C, COL: $C, $COL";
+                    break
+                };
+                (( C += 1 ));
+            done;
+        else
+            debug "the column is NOT in Table, COL: $COL";
+            COL="${COL},blank";
+        fi;
+        debug "COL: $COL";
+    done;
+    COL=${COL#,};
+    debug COL: $COL;
+    pause;
+    : -------------------------------------- this WAS redundant --;
+    : ------------------- using rdb_hdr --;
+    local script="
+        BEGIN {
+	        FS = OFS = \"\t\";
+		blank = \"\";
+
+	      }; 
+              { 
+                print $COL; 
+              }
+    ";
+    debug TO READ DATA $(wc -l $data);
+    pause;
+    cat $data | awk -F'\t' "$script"
+}
+column_data () 
+{ 
+    : just the data from a tables column;
+    : date: 2016-06-09;
+    : date: 2022-10-12;
+    : date: 2023-07-09;
+    column $1 | headoff | sort
+}
+compute () 
+{ 
+    : use AWK language, functions on named fields;
+    : date: 2017-06-20;
+    : date: 2021-07-05;
+    : date: 2021-07-16;
+    : date: 2023-07-09;
+    : date: 2025-04-11;
+    :;
+    local COLIN;
+    local COLOUT;
+    read HEAD;
+    if test -z "$HEAD"; then
+        ( echo;
+        cat ) | listtotable | compute "$@" | tabletolist;
+        return 0;
+    fi;
+    read DASH;
+    rdb_hdr $HEAD;
+    (( C = 1 ));
+    for I in $HEAD;
+    do
+        COLIN="$COLIN $I=\$$C;";
+        COLOUT="$COLOUT \$$C=$I;";
+        (( C += 1 ));
+    done;
+    : trace_call "IN, cmd, OUT: $COLIN; $cmmd; $COLOUT";
+    local awklib='
+       function max(x,y) { return (x>y?x:y) }
+       function min(x,y) { return (x<y?x:y) }
+       function abs(x)   { return (x<0?-x:x) }
+    ';
+    : insight: 2nd arg is an ENDBLOCK,;
+    :;
+    local endblock="${2:-exit}";
+    :;
+    case $endblock in 
+        exit)
+
+        ;;
+        *)
+            pptlog "$(myname 2) $(myname) $# ENDBLOCK: $endblock" >> $(lib)/log/compute.log
+        ;;
+    esac;
+    [[ -n "$COLIN" ]] && { 
+        awk "
+        $awklib
+        BEGIN   { FS=OFS=\"\t\"}; { $COLIN $1; $COLOUT print }; END { $endblock; }"
+    }
+}
+hdr_row () 
+{ 
+    : produce the field names from a list format;
+    : date: 2016-06-09;
+    set -- ${1:-$(ls -t *_list.txt)};
+    set -- $1 ${1%_list.txt}.hdr;
+    newest $2 $1 || { 
+        field 1 < $1 | printfirst > $2
+    };
+    cat $2
+}
+headoff () 
+{ 
+    : remove the RDB header from a TABLE, see Book p. 311;
+    : it makes NO sense to take the head off a LIST format;
+    : without first converting to a TABLE.;
+    : todo: does the SED belong in Column, or does it need fixing?;
+    : date: 2019-08-14;
+    : date: 2025-01-22;
+    case $# in 
+        0)
+            tail +3 | sed 's/  *$//'
+        ;;
+        *)
+            report_notfile $1 && return 1;
+            cat $1 | headoff
+        ;;
+    esac
+}
+jointable () 
+{ 
+    : join two tables into one where keys match;
+    : for historic compatibility, -jN is preserved, and;
+    : uses join with -j N;
+    : todo: "sort" out leading column name;
+    : todo: thoroughly test the STDIN or - arg;
+    : date: 2017-03-26;
+    : date: 2020-04-11;
+    : date: 2021-04-11 need, implemented -a, ixnclude unmatched;
+    : date: 2022-06-23;
+    : date: 2022-10-03;
+    local COLS="";
+    local ARGS="-e ' '";
+    local f1="";
+    local f2="";
+    local tmp=$HOME/tmp/$(myname);
+    rm -f $tmp.*;
+    while [ $# -gt 0 ]; do
+        arg=$1;
+        shift;
+        case $arg in 
+            -)
+                debug "= A = arg F1 F2: $arg, $f1, $f2";
+                if [ -z "$f1" ]; then
+                    cat - > $tmp.i;
+                    f1=$tmp.i;
+                else
+                    cat - > $tmp.i;
+                    f2=$tmp.i;
+                fi;
+                debug "TMP: $(wc -l $tmp.i)"
+            ;;
+            -t)
+                : ignore the T, apply after args are parsed;
+                continue
+            ;;
+            -j1 | -1)
+                local j1=$1;
+                shift
+            ;;
+            -j2 | -2)
+                local j2=$1;
+                shift
+            ;;
+            -[oj])
+                : ignore these
+            ;;
+            -[ave12])
+                ARGS="$ARGS $arg $1";
+                shift
+            ;;
+            -*)
+                ARGS="$ARGS $arg"
+            ;;
+            *)
+                debug "= B = arg F1 F2: $arg, $f1, $f2";
+                : column names or file args;
+                if [ ! -f $arg ]; then
+                    COLS="$COLS $arg";
+                    :;
+                else
+                    if [ -z "$f1" ]; then
+                        f1=$arg;
+                        :;
+                    else
+                        if [ -z "$f2" ]; then
+                            f2=$arg;
+                        fi;
+                    fi;
+                fi
+            ;;
+        esac;
+        debug "= C = arg F1 F2: $arg, $f1, $f2";
+    done;
+    debug "= D = arg F1 F2: $arg, $f1, $f2";
+    debug ARGS: $ARGS;
+    pause;
+    [[ -z "$f2" ]] && { 
+        comment there was no table 2, is it on STDIN;
+        [[ "$f1" = "$tmp.i" ]] && { 
+            comment bad STDIN or missing FILE $arg;
+            return 3
+        };
+        f2=$tmp.i;
+        debug "=  = tmp F2: $tmp.i, $f2";
+        report_notpipe && return 3;
+        cat - > $f2
+    };
+    debug "= E = arg F1 F2: $arg, $f1, $f2";
+    report_notfile $f1 && return 1;
+    report_notfile $f2 && return 2;
+    : --------------------------------------------------- clean up args --;
+    :;
+    : ---------------------------- multi-arg resolution --;
+    :;
+    [[ -n "$j1" ]] && { 
+        ARGS="$ARGS -1 $(rdb_column $f1 $j1)"
+    };
+    [[ -n "$j2" ]] && { 
+        ARGS="$ARGS -2 $(rdb_column $f2 $j2)"
+    };
+    debug "ARGS: $ARGS;";
+    :;
+    : ---------------- TAB is the only field separator --;
+    : and requires the EVAL in the join command;
+    :;
+    : date: 2020-09-08 in which i learned this bash syntax;
+    : ref: "https://duckduckgo.com/?t=ffab&q=bash+join+tab";
+    : requires EVAL;
+    ARGS="$ARGS -t $'\t'";
+    debug ARGS: $ARGS;
+    : --------------------------------------------- collect the columns --;
+    :;
+    local COL1=$(fieldsof $f1);
+    local COL2=$(fieldsof $f2);
+    :;
+    debug "FILE: $f1, COLUMNS: $COL1;";
+    pause;
+    cat $f1 | column $COL1 | sorttable -u $j1 | headoff > $tmp.a;
+    :;
+    debug " FILE: $f2, COLUMNS: $COL2;";
+    pause;
+    cat $f2 | column $COL2 | sorttable -u $j2 | headoff > $tmp.b;
+    :;
+    : columns of the JOINed table;
+    set -- $(args_uniq $j1 $j2 $COL1 $COL2);
+    debug "rdb_hdr $*";
+    pause;
+    rdb_hdr $*;
+    : the EVAL is mandated by the TAB syntax;
+    eval join $ARGS $tmp.{a,b} | tee ${tmp}.out;
+    debug ": $ARGS $tmp.{a,b}"
+}
+listtableornaught () 
+{ 
+    : table or list or ?? for one file or STDIN;
+    : the /rdb manual doesnt allow OTHER file type, and;
+    : todo: LIST format needs to check the 2nd line for a single TAB;
+    : lone TAB does not indicate 2nd field unless occupied, so;
+    : constrain field names to LT 17 characaters in LIST format;
+    : date: 2020-09-06;
+    : date: 2020-09-27;
+    [[ $# -eq 1 ]] && report_notfile $1 && return 1;
+    case $1 in 
+        *.css | *.awk | *.html | *.org | *.md | *.sh)
+            return
+        ;;
+    esac;
+    awk -v name=${1:-""} '
+    function found(type, ex) { printf fmt, type, name; exit ex }
+    BEGIN { FS = "\t"; fmt = "%s\t%s\n" }
+    #      { printf "A: NR, NF, qlist: %d, %d, %d\n", NR, NF, qlist > "/dev/stderr" ; }
+    #
+    # --------------------------------- isolate the LIST format	--
+    #
+    NR == 1 && NF < 1           { qlist = 1; next; }
+    #      { printf "B: NR, NF, qlist: %d, %d, %d\n", NR, NF, qlist > "/dev/stderr" ; }    
+    #
+    # ---------- NF < 3, the first record may have blank fields	--
+    #
+    NR == 2 && length($1) < 17 && qlist { found( "list",  1) }
+    #
+    # -------------------------------- isolate the TABLE format	--
+    #
+    #      { printf "C: NR, NF, qlist: %d, %d, %d\n", NR, NF, qlist > "/dev/stderr" ; }        
+    NR > 2                      { exit; }
+    NR == 1                     { next; }
+    #
+    # ------------------------- the second record, ?? Dashes ??	--
+    #
+    NF > 1 && $2 ~ /^--*$/      { found( "table", 0) }
+    $1 ~ /^--*$/                { found( "table", 0) }
+
+    ' $1
+}
+listtotable () 
+{ 
+    : reads stdin or named files in LIST format, converting to TABLE;
+    : to relieve a possible non-EMPTY Line at the END of the file, added flushed;
+    : an awkism "!flushed" is not the same as "flushed > 0";
+    : related: lib_faulty;
+    : todo: functions totable and tolist, take either, convert only as required;
+    : todo: move to an awk file, defense against lib_faulty;
+    : 2020-09-06: added flushed. still needs a separate test .;
+    : date: 2016-06-09;
+    : date: 2024-04-14;
+    : date: 2024-06-19;
+    awk -f $INSTALL_HOME/lib/awk/listtotable.awk $* | awk NF
+}
+ncolumn () 
+{ 
+    : removes columns from table -- Not Column;
+    : date: 2019-07-02;
+    : date: 2019-08-14 added the BLANK columns, not yet in table;
+    : -------------------------------------- begin template.fun --;
+    : date: 2019-08-27;
+    : date: 2022-06-23;
+    : date: 2023-09-05;
+    : date: 2024-06-28;
+    : date: 2025-02-06;
+    : date: 2025-04-27;
+    debug ENTRY $#: $*;
+    local HEAD;
+    local DASH;
+    local COL="";
+    local C;
+    :;
+    read HEAD;
+    [[ -z "$HEAD" ]] && { 
+        ( echo;
+        cat ) | listtotable | $(myname) "$@" | tabletolist;
+        return 0
+    };
+    read DASH;
+    : ---------------------------------------- end template.fun --;
+    : extract names from HEADER fields;
+    COL=$(echo :$HEAD: | tr ' 	' :);
+    debug COL: $COL;
+    for C in $@;
+    do
+        COL=${COL/:$C:/:};
+        debug removed $C, COL: $COL;
+    done;
+    COL=$(echo $COL | tr : ' ');
+    debug COL.: $COL;
+    ( rdb_hdr $HEAD;
+    debug HEAD: $HEAD;
+    cat - ) | column $COL
+}
+not () 
+{ 
+    : comment - logical inversion of command result;
+    : date: 2020-08-24;
+    : date: 2023-12-19;
+    : date: 2025-04-19;
+    debug ENTRY $# $*;
+    if eval $*; then
+        exit 255;
+    else
+        exit 0;
+    fi
+}
+rd () 
+{ 
+    : -- allow commands to preserve Relation Data header;
+    : date: 2017-05-11;
+    : debug $*;
+    read HEAD;
+    read DASH;
+    rdb_hdr $HEAD;
+    "$@"
+}
+rdb () 
+{ 
+    : list all /RDB programs in rdb/bin directory;
+    : hidden first argument, the;
+    : date: 2020-04-11;
+    : ${RDB_HOME:=$HOME/marty3};
+    : date: 2023-09-13;
+    function _rdb () 
+    { 
+        local c="--------";
+        local f="---------";
+        fmt="%s\n%s\n%s\n";
+        printf $fmt $c commands $c;
+        ls | grep -v ^_;
+        printf $fmt $f functions $f;
+        functions $(which rdlib) | grep -v ^_ | sort
+    };
+    function _rdb_post () 
+    { 
+        : supply alternative to condition rdb output;
+        : date: 2020-04-11;
+        report_notpipe && return 1;
+        pr -${1:-4} -t
+    };
+    indir ${RDB_HOME}/bin _rdb | _rdb_post $1;
+    comment unset _rdb{,_post}
+}
+rdb_commands () 
+{ 
+    : the file of BOOK command names;
+    : date: 2021-02-07 recovered from oldcommand history;
+    function commands_fields () 
+    { 
+        rdb_commands sed 1q
+    };
+    ${*:-echo} ${RDB_HOME}/bookcommand.rdb
+}
+rdb_hdr () 
+{ 
+    : first the names, then equal-width dashes,;
+    : with one or more, spaces to a single TAB;
+    : date: 2017-05-12;
+    : date: 2022-05-29;
+    : date: 2023-07-09;
+    ( echo $*;
+    echo $* | tr 'a-zA-Z0-9_' '-' ) | sed 's/  */ /g' | tr ' ' '\t'
+}
+rdb_notime () 
+{ 
+    : removes insert, delete times;
+    : date: 2017-05-12;
+    : date: 2023-07-09;
+    ncolumn insert_time delete_time
+}
+rduniq () 
+{ 
+    : Relational Data UNIQ;
+    : date: 2016-06-09;
+    : date: 2022-11-20;
+    debug ENTRY $@;
+    uniq -c | awk '
+BEGIN  { OFS = "\t" }
+NR == 1 { $1 = "Count" }
+NR == 2 { $1 = "-----" }
+       { print }
+' | sed '
+#  s/^  *//
+ s/\(^ *[0123456789][0123456789]*\)  */\1	/
+'
+}
+rename () 
+{ 
+    : ~ fromFieldName toNewName;
+    : by modifying the matching column name;
+    : date: 2016-11-15;
+    : date: 2019-08-14;
+    : date: 2024-01-25;
+    report_notpipe && return 1;
+    : -------------------------------------- begin template.fun --;
+    local HEAD;
+    local DASH;
+    :;
+    read HEAD;
+    [[ -z "$HEAD" ]] && { 
+        ( echo;
+        cat ) | listtotable | $(myname) "$@" | tabletolist;
+        return 0
+    };
+    read DASH;
+    : ---------------------------------------- end template.fun --;
+    HEAD=$(echo :$HEAD: | tr ' 	' :);
+    while [[ $# -gt 1 ]]; do
+        HEAD=${HEAD/:$1:/:$2:};
+        shift 2;
+    done;
+    HEAD=$(echo $HEAD | tr : ' ');
+    rdb_hdr $HEAD;
+    cat
+}
+row () 
+{ 
+    : SELECT rows matching argument criteria,;
+    : expressed as AWK pattern. e.g. "date > 20170210";
+    : where "date" in this case is a field name in table header;
+    : reads STDIN for RDB list or TABLE format,;
+    : date: 2017-05-11;
+    : date: 2022-05-27;
+    : date: 2022-06-23;
+    : date: 2024-01-25;
+    :;
+    : an empty first row is assumed to be in LIST format;
+    : date 2017-02-10;
+    local COL="";
+    local HEAD;
+    local DASH;
+    report_exceedargcount 1 $# "field ~ /pattern/ || " && return 2;
+    read HEAD;
+    [[ -z "$HEAD" ]] && { 
+        debug $*;
+        ( echo;
+        cat ) | listtotable | row "$@" | tabletolist;
+        return 00
+    };
+    read DASH;
+    rdb_hdr $HEAD;
+    (( C = 1 ));
+    for I in $HEAD;
+    do
+        COL="$COL $I=\$$C;";
+        (( C += 1 ));
+    done;
+    : debug 1: $1, COL: $COL;
+    [[ -n "$COL" ]] && { 
+        : comment awk "BEGIN { FS = OFS = \"\t\" }; { $COL } $1 { print }";
+        awk "BEGIN { FS = OFS = \"\t\" }; { $COL }; $1 { print }"
+    }
+}
+rowhas () 
+{ 
+    : a FIELD has a VALUE;
+    : date: 2022-03-23;
+    : date: 2024-09-14;
+    report_notargcount 2 $# field value && return 1;
+    report_notpipe && return 2;
+    row "$1 ~ /$2/"
+}
+rowis () 
+{ 
+    : a FIELD is exactly the VALUE;
+    : date: 2016-06-09;
+    report_notargcount 2 $# field value && return 1;
+    report_notpipe && return 2;
+    row "$1 ~ /^$2$/"
+}
+rowisnot () 
+{ 
+    : a FIELD does not have the VALUE;
+    : date: 2016-06-09;
+    report_notargcount 2 $# field value && return 1;
+    report_notpipe && return 2;
+    row "$1 !~ /$2/"
+}
+schema () 
+{ 
+    : lists the database dictionary from tables;
+    : date: 2016-06-09;
+    function _do_schema () 
+    { 
+        if tableorlist < $1 > /dev/null; then
+            sed 1q $1;
+        else
+            listtotable $1 | sed 1q;
+        fi | awk -v name=$1 '
+
+           BEGIN { OFS = "\t" }
+	         {
+		   for (i=1; i <= NF; i++) {
+		       print name, i, $i
+		       }
+		 }
+           '
+    };
+    rdb_hdr Table Field Name;
+    foreach _do_schema $*
+}
+sortable () 
+{ 
+    : shorthand for sorttable;
+    : date: 2020-08-01;
+    sorttable $@
+}
+sorttable () 
+{ 
+    : sort /RDB table according to books p. 398;
+    : single lettter with following arg TkSo;
+    : todo: accomodate field NAMES;
+    : date: 2020-04-11;
+    : simple rd sort $*;
+    read HEAD;
+    [[ -z "$HEAD" ]] && { 
+        ( echo;
+        cat ) | listtotable | sorttable "$@" | tabletolist;
+        return 0
+    };
+    read DASH;
+    : sort -t;
+    ARGS="";
+    while [ -n "$1" ]; do
+        case $1 in 
+            --*)
+                : eschew or IGNORE -- args;
+                continue
+            ;;
+            -t)
+                : -t is a TAB, none other;
+                continue
+            ;;
+            -[koST])
+                : allow -k N args, prefer Column Name;
+                ARGS="$ARGS $1 $2";
+                shift
+            ;;
+            -*)
+                ARGS="$ARGS $1"
+            ;;
+            *)
+                : detect Column Name;
+                local argn=$(argnumber $1 $HEAD);
+                [[ $argn == 0 ]] && continue;
+                ARGS="$ARGS -k $argn"
+            ;;
+        esac;
+        shift;
+    done;
+    rdb_hdr $HEAD;
+    sort -t'	' $ARGS
+}
+tableorlist () 
+{ 
+    : reports if a file is table, list or ignores non /rdb files;
+    : date: 2016-06-09;
+    case $# in 
+        0 | 1)
+            [[ $# = 1 ]] && { 
+                listtableornaught $1;
+                return $?
+            };
+            listtableornaught
+        ;;
+        *)
+            rdb_hdr Type File;
+            foreach listtableornaught $* 2> /dev/null;
+            return 0
+        ;;
+    esac
+}
+tabletolist () 
+{ 
+    : convert TABLE format to LIST format;
+    : use in format-smart functions -- e.g. row, column,;
+    : todo: functions totable and tolist, take either, convert only as required;
+    : date: 2016-06-09;
+    : date: 2024-04-14;
+    : date: 2024-06-19;
+    awk -f $INSTALL_HOME/lib/awk/tabletolist.awk
+}

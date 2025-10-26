@@ -1,0 +1,18 @@
+html_dir () 
+{ 
+    : trim path to nearest HTML directory;
+    : date: 2025-02-09;
+    debug ENTRY $# $*;
+    for d in . .. ../.. ../../.. ../../../..;
+    do
+        ignore pushd $d;
+        debug PWD: $PWD;
+        pause;
+        [[ -d html ]] && { 
+            ${*:-echo} $PWD/html;
+            ignore popd;
+            return
+        };
+        ignore popd;
+    done
+}

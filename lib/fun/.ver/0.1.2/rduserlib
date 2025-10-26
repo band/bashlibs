@@ -1,0 +1,263 @@
+rduser_libheader () 
+{ 
+    : " This is the rduserlib Function Library Comment Header";
+    : "Copyright 2025, Marty McGowwan @ Shell Functions";
+    :;
+    : " This program is free software: you can redistribute it and/or modify";
+    : "it under the terms of the GNU General Public License as published by";
+    : "the Free Software Foundation, either version 3 of the License, or";
+    : "(at your option) any later version.";
+    :;
+    : " This program is distributed in the hope that it will be useful,";
+    : "but WITHOUT ANY WARRANTY; without even the implied warranty of";
+    : "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the";
+    : "GNU General Public License for more details.";
+    :;
+    : " You should have received a copy of the GNU General Public License";
+    : "along with this program.  If not, see <http://www.gnu.org/licenses/>.";
+    :;
+    : date: 2025-05-08 - even libheaders need a date;
+    :;
+    : "name            	abstract                                                        	";
+    : "----            	--------                                                        	";
+    : "rduser_libheader	This is the rduserlib Function Library Comment Header           	";
+    : "rd_audit        	collect first TSV occurrence of NF by NR                        	";
+    : "rd_awk_builtin  	debug $*                                                        	";
+    : "rd_backup       	update a table with backup                                      	";
+    : "rd_base         	the base name of the local table                                	";
+    : "rd_before       	debug $*                                                        	";
+    : "rd_columns      	enumerate the columns in an RDB table                           	";
+    : "rd_data         	debug $*                                                        	";
+    : "rd_doundelete   	undelete records matching a DELETE_TIME                         	";
+    : "rd_help         	the whole rd_ family                                            	";
+    : "rd_init         	a no-op for the time being                                      	";
+    : "rd_nospace      	debug $*                                                        	";
+    : "rd_popular      	debug $*                                                        	";
+    : "rd_reject       	Row selection to reject a Field with a Value                    	";
+    : "rd_reorder      	edit, re-order the fields in an rdb table                       	";
+    : "rd_rulehdr      	edit-ready rule table record                                    	";
+    : "rd_since        	debug $*                                                        	";
+    : "rd_table        	those of us rd_ functions which manage rd_rule tables           	";
+    : "rd_undeleted    	retrieve undeleted records from rd history on STDIN             	";
+    : "rd_undeletenxt  	update NXT copies of HISTORY from records matching a DELETE_TIME	";
+    : "rd_uniq         	select column or columns from a table                           	";
+    : "rd_working      	sorting out the rd family                                       	";
+    : "rdr             	just short of an app with a function family, default help       	"
+}
+rd_audit () 
+{ 
+    : collect first TSV occurrence of NF by NR;
+    : date: 2025-01-24;
+    awk -F\t ' !p[NF]++ { printf "%5d\t%5d\t%s\n", NF, NR, $0 }' | top_rdbhdr NF NR fields
+}
+rd_backup () 
+{ 
+    : update a table with backup;
+    : date: 2025-01-24;
+    set -- $(newsuf rdb) /dev/null;
+    debug SET $*;
+    report_notfile $1 && return;
+    local root=${1%.rdb};
+    local temp=${root}.nxt;
+    debug root, temp: $root, $temp;
+    pause;
+    rdupdate $1;
+    mv .hry/$temp .hry/$1;
+    backup .hry/$1
+}
+rd_base () 
+{ 
+    : the base name of the local table;
+    : date: 2020-10-25;
+    basename $PWD
+}
+rd_columns () 
+{ 
+    : enumerate the columns in an RDB table;
+    set -- {1..129};
+    while [ -n "$2" ]; do
+        eval nC$1=$2;
+        shift;
+    done
+}
+rd_data () 
+{ 
+    : debug $*;
+    cat ${1:--} | column_data ${*:2}
+}
+rd_doundelete () 
+{ 
+    : undelete records matching a DELETE_TIME;
+    : date: 2022-06-16;
+    if_missingargs 1 $* && return;
+    compute "if (delete_time ~ /$1/) delete_time = \"\""
+}
+rd_help () 
+{ 
+    : the whole rd_ family;
+    : date: 2020-10-21;
+    : date: 2020-10-23;
+    ${*:-echo} rdr $(sfg ^rd_)
+}
+rd_init () 
+{ 
+    : a no-op for the time being;
+    : date: 2018-01-15;
+    : date: 2022-06-16;
+    return
+}
+rd_reject () 
+{ 
+    : Row selection to reject a Field with a Value;
+    : date: 2024-09-14;
+    debug SET $# $@;
+    report_notpipe && { 
+        return 1
+    };
+    if_missingargs 2 $* && { 
+        cat -;
+        return
+    };
+    row "$1 !~ /$2/"
+}
+rd_reorder () 
+{ 
+    : edit, re-order the fields in an rdb table;
+    : usage cat table | column $(rd_reorder table);
+    :;
+    report_notfile $1 && return 1;
+    sed 1q $1 | tr '\t' '\n' > .x;
+    pr -tn .x 1>&2;
+    ed .x;
+    set $(< .x);
+    echo $*
+}
+rd_rulehdr () 
+{ 
+    : edit-ready rule table record;
+    : date: 2020-10-27;
+    rdb_hdr base rule input command | tabletolist
+}
+rd_table () 
+{ 
+    : those of us rd_ functions which manage rd_rule tables;
+    : date: 2020-10-23;
+    : date: 2020-11-11;
+    ${*:-echo} rdr \
+               rd_{help,base,rules,rulehdr,local,table,run,cmd,edit,show}
+}
+rd_undeleted () 
+{ 
+    : retrieve undeleted records from rd history on STDIN;
+    : date: 2022-06-16;
+    : date: 2022-06-22;
+    report_notpipe && return 1;
+    row '!delete_time' | ncolumn {insert,delete}_time
+}
+rd_undeletenxt () 
+{ 
+    : update NXT copies of HISTORY from records matching a DELETE_TIME;
+    : run: ~ REmatchingtime FILE.rdb;
+    : demo: rd_undeletenxt ^220616 todo.rdb;
+    : date: 2022-06-16;
+    : date: 2022-06-24;
+    if_missingargs 2 $* && return;
+    local retime=$1;
+    debug retime: $retime;
+    set -- ${2%.*}.{rdb,nxt};
+    debug SET $*;
+    local dirn=$(dirname $1);
+    local base=$(basename $1);
+    local next=$(basename $2);
+    report_notfile $dirn/.hry/$base && return 1;
+    debug FILE $dirn/.hry/$base;
+    debug NEXT $dirn/.hry/$next;
+    pause;
+    cat $dirn/.hry/$base | rd_doundelete $retime | tee $dirn/.hry/$next | rd_undeleted | tee $dirn/$next
+}
+rd_uniq () 
+{ 
+    : select column or columns from a table;
+    : date: 2025-02-27;
+    column ${*:-fun} | uniq | headoff
+}
+rd_working () 
+{ 
+    : sorting out the rd family;
+    : date: 2025-01-24;
+    ignore libfun pushd;
+    ignore cdx;
+    do_whlib $(functions rd*lib) | top_rdbhdr fun library;
+    ignore pushd;
+    pickd 1>&2
+}
+rdr () 
+{ 
+    : just short of an app with a function family, default help;
+    : former rule. just plan RD is taken, paean to rd rule;
+    : date: 2020-10-23;
+    local fun=rd_${1};
+    isfunction $fun || { 
+        rd_help;
+        return
+    };
+    $fun ${*:2}
+}
+rd_update () 
+{ 
+    : update a Relational TABLE;
+    : from rdupdate;
+    : date: 2024-02-03;
+    : date: 2025-04-27;
+    : date: 2025-06-08;
+    report_notfile $1 && return 1;
+    debug ENTRY $# $@;
+    function _rd_update () 
+    { 
+        debug ENTRY $# $@;
+        local tbl=$1;
+        local hry=$(needir .hry)/$tbl;
+        local nxt=.hry/${tbl%.*}.nxt;
+        local err=~/tmp/rd_update.err;
+        debug B tbl: $tbl, hry: $hry, nxt: $nxt;
+        pause;
+        [[ -f $hry ]] || { 
+            debug W hry: $hry;
+            rdb_hdr {insert,delete}_time $(sed 1q $tbl) > $hry
+        };
+        local awkfile=$INSTALL_HOME/lib/awk/rdupdate.awk;
+        debug awkfile: $awkfile;
+        report_notfile $awkfile && { 
+            debug E2 $awkfile;
+            pause;
+            return 2
+        };
+        now=$2;
+        debug now: $now;
+        pause;
+        debug D $* awk -F'\t' $tbl -v now=$now -f $awkfile $hry;
+        awk NF $tbl | awk -F'\t' -v now=$now -f $awkfile $hry - 2> $err | sorttable > $nxt;
+        debug SIZE $nxt: $(wc $nxt $hry);
+        pause;
+        [[ -s $nxt ]] && { 
+            diff $nxt $hry 1>&2 && { 
+                debug PWD: $PWD;
+                debug WC: $(wc $nxt $hry);
+                pause
+            } || { 
+                debug $nst $hry HANDLE the difference;
+                pause;
+                diff $nxt $hry > /dev/null && { 
+                    debug Next is redundant;
+                    rm -f $nxt
+                } || { 
+                    debug Update $hry;
+                    echo mv $nxt $hry
+                }
+            }
+        };
+        debug EXIT. $@
+    };
+    indir $(dirname $1) _rd_update $(basename $1) $(date '+%y%m%d%H%M%S');
+    debug EXIT. $@
+}

@@ -1,0 +1,11 @@
+repo_files () 
+{ 
+    : REPO candidates;
+    : date: 2024-10-21;
+    : date: 2024-11-13;
+    ignore pushd $(repo);
+    ignore cdx;
+    report_notdirectory .git && return 1;
+    find . -type f | egrep -v '/([.][a-z]|bin)' | egrep -v '[.](html|out)$' | sed s'/^..//';
+    ignore pushd
+}

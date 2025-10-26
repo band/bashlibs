@@ -1,0 +1,10 @@
+qprofile () 
+{ 
+    : query the backup state of Dot Profiles;
+    : theres a bug here somewhere;
+    : look below Backup_Ver Next_Version;
+    : todo: eliminate the bug;
+    : date: 2024-06-24;
+    : date: 2024-07-01;
+    ls -alrt ${*:-.} ~/.{user,bash}_profile $(local_profile $(libfun))
+}

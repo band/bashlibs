@@ -1,0 +1,179 @@
+clean_libheader () 
+{ 
+    : " This is the cleanlib Function Library Comment Header";
+    : "Copyright 2025, Marty McGowwan @ Shell Functions";
+    : date: 2025-05-07;
+    :;
+    : " This program is free software: you can redistribute it and/or modify";
+    : "it under the terms of the GNU General Public License as published by";
+    : "the Free Software Foundation, either version 3 of the License, or";
+    : "(at your option) any later version.";
+    :;
+    : " This program is distributed in the hope that it will be useful,";
+    : "but WITHOUT ANY WARRANTY; without even the implied warranty of";
+    : "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the";
+    : "GNU General Public License for more details.";
+    :;
+    : " You should have received a copy of the GNU General Public License";
+    : "along with this program.  If not, see <http://www.gnu.org/licenses/>."
+}
+clean () 
+{ 
+    : show list to clean, or eval command;
+    : e.g clean rm -f;
+    : date: 2024-03-23;
+    : date: 2024-11-30;
+    debug ENTRY $# $*;
+    case $# in 
+        0)
+            toclean
+        ;;
+        *)
+            set $* $(toclean);
+            debug Commands and ARGS: $*;
+            pause;
+            $*;
+            ls -alrt 1>&2
+        ;;
+    esac
+}
+clean_help () 
+{ 
+    : user info;
+    : date: 2024-09-27;
+    cat <<EOF
+    $ clean          # lists the files to be cleaned
+    $ clean rm -f    # removes files to be cleaned; listing remaining
+    $ cat clean.txt  # absrtacts of Clean functions
+    $ cat .toclean   # list names to add to the default list to be cleaned
+    $ cat .tokeep    # list names NOT to be cleaned,
+                     # side effect, first usage adds .to{clean,keep} to .tokeep
+ 
+  N.B. debug and pause functions, as place-holders return w/o acting on arguments
+  
+EOF
+
+}
+clean_orkeep () 
+{ 
+    : keep some files regardless;
+    : clean some files regardless;
+    : relies on sorted Clean or Keep;
+    : date: 2024-03-23;
+    : date: 2024-07-13;
+    : date: 2024-07-14;
+    : date: 2024-11-30;
+    : date: 2024-12-28;
+    local clean keep;
+    clean=.toclean;
+    tokeep=.tokeep;
+    report_notpipe && return 1;
+    mkdir -p ~/tmp;
+    rm -f ~/tmp/.*.{in,out};
+    [[ -f $clean ]] || touch $clean;
+    [[ -f $tokeep ]] || touch $tokeep;
+    ( cat $tokeep;
+    printf "$clean\n$tokeep\n" ) | lft 00 | sort -u > ~/tmp/$tokeep;
+    mv ~/tmp/$tokeep .;
+    :;
+    cat - $clean | lft 01 | sort -u | lft 02 | comm -23 - $tokeep | lft 03 | tee ~/tmp/.tokeep.out;
+    debug $(wc -l $clean $tokeep)
+}
+debug () 
+{ 
+    return
+}
+debug_off () 
+{ 
+    : no diagnostics, just return;
+    : date: 2023-03-29;
+    : date: 2024-11-05;
+    function debug () 
+    { 
+        return
+    }
+}
+debug_on () 
+{ 
+    : write a COMMENT, on STDERR, at a point in a function, listing ...;
+    : the CALLER and any passed ARGS, who CALLED it, 3rd, and that CALLER, 4th as well;
+    : lesson: NO user functions in DEBUG:;
+    : date: 2022-03-07;
+    : date: 2023-01-30;
+    : date: 2024-11-05;
+    eval "debug () { printf \"%-21s\\t%-21s\\t%-21s : %s\\n\" \${FUNCNAME[3]} \${FUNCNAME[2]} \${FUNCNAME[1]} \"\$*\" 1>&2; }"
+}
+gex () 
+{ 
+    : broken out for testing, hence the _ prefix;
+    : args: "e \..*\..* -e .*\# -e \.#.* -e .*~ -e ^[.]";
+    : date: 2025-01-01;
+    debug ENTRY $# $@;
+    pause;
+    [[ $# -lt 1 ]] && { 
+        cat;
+        return
+    };
+    grep -e $1
+}
+myname () 
+{ 
+    : a calling functions NAME, default MYcaller;
+    : 2 is the callers caller, 3 is theirs, etc...;
+    : date: 2023-07-22;
+    echo ${FUNCNAME[${1:-1}]}
+}
+namedfiles () 
+{ 
+    : the ordinary file arguments, default is curren directory;
+    : revised from a version that ignored ~;
+    : lesson: hide Error reminders behind a Debug;
+    : date: 2023-07-22;
+    : date: 2024-04-30;
+    : date: 2024-06-26;
+    debug ENTRY $# $@;
+    pause;
+    local err=~/tmp/.file.err;
+    set -- ${@:-$(ls -a)};
+    debug SET $PWD, $# $@;
+    pause;
+    for file in $*;
+    do
+        debug file: $file;
+        debug Errors are thrown into $err;
+        [[ -f $file ]] && echo $file;
+    done 2> $err
+}
+pause () 
+{ 
+    return
+}
+pause_off () 
+{ 
+    : do not pause, just return;
+    : date: 2023-03-29;
+    : date: 2024-11-05;
+    function pause () 
+    { 
+        return
+    }
+}
+pause_on () 
+{ 
+    : pause the script, waiting for the users CR;
+    : date: 2023-01-30;
+    : date: 2024-11-05;
+    eval "pause () { read -p \"[return] / [Ctrl-C] \${FUNCNAME[1]} \$@ ? \" < /dev/tty; }"
+}
+toclean () 
+{ 
+    : list files TOCLEAN, retain those TOKEEP among matching pattens;
+    : name existing files matching expressions,;
+    : alternatively, ~ rm -f;
+    : date: 2023-07-22;
+    : date: 2024-11-30;
+    : date: 2025-01-01;
+    : date: 2025-02-06;
+    debug ENTRY $# $@;
+    namedfiles | lft 00 | gex '~$' | lft 01 | clean_orkeep
+}
