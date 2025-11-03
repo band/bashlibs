@@ -1261,13 +1261,13 @@ Let's set and retrieve a date stamp in our functions.
 
 And an exercise to use the information:
 
-/* 
+```shell
 $ foreach shd_latest shd_{{set,get}date,latest} 
 2022-01-02 shd_setdate
 2022-08-25 shd_getdate
 2022-03-23 shd_latest
 $
- */
+```
 
 Last things first:
 
