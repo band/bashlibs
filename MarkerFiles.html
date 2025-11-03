@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta name="fs_path" content="/MarkerFiles.md">
+    
+    <title>MarkerFiles - Bash Shell Libraries</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/thebook/markpub_static/css/style.css">
+    <link rel="stylesheet" href="/thebook/markpub_static/css/custom.css">
+    <link rel="stylesheet" href="https://unpkg.com/bluesky-comments@0.12.0/dist/bluesky-comments.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.9/lunr.min.js"></script>
+    <script src="/thebook/lunr-index-1762197806.437568.js"></script>
+    <script>var index = lunr.Index.load(lunr_index)</script>
+    
+    
+    <script src="/thebook/lunr-posts-1762197806.437568.js"></script>
+    <script> function randomPageLink() { return "/thebook"+lunr_posts[Math.floor(Math.random() * lunr_posts.length)].link; } </script>
+    
+  </head>
+<body>
+  <div id="header">
+    <span id="hamburger-btn"
+    class="hidden">&#9776;</span><a class="button is-light" id="header-link" href="/thebook/index.html">Bash Shell Libraries</a>
+  </div>
+
+  <div class="container" id="flex-container">
+    <div id="side-column">
+      <div>
+        <button id="hide-btn">Hide</button>
+        <button id="move-btn" class="hidden">Move to Sidebar</button>
+      </div>
+      <h3>Site Navigation</h3>
+<div class="navlinks">
+<ul>
+<li><a class="wikilink" href="/thebook/README.html">HOME</a></li>
+<li><a href="/thebook/search.html">SEARCH</a></li>
+<li><a href="/thebook/all-pages.html">ALL PAGES</a></li>
+<li><a href="/thebook/recent-pages.html">RECENT CHANGES</a></li>
+</ul>
+</div>
+<div class="navlinks">
+  <button onclick="location.href=`${randomPageLink()}`">
+    RANDOM PAGE
+  </button>
+</div>
+
+    </div>
+
+    <div id="main-column">
+      
+      <div> <!-- edit this page button -->
+	<p style="float:right; margin:.5em .5em
+	.5em"><a target="_blank" href="https://github.com/band/bashlibs/edit/main/MarkerFiles.md"
+	class="edit-this-page-button">Edit on GitHub</a></p>
+	<br clear="all">
+      </div> <!-- edit this page button -->
+      
+      <h1>Marker Files and Backup</h1>
+<p>The current development process uses a handful of "Marker Files" as
+sentinals.  The steps involved are highlighted in the <code>wrap_up</code>
+function, which:</p>
+<ul>
+<li>"tidys" an untidied library</li>
+<li>sources an unsourced library - simply reads the library into the
+current shell</li>
+<li>"refreshes" an unrefreshed library</li>
+<li>checks for duplicated functions - may be defined in more than one
+library</li>
+<li>compares retired or retiring libraies to the existing functions.</li>
+</ul>
+<p>Here is the <a href="./Development.html">Table of Contents</a>.</p>
+<h2>The Processes</h2>
+<p>Since libraries are updated by appending one or more functions to the
+end of the library, they may become "untidied".  The moment the
+functions are appended, by default their last definition in the
+library is the operative definition. This is OK for a spot use such as
+testing.  The <code>lib_tidy</code> function</p>
+<ul>
+<li>restores the library to the lastest definition for each function.</li>
+</ul>
+<p>The 'wrap_up' function then sources each unsourced library.</p>
+<p>This development process also maintains a searchable [library
+database] of each function in the available libraries.  Unrefreshed
+libraries are then 'refreshed' by <code>dfg_refresh</code> which:</p>
+<ul>
+<li>backs up the library</li>
+<li>copies the library's functions into the database</li>
+<li>backups all the current functions as files in the database, recall
+that backing up an unchanged file does not update any backups</li>
+<li>"synchronizes" the function collection, which hides backup files no
+longer in the collection by pushing the first backup on the stack.
+(in the second backup directory, i.e. .bak/.bak)</li>
+</ul>
+<h2>Role of Marker Files</h2>
+<p>The Unix(R) system has a "hidden file" feature.  Normal files are
+alpha-numeric names and some system commands -- notably 'ls (1)'
+ignore hidden files. A hidden file name begins with a period (or dot).
+The current directory is know as .  "dot", a single character.  For
+example "thisFile" is identical to "./thisFile", however ".thisFile"
+is not identical with either.  I use special files to note the state
+of the library file.</p>
+<h2>Functions</h2>
+<ul>
+<li><code>wrap_up</code></li>
+<li><code>lib_tidy</code></li>
+<li><code>dfg_refresh</code></li>
+<li><code>backup_sync</code></li>
+<li><code>backup_status</code></li>
+</ul>
+<h1>Concept</h1>
+<h2>Reference</h2>
+<ul>
+<li>//marker files//</li>
+<li>//untidied library//</li>
+<li>//synchronized backup//</li>
+<li>//refreshed library//</li>
+</ul>
+<h2>Definition</h2>
+<ul>
+<li></li>
+</ul>
+<!--
+
+## deprecated
+
+1. 
+
+  -->
+
+      
+    </div>
+  </div>
+  <script src="/thebook/markpub_static/js/script.js"></script>
+  
+  <footer class="footer">
+  <div class="content has-text-centered">
+    
+    <div><strong>Bash Shell Libraries</strong> by Martin J. McGowan, III and William L. Anderson.</div>
+    
+    
+    <div>Central repository at <a href="https://github.com/band/bashlibs">bashlibs</a>.</div>
+    
+    
+    <div>Licensed under <a href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</div>
+    
+    <div><em>Site last updated on Monday, November 03, 2025 at 19:23 UTC.</em></div>
+  </div>
+</footer>
+</body>
+</html>
