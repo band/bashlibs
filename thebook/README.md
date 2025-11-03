@@ -1,20 +1,18 @@
-# Development Plans 0.1.2
+# Bash Shell Libraries
 
-# Requirements
+This new Bash Shell Libraries collection upgrades the Shell Functions
+e-book \[FIND A LINK\]. To
+support many development needs, here the focus shifts to managing
+separate libraries supporting those various needs.
 
-## define Family requirements
+At bottom, it recognizes three needs of a Shell developer independent
+of their own application development families.
 
-    + minimum number of FAM_subfunctions, say 3
-	+ for most frequent, find the library
-    + any with a help, init, ... Reserved list of subfunction names
+- backing up functions, libraries, and ancillary files: images,
+  spreadsheets, ...
+- converting function libraries, their collections, into Apps
+- producing a library/function data base, it uses the Unix Relational
+  Data Base
+  
 
-## plan for popular families
-
-    + make a chart of library <-> family matches
-    + 1 per library with some non-family
-
-## find true cmdlinelib functions.
-
-    - for all fuse = 0
-    - for fuse depth < 2, 3
 
