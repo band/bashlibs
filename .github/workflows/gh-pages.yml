@@ -36,7 +36,7 @@ jobs:
     - name: Build website
       run: |
         cd thebook/.markpub
-        markpub build -i .. -o ../../output -r /thebook --lunr --commits
+        markpub build -i .. -o ../../output -r /bashlibs --lunr --commits
 
     - name: add a nojekyll file
       run: touch $GITHUB_WORKSPACE/output/.nojekyll
