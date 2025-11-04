@@ -1,7 +1,7 @@
 # Bash Shell Libraries
 
 This new Bash Shell Libraries collection upgrades the Shell Functions
-e-book \[FIND A LINK\]. To
+e-book [Shell Functions](https://leanpub.com/shellfunctions). To
 support many development needs, here the focus shifts to managing
 separate libraries supporting those various needs.
 
