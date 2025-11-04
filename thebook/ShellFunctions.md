@@ -44,53 +44,45 @@
 
 # Shell Functions, How To Write, Save, Re-use
 
-We\'ll start by composing and executing functions on the command line,
+We start by composing and executing functions on the command line,
 without recourse to a text editor.
 
-The functions we\'ll write in this chapter are short enough to fit on a
+The functions we write in this chapter are short enough to fit on a
 single line. As you get more comfortable writing on the command line,
 expect to write functions extending and wrapping text on the terminal.
 At some point, you will need an editor to write and maintain functions.
 
-This chapter updates the e-book -- [Shell
-Functions](https://leanpub.com/shellfunctions).
+This chapter updates the e-book -- [Shell Functions](https://leanpub.com/shellfunctions).
 
 Each section in this chapter is simple enough to require a half an hour
-of your time. When you've completed these exercises, you will be
-comfortable creating, using, saving and re-using shell functions.
+of your time. When you have completed these exercises, you will be
+comfortable creating, using, saving, and re-using shell functions.
 
 To get started, here are the few assumptions we make. That you:
 
 -   have access to an open terminal window
 -   can open simultaneous multiple terminal windows
--   are running the bash shell
--   have executed the `man`{.verbatim} command, e.g
-    `$ man man`{.verbatim}, we\'l use it repeatedly throught out the
-    introductory chapters
+-   are running the bash shell \[zsh differences are noted\]
+-   have executed the `man` command, e.g.,
+    `$ man man` is used repeatedly throughout the introductory chapters
 
-The text is sprinkled with links to more detailed treatment of
-fundamental topics. Each chapter has experiments to enable the curious
-reader to grasp the concepts.
+The text is sprinkled with links to more detailed treatment of fundamental topics. Each chapter has experiments to enable the curious reader to grasp the concepts.
 
 ## Write a Shell Function
 
-The simplest shell functions may be written on a single line at the
-command prompt. In this section, you will write and use two simple shell
-functions: `hello`{.verbatim} and `today`{.verbatim}.
+The simplest shell functions may be written on a single line at the command prompt. In this section, you will write and use two simple shell functions: `hello` and `today`.
 
 ### Hello World
 
-Throughout the book, assume your command prompt is the dollar sign, all
-the examples are entered at the command line.
+Throughout the book, assume your command prompt is the dollar sign, all the examples are entered at the command line.
 
 ``` example
-
 $ ...
-
 ```
 
-The *Programmer\'s Birth Announcement* is **Hello World!** Type this
-after your command prompt:
+\[ 2025-11-04: N.B. the "!" in this example needs to be escaped with a "\" on my macOS; maybe leave it off for the first example?\]  
+
+The *Programmer\'s Birth Announcement* is **Hello World!** Type this after your command prompt:
 
 ``` {.bash exports="both" results="output"}
 : define the hello function
@@ -114,9 +106,9 @@ no leading colon(:), followed by a carriage return. In order, you are:
 -   using it, in action
 
 You can see the formal definition of a function from the
-`declare`{.verbatim} builtin. After typing
-`declare -f hello`{.verbatim}, you then typed the function name
-`hello`{.verbatim}, executing the function. You see both results at the
+`declare` builtin. After typing
+`declare -f hello`, you then typed the function name
+`hello`, executing the function. You see both results at the
 end.
 
 Note, the declared version of your function has been slightly
@@ -126,7 +118,7 @@ reformatted. More on that later.
 
 Arguments, like file names and options make functions more useful. But
 before looking at how arguments are used, whet your appetite with this
-one, called `today`{.verbatim}
+one, called `today`
 
 ``` {.bash exports="both" results="output"}
 today () { date +%Y%m%d; }
@@ -135,7 +127,7 @@ today
 : --------------
 ```
 
-Type the definition and invoke your new function `today`{.verbatim}.
+Type the definition and invoke your new function `today`.
 Since **date** takes almost any upper- or lower-case letter, we'll deal
 with those later as arguments. Here\'s a search for [Unix Date Man(ual)
 Page](https://www.unix.com/man-page/Linux/1/date/). On that page, the
@@ -151,7 +143,7 @@ You\'ll probably deduce how these arguments are interpreted.
 
 ## Use Function Arguments
 
-In the last exercise you used the `date`{.verbatim} command in a
+In the last exercise you used the `date` command in a
 function -- in a very limited way. You saw the date command with upper-
 and lower-case options. Without going in great detail, a date option is
 a plus sign (+) followed by any number of percent sign - single letter
@@ -180,7 +172,7 @@ date "+Y: %Y"
 : -----------
 ```
 
-Now, to write the function `dateArg`{.verbatim}, replace the specific
+Now, to write the function `dateArg`, replace the specific
 **option** parameters with a **positional parameter**, and call the
 function with an **argument**
 
@@ -196,11 +188,11 @@ dateArg F
 The important lesson here: to convert a command into a function, you
 wrap the command with:
 
--   a name, in this case `dateArg`{.verbatim}
--   a set of parenthesis `()`{.verbatim},
--   a opening (left `{`{.verbatim} ) brace,
+-   a name, in this case `dateArg`
+-   a set of parenthesis `()`,
+-   a opening (left `{` ) brace,
 -   the text of the command.
--   a closing semi-colon, brace ( `;}`{.verbatim} )
+-   a closing semi-colon, brace ( `;}` )
 
 In a subsequent lesson, we\'ll go the the command history to take
 advantage of having typed the command, and add the wrapper to make it
@@ -224,7 +216,7 @@ The syntax elements in that statement:
 **for** ... **in** **; do** ... **; done**
 
 where the *var* becomes a shell variable name, which takes on the values
-of the respective members of the *list* and invoked as `$var`{.verbatim}
+of the respective members of the *list* and invoked as `$var`
 the \"value\" of the variable and the *commands* are;
 
 -   built-in shell commands,
@@ -237,8 +229,8 @@ semi-colon.
 
 ### Individual Arguments
 
-Now using the syntax of the `for`{.verbatim} loop, the
-`dateArg`{.verbatim} function is executed once for each argument in the
+Now using the syntax of the `for` loop, the
+`dateArg` function is executed once for each argument in the
 *list* and produces the results seen here.
 
 ``` {.bash exports="both" results="output"}
@@ -249,17 +241,17 @@ echo ----------
 ```
 
 The for loop assigns the separate arguments in sequence to the shell
-variable (`$opt`{.verbatim}), evaluated as the one positional parameter
-of the `dateArg`{.verbatim} function.
+variable (`$opt`), evaluated as the one positional parameter
+of the `dateArg` function.
 
 You have assigned the first positional parameter, and you can likely
 figure out how to deal with the second, third, ... etc. Also, notice, if
 you haven not done this before, you have just assigned and used a **shell
-variable**, in this case the variable `opt`{.verbatim}. You assign it
+variable**, in this case the variable `opt`. You assign it
 just by the name, and (in the for loop) substitute the value with a
-leading dollar sign: `$opt`{.verbatim}. So, in this case,
-`dateArg`{.verbatim} is invoked in succession with the *list* members:
-`a c d F Y`{.verbatim}.
+leading dollar sign: `$opt`. So, in this case,
+`dateArg` is invoked in succession with the *list* members:
+`a c d F Y`.
 
 ### Multiple Arguments
 
@@ -302,16 +294,16 @@ same result, and therefore, still be ambiguous.
 
 ### The For loop
 
-Having just seen our first control syntax item, the `for`{.verbatim}
+Having just seen our first control syntax item, the `for`
 loop, we now use this to create a function to handle common looping
 needs.
 
 The syntax of the *for loop* is given by these elements
 
--   `for`{.verbatim}
--   `in`{.verbatim}
--   `; do`{.verbatim}
--   and `; done`{.verbatim}
+-   `for`
+-   `in`
+-   `; do`
+-   and `; done`
 
 as here:
 
@@ -324,10 +316,10 @@ This example suffices, demonstrating our first
 -   setting a *positional parameter*.
 
 The variable name *opt* is retrieved by value with a *\$opt*, passed as
-the first argument to the `dateArg`{.verbatim} function, and used twice
-in that function to show the argument value, `$1:`{.verbatim} and the
-effect of the `date`{.verbatim} command to accept the formatting option.
-`+ ... %`{.verbatim}.
+the first argument to the `dateArg` function, and used twice
+in that function to show the argument value, `$1:` and the
+effect of the `date` command to accept the formatting option.
+`+ ... %`.
 
 ------------------------------------------------------------------------
 
@@ -401,7 +393,7 @@ dateArg function; it is called once per lower-case letter.
 ### The foreach function
 
 Enter this text to create the function and test it. Recall the lesson
-with the `dateArg`{.verbatim} function: once you\'ve typed the function
+with the `dateArg` function: once you\'ve typed the function
 on the command line, it\'s quite easy to wrap it to convert it into a
 function.nnnn The inspiration came from training programmers in the Tcl
 (pr. \"tickle\") language which has the feature. The shell function
