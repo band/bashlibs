@@ -80,13 +80,11 @@ Throughout the book, assume your command prompt is the dollar sign, all the exam
 $ ...
 ```
 
-\[ 2025-11-04: N.B. the "!" in this example needs to be escaped with a "\" on my macOS; maybe leave it off for the first example?\]  
-
 The *Programmer\'s Birth Announcement* is **Hello World!** Type this after your command prompt:
 
 ``` {.bash exports="both" results="output"}
 : define the hello function
-hello () { echo "Hello World!"; }
+hello () { echo 'Hello World!'; }
 
 : view the function stored in the shell memory
 declare -f hello
