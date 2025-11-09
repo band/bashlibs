@@ -16,11 +16,11 @@
     <link rel="stylesheet" href="https://unpkg.com/bluesky-comments@0.12.0/dist/bluesky-comments.css">
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.9/lunr.min.js"></script>
-    <script src="/bashlibs/lunr-index-1762226474.0704517.js"></script>
+    <script src="/bashlibs/lunr-index-1762698733.6720603.js"></script>
     <script>var index = lunr.Index.load(lunr_index)</script>
     
     
-    <script src="/bashlibs/lunr-posts-1762226474.0704517.js"></script>
+    <script src="/bashlibs/lunr-posts-1762698733.6720603.js"></script>
     <script> function randomPageLink() { return "/bashlibs"+lunr_posts[Math.floor(Math.random() * lunr_posts.length)].link; } </script>
     
   </head>
@@ -129,44 +129,34 @@ Features</a>{#toc-commands-and-features}</li>
 </li>
 </ul>
 <h1>Shell Functions, How To Write, Save, Re-use</h1>
-<p>We'll start by composing and executing functions on the command line,
+<p>We start by composing and executing functions on the command line,
 without recourse to a text editor.</p>
-<p>The functions we'll write in this chapter are short enough to fit on a
+<p>The functions we write in this chapter are short enough to fit on a
 single line. As you get more comfortable writing on the command line,
 expect to write functions extending and wrapping text on the terminal.
 At some point, you will need an editor to write and maintain functions.</p>
-<p>This chapter updates the e-book -- <a href="https://leanpub.com/shellfunctions">Shell
-Functions</a>.</p>
+<p>This chapter updates the e-book -- <a href="https://leanpub.com/shellfunctions">Shell Functions</a>.</p>
 <p>Each section in this chapter is simple enough to require a half an hour
-of your time. When you've completed these exercises, you will be
-comfortable creating, using, saving and re-using shell functions.</p>
+of your time. When you have completed these exercises, you will be
+comfortable creating, using, saving, and re-using shell functions.</p>
 <p>To get started, here are the few assumptions we make. That you:</p>
 <ul>
 <li>have access to an open terminal window</li>
 <li>can open simultaneous multiple terminal windows</li>
-<li>are running the bash shell</li>
-<li>have executed the <code>man</code>{.verbatim} command, e.g
-<code>$ man man</code>{.verbatim}, we'l use it repeatedly throught out the
-introductory chapters</li>
+<li>are running the bash shell [zsh differences are noted]</li>
+<li>have executed the <code>man</code> command, e.g.,
+<code>$ man man</code> is used repeatedly throughout the introductory chapters</li>
 </ul>
-<p>The text is sprinkled with links to more detailed treatment of
-fundamental topics. Each chapter has experiments to enable the curious
-reader to grasp the concepts.</p>
+<p>The text is sprinkled with links to more detailed treatment of fundamental topics. Each chapter has experiments to enable the curious reader to grasp the concepts.</p>
 <h2>Write a Shell Function</h2>
-<p>The simplest shell functions may be written on a single line at the
-command prompt. In this section, you will write and use two simple shell
-functions: <code>hello</code>{.verbatim} and <code>today</code>{.verbatim}.</p>
+<p>The simplest shell functions may be written on a single line at the command prompt. In this section, you will write and use two simple shell functions: <code>hello</code> and <code>today</code>.</p>
 <h3>Hello World</h3>
-<p>Throughout the book, assume your command prompt is the dollar sign, all
-the examples are entered at the command line.</p>
-<pre><code class="language-example">
-$ ...
-
+<p>Throughout the book, assume your command prompt is the dollar sign, all the examples are entered at the command line.</p>
+<pre><code class="language-example">$ ...
 </code></pre>
-<p>The <em>Programmer's Birth Announcement</em> is <strong>Hello World!</strong> Type this
-after your command prompt:</p>
+<p>The <em>Programmer's Birth Announcement</em> is <strong>Hello World!</strong> Type this after your command prompt:</p>
 <pre><code class="language-{.bash">: define the hello function
-hello () { echo "Hello World!"; }
+hello () { echo 'Hello World!'; }
 
 : view the function stored in the shell memory
 declare -f hello
@@ -185,22 +175,22 @@ no leading colon(:), followed by a carriage return. In order, you are:</p>
 <li>using it, in action</li>
 </ul>
 <p>You can see the formal definition of a function from the
-<code>declare</code>{.verbatim} builtin. After typing
-<code>declare -f hello</code>{.verbatim}, you then typed the function name
-<code>hello</code>{.verbatim}, executing the function. You see both results at the
+<code>declare</code> builtin. After typing
+<code>declare -f hello</code>, you then typed the function name
+<code>hello</code>, executing the function. You see both results at the
 end.</p>
 <p>Note, the declared version of your function has been slightly
 reformatted. More on that later.</p>
 <h3>More interesting</h3>
 <p>Arguments, like file names and options make functions more useful. But
 before looking at how arguments are used, whet your appetite with this
-one, called <code>today</code>{.verbatim}</p>
+one, called <code>today</code></p>
 <pre><code class="language-{.bash">today () { date +%Y%m%d; }
 declare -f today
 today
 : --------------
 </code></pre>
-<p>Type the definition and invoke your new function <code>today</code>{.verbatim}.
+<p>Type the definition and invoke your new function <code>today</code>.
 Since <strong>date</strong> takes almost any upper- or lower-case letter, we'll deal
 with those later as arguments. Here's a search for <a href="https://www.unix.com/man-page/Linux/1/date/">Unix Date Man(ual)
 Page</a>. On that page, the
@@ -211,7 +201,7 @@ FORMAT arguments appear after the plus (+) sign.</p>
 %d  two digit date
 </code></pre>
 <h2>Use Function Arguments</h2>
-<p>In the last exercise you used the <code>date</code>{.verbatim} command in a
+<p>In the last exercise you used the <code>date</code> command in a
 function -- in a very limited way. You saw the date command with upper-
 and lower-case options. Without going in great detail, a date option is
 a plus sign (+) followed by any number of percent sign - single letter
@@ -232,7 +222,7 @@ done this:</p>
 date "+Y: %Y"
 : -----------
 </code></pre>
-<p>Now, to write the function <code>dateArg</code>{.verbatim}, replace the specific
+<p>Now, to write the function <code>dateArg</code>, replace the specific
 <strong>option</strong> parameters with a <strong>positional parameter</strong>, and call the
 function with an <strong>argument</strong></p>
 <pre><code class="language-{.bash">dateArg () { date "+$1: %$1"; }
@@ -245,11 +235,11 @@ dateArg F
 <p>The important lesson here: to convert a command into a function, you
 wrap the command with:</p>
 <ul>
-<li>a name, in this case <code>dateArg</code>{.verbatim}</li>
-<li>a set of parenthesis <code>()</code>{.verbatim},</li>
-<li>a opening (left <code>{</code>{.verbatim} ) brace,</li>
+<li>a name, in this case <code>dateArg</code></li>
+<li>a set of parenthesis <code>()</code>,</li>
+<li>a opening (left <code>{</code> ) brace,</li>
 <li>the text of the command.</li>
-<li>a closing semi-colon, brace ( <code>;}</code>{.verbatim} )</li>
+<li>a closing semi-colon, brace ( <code>;}</code> )</li>
 </ul>
 <p>In a subsequent lesson, we'll go the the command history to take
 advantage of having typed the command, and add the wrapper to make it
@@ -265,7 +255,7 @@ for var in list ; do command(s) using var ... ; done
 <p>The syntax elements in that statement:</p>
 <p><strong>for</strong> ... <strong>in</strong> <strong>; do</strong> ... <strong>; done</strong></p>
 <p>where the <em>var</em> becomes a shell variable name, which takes on the values
-of the respective members of the <em>list</em> and invoked as <code>$var</code>{.verbatim}
+of the respective members of the <em>list</em> and invoked as <code>$var</code>
 the "value" of the variable and the <em>commands</em> are;</p>
 <ul>
 <li>built-in shell commands,</li>
@@ -276,8 +266,8 @@ the "value" of the variable and the <em>commands</em> are;</p>
 <p>Any of the commands may take arguments, and multiple commands must be separated with semi-colons. <em>do</em> and <em>done</em> may appear on separate lines in a function, which effectively replaces the need for a separating
 semi-colon.</p>
 <h3>Individual Arguments</h3>
-<p>Now using the syntax of the <code>for</code>{.verbatim} loop, the
-<code>dateArg</code>{.verbatim} function is executed once for each argument in the
+<p>Now using the syntax of the <code>for</code> loop, the
+<code>dateArg</code> function is executed once for each argument in the
 <em>list</em> and produces the results seen here.</p>
 <pre><code class="language-{.bash">dateArg () { date "+$1: %$1"; }
 echo ----------
@@ -285,16 +275,16 @@ for opt in a c d F Y; do dateArg $opt; done
 echo ----------
 </code></pre>
 <p>The for loop assigns the separate arguments in sequence to the shell
-variable (<code>$opt</code>{.verbatim}), evaluated as the one positional parameter
-of the <code>dateArg</code>{.verbatim} function.</p>
+variable (<code>$opt</code>), evaluated as the one positional parameter
+of the <code>dateArg</code> function.</p>
 <p>You have assigned the first positional parameter, and you can likely
 figure out how to deal with the second, third, ... etc. Also, notice, if
 you haven not done this before, you have just assigned and used a <strong>shell
-variable</strong>, in this case the variable <code>opt</code>{.verbatim}. You assign it
+variable</strong>, in this case the variable <code>opt</code>. You assign it
 just by the name, and (in the for loop) substitute the value with a
-leading dollar sign: <code>$opt</code>{.verbatim}. So, in this case,
-<code>dateArg</code>{.verbatim} is invoked in succession with the <em>list</em> members:
-<code>a c d F Y</code>{.verbatim}.</p>
+leading dollar sign: <code>$opt</code>. So, in this case,
+<code>dateArg</code> is invoked in succession with the <em>list</em> members:
+<code>a c d F Y</code>.</p>
 <h3>Multiple Arguments</h3>
 <p>The bash shell offers a syntactic feature which offers some convenient
 shorthand to investigate all the parameter options here, called <a href="https://www.gnu.org/software/bash/manual/html_node/Brace-Expansion.html#Brace-Expansion">Brace
@@ -324,15 +314,15 @@ likely distinguish their meaning.</p>
 the minutes many be the same number, some letter options may give the
 same result, and therefore, still be ambiguous.</p>
 <h3>The For loop</h3>
-<p>Having just seen our first control syntax item, the <code>for</code>{.verbatim}
+<p>Having just seen our first control syntax item, the <code>for</code>
 loop, we now use this to create a function to handle common looping
 needs.</p>
 <p>The syntax of the <em>for loop</em> is given by these elements</p>
 <ul>
-<li><code>for</code>{.verbatim}</li>
-<li><code>in</code>{.verbatim}</li>
-<li><code>; do</code>{.verbatim}</li>
-<li>and <code>; done</code>{.verbatim}</li>
+<li><code>for</code></li>
+<li><code>in</code></li>
+<li><code>; do</code></li>
+<li>and <code>; done</code></li>
 </ul>
 <p>as here:</p>
 <p>for <em>var</em> in <em>list</em> ; do <em>command(s) using $var ...</em> ; done</p>
@@ -343,10 +333,10 @@ needs.</p>
 <li>setting a <em>positional parameter</em>.</li>
 </ul>
 <p>The variable name <em>opt</em> is retrieved by value with a <em>$opt</em>, passed as
-the first argument to the <code>dateArg</code>{.verbatim} function, and used twice
-in that function to show the argument value, <code>$1:</code>{.verbatim} and the
-effect of the <code>date</code>{.verbatim} command to accept the formatting option.
-<code>+ ... %</code>{.verbatim}.</p>
+the first argument to the <code>dateArg</code> function, and used twice
+in that function to show the argument value, <code>$1:</code> and the
+effect of the <code>date</code> command to accept the formatting option.
+<code>+ ... %</code>.</p>
 <hr />
 <p>Of special note are the ''n'' and ''t'' arguments. You can
 likely distinguish their meaning.</p>
@@ -398,7 +388,7 @@ argument could be any relevant name. Also, notice the position of the
 dateArg function; it is called once per lower-case letter.</p>
 <h3>The foreach function</h3>
 <p>Enter this text to create the function and test it. Recall the lesson
-with the <code>dateArg</code>{.verbatim} function: once you've typed the function
+with the <code>dateArg</code> function: once you've typed the function
 on the command line, it's quite easy to wrap it to convert it into a
 function.nnnn The inspiration came from training programmers in the Tcl
 (pr. "tickle") language which has the feature. The shell function
@@ -712,7 +702,7 @@ help -m help # be sure to read the Options
     
     <div>Licensed under <a href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</div>
     
-    <div><em>Site last updated on Tuesday, November 04, 2025 at 03:21 UTC.</em></div>
+    <div><em>Site last updated on Sunday, November 09, 2025 at 14:32 UTC.</em></div>
   </div>
 </footer>
 </body>
