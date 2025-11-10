@@ -5,7 +5,7 @@
         -   [Hello World](#hello-world){#toc-hello-world}
         -   [More interesting](#more-interesting){#toc-more-interesting}
     -   [Use Function
-        Arugments](#use-function-arugments){#toc-use-function-arugments}
+        Arguments](#use-function-arugments){#toc-use-function-arugments}
         -   [The first
             argument](#the-first-argument){#toc-the-first-argument}
     -   [Introduing Shell Syntax, the For
@@ -58,7 +58,7 @@ Each section in this chapter is simple enough to require a half an hour
 of your time. When you have completed these exercises, you will be
 comfortable creating, using, saving, and re-using shell functions.
 
-To get started, here are the few assumptions we make. That you:
+To get started, we make a few assumptions; viz., that you:
 
 -   have access to an open terminal window
 -   can open simultaneous multiple terminal windows
@@ -66,21 +66,22 @@ To get started, here are the few assumptions we make. That you:
 -   have executed the `man` command, e.g.,
     `$ man man` is used repeatedly throughout the introductory chapters
 
-The text is sprinkled with links to more detailed treatment of fundamental topics. Each chapter has experiments to enable the curious reader to grasp the concepts.
+The text is sprinkled with links to more detailed treatment of fundamental topics. Each chapter has experiments to enable the curious reader to grasp (explore) the concepts.
 
 ## Write a Shell Function
 
 The simplest shell functions may be written on a single line at the command prompt. In this section, you will write and use two simple shell functions: `hello` and `today`.
 
-### Hello World
-
-Throughout the book, assume your command prompt is the dollar sign, all the examples are entered at the command line.
+Throughout the book, the command prompt is the dollar sign, all the examples are entered at the command line.
 
 ``` example
 $ ...
 ```
 
-The *Programmer\'s Birth Announcement* is **Hello World!** Type this after your command prompt:
+### Hello World
+
+The *Programmer\'s Birth Announcement* is **Hello World!**  
+Type this after the command prompt (`$ `):
 
 ``` {.bash exports="both" results="output"}
 : define the hello function
