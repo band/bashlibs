@@ -1,46 +1,32 @@
 -   [Shell Functions, How To Write, Save,
-    Re-use](#shell-functions-how-to-write-save-re-use){#toc-shell-functions-how-to-write-save-re-use}
+    Re-use](#shell-functions-how-to-write-save-re-use)
     -   [Write a Shell
         Function](#write-a-shell-function){#toc-write-a-shell-function}
         -   [Hello World](#hello-world){#toc-hello-world}
         -   [More interesting](#more-interesting){#toc-more-interesting}
-    -   [Use Function
-        Arguments](#use-function-arugments){#toc-use-function-arugments}
-        -   [The first
-            argument](#the-first-argument){#toc-the-first-argument}
-    -   [Introduing Shell Syntax, the For
-        Loop](#introduing-shell-syntax-the-for-loop){#toc-introduing-shell-syntax-the-for-loop}
-        -   [Individual
-            Arguments](#individual-arguments){#toc-individual-arguments}
-        -   [Multiple
-            Arguments](#multiple-arguments){#toc-multiple-arguments}
-        -   [The For loop](#the-for-loop){#toc-the-for-loop}
-        -   [The *for* syntax](#the-for-syntax){#toc-the-for-syntax}
-        -   [The foreach
-            function](#the-foreach-function){#toc-the-foreach-function}
-        -   [questions:](#questions){#toc-questions}
-        -   [exercise](#exercise){#toc-exercise}
-    -   [Inspect a Function
-        Body](#inspect-a-function-body){#toc-inspect-a-function-body}
-        -   [More about
-            arguments](#more-about-arguments){#toc-more-about-arguments}
-        -   [experiments](#experiments){#toc-experiments}
-        -   [questions](#questions-1){#toc-questions-1}
-        -   [The function
-            body](#the-function-body){#toc-the-function-body}
-        -   [assesment](#assesment){#toc-assesment}
-    -   [Collect Save and
-        Reuse](#collect-save-and-reuse){#toc-collect-save-and-reuse}
-        -   [Accessing a Function
-            Library](#accessing-a-function-library){#toc-accessing-a-function-library}
-        -   [Writing your first Function
-            Library](#writing-your-first-function-library){#toc-writing-your-first-function-library}
-    -   [Introduced in this
-        Chapter](#introduced-in-this-chapter){#toc-introduced-in-this-chapter}
-        -   [Commands and
-            Features](#commands-and-features){#toc-commands-and-features}
-        -   [Functions](#functions){#toc-functions}
-        -   [References](#references){#toc-references}
+    -   [Use Function Arguments](#use-function-arguments)
+        -   [The first argument](#the-first-argument)
+    -   [Introducing Shell Syntax, the For Loop](#introducing-shell-syntax-the-for-loop)
+        -   [Individual Arguments](#individual-arguments)
+        -   [Multiple Arguments](#multiple-arguments)
+        -   [The For loop](#the-for-loop)
+        -   [The *for* syntax](#the-for-syntax)
+        -   [The foreach function](#the-foreach-function)
+	    - [questions:](#questions)
+        -   [exercise](#exercise)
+    -   [Inspect a Function Body](#inspect-a-function-body)
+        -   [More about arguments](#more-about-arguments)
+        -   [experiments](#experiments)
+        -   [questions](#questions-1)
+        -   [The function body](#the-function-body)
+        -   [assesment](#assesment)
+    -   [Collect Save and Reuse](#collect-save-and-reuse)
+        -   [Accessing a Function Library](#accessing-a-function-library)
+        -   [Writing your first Function Library](#writing-your-first-function-library)
+    -   [Introduced in this Chapter](#introduced-in-this-chapter)
+        -   [Commands and Features](#commands-and-features)
+        -   [Functions](#functions)
+        -   [References](#references)
 
 # Shell Functions, How To Write, Save, Re-use
 
