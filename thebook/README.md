@@ -5,7 +5,7 @@ e-book [Shell Functions](https://leanpub.com/shellfunctions). To
 support many development needs, here the focus shifts to managing
 separate libraries supporting those various needs.
 
-At bottom, it recognizes three needs of a Shell developer independent
+At bottom, we recognize three needs of a Shell developer independent
 of their own application development families.
 
 - backing up functions, libraries, and ancillary files: images,

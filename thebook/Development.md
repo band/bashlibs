@@ -1,11 +1,11 @@
 
 # Organizing Shell Libraries
 
-This book expands on an earlier work, Shell Functions, to build a
+This book expands on an earlier work, _Shell Functions_, to build a
 practice of shell libraries.  Specifically, `bash` shell function
 libraries. Each developer, a tool-maker will have work clusters which
 take shape as applications, general- and special-purpose groups of
-functions.  Here, we'll investigate collections of functions, first as
+functions.  Here, we investigate collections of functions, first as
 libraries - physical files - and other associations we'll recognize as
 families and groups of lists.
 
