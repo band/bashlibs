@@ -3,7 +3,7 @@ name: MarkPub deploy to GitHub Pages
 on:
   push:
     branches:
-      - wla-copy-20251101
+      - main
 
 jobs:
   build-and-deploy:
