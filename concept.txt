@@ -1,0 +1,45 @@
+
+# Concept
+
+Besides the self-referential reference v definition concept,
+the early section here now includes Conceptual Changes.
+## Shell Features
+
+### The Tab
+### The Null Command
+### Unix Commands
+### Syntax, Tricks, gotchas
+### Python and Awk 
+   
+## reference, definition
+
+Each file may have `Reference`, `Definition`, and `deprecated`
+sections where references need link to a definition, definition shows
+satisfying link.  The deprecated section may be commented out.
+
+## Reference
+
+
+ While the temptation is strong to describe the development
+cycle, that process is finding its way to a separate document.
+<!-- 
+  use a level of indirection to collect the current COPYs chapters
+
+  ... see the MK_CHAPTERS function ...
+  -->
+  
+  
+  
+
+## Definition
+
+<!--
+
+## deprecated
+
+1. xhylib 
+   workup the **xhylib** process, it's part of both/either
+   the **Development Loop** and the **Value of an Alias**.
+
+
+  -->
