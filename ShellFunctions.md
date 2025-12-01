@@ -1,9 +1,7 @@
--   [Shell Functions, How To Write, Save,
-    Re-use](#shell-functions-how-to-write-save-re-use)
-    -   [Write a Shell
-        Function](#write-a-shell-function){#toc-write-a-shell-function}
-        -   [Hello World](#hello-world){#toc-hello-world}
-        -   [More interesting](#more-interesting){#toc-more-interesting}
+-   [Shell Functions, How To Write, Save, Re-use](#shell-functions-how-to-write-save-re-use)
+    -   [Write a Shell Function](#write-a-shell-function)
+        -   [Hello World](#hello-world)
+        -   [More interesting](#more-interesting)
     -   [Use Function Arguments](#use-function-arguments)
         -   [The first argument](#the-first-argument)
     -   [Introducing Shell Syntax, the For Loop](#introducing-shell-syntax-the-for-loop)
