@@ -24,18 +24,18 @@ jobs:
 
     - name: install Python dependencies
       run: |
-        cd thebook/.markpub
+        cd .markpub
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
     - name: install node modules
-      working-directory: thebook/.markpub
+      working-directory: .markpub
       run: npm ci
 
     - name: Build website
       run: |
-        cd thebook/.markpub
-        markpub build -i .. -o ../../output -r /bashlibs --lunr --commits
+        cd .markpub
+        markpub build -i .. -o ../output -r /bashlibs --lunr --commits
 
     - name: add a nojekyll file
       run: touch $GITHUB_WORKSPACE/output/.nojekyll
