@@ -58,7 +58,7 @@ The simplest shell functions may be written on a single line at the command prom
 
 Throughout the book, the command prompt is the dollar sign, all the examples are entered at the command line.
 
-``` example
+``` shell
 $ ...
 ```
 
@@ -67,7 +67,7 @@ $ ...
 The *Programmer\'s Birth Announcement* is **Hello World!**  
 Type this after the command prompt (`$ `):
 
-``` {.bash exports="both" results="output"}
+``` bash
 : define the hello function
 hello () { echo 'Hello World!'; }
 
@@ -103,7 +103,7 @@ Arguments, like file names and options make functions more useful. But
 before looking at how arguments are used, whet your appetite with this
 one, called `today`
 
-``` {.bash exports="both" results="output"}
+``` bash
 today () { date +%Y%m%d; }
 declare -f today
 today
@@ -189,7 +189,7 @@ printing a useful representation of the date.
 With the strong hint that there is quite a bit of information hidden behind
 the upper- and lower-case parameters to the date command, let’s see if we can easily give ourselves a reminder.
 
-``` example
+``` shell
 
 for var in list ; do command(s) using var ... ; done
 ```
