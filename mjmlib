@@ -15,12 +15,6 @@ dfg_db ()
     debug ENTRY $*;
     ${*:-echo} "$(icloud)/mjm/lib/dir"
 }
-devdir_dir () 
-{ 
-    : the data directory;
-    : date: 2025-03-03;
-    ${*:-echo} $(ilcloud)/mjm/devdir
-}
 mjm () 
 { 
     : smart directory;
@@ -254,7 +248,7 @@ dfg_unique ()
 }
 dup_funs () 
 { 
-    : identify dupliact functions in the Function Dataase, e.g. dfg_db;
+    : identify duplicate functions in the Function Dataase, e.g. dfg_db;
     : date: 2025-05-05;
     : date: 2025-05-10 - update awk GT 1 filter;
     function _dup_funs () 
@@ -356,7 +350,7 @@ function_history ()
 }
 functions_home () 
 { 
-    : from the function Data Base, list the homr library and function;
+    : from the function Data Base, list the home library and function;
     : also Tail Pipe sort -k2 by Function;
     : lesson: gmv Grep Mulit-minus V;
     : date: 2025-02-10;
