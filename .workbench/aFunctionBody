@@ -1,0 +1,4 @@
+aFunctionBody () {
+	: writes itself on the output
+	declare -f aFunctionBody
+}
