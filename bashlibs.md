@@ -54,21 +54,21 @@ The current [CHANGELOG](./Changelog.html)
 
 ### Debugging
 
-Uses these six functions, using the 
+Uses these six functions:  
 
 ```
-$ echo {{debug,pause},_{on,off}}
+$ echo {debug,pause}{,_on,_off}
 ```
 
 
 The debugging features may be turned on or off together or separately
-using thesa aliases.  It's usually prefferable to set them together,
-thought not necessary.  The _on and _off functions redefine the debug
-and pause functions to execute their respective commands or simply
+using thes aliases.  It is preferable to set them together,
+though not necessary.  The `_on` and `_off` functions redefine the `debug`
+and `pause` functions to execute their respective commands or simply
 return without taking action.
 
-When on `debug` treats all its arguments as a `comment`, displaying on
-the `standard error`. where `pause` halts the process, inviting the
+When **on**, `debug` treats all its arguments as a `comment`, displaying on
+the `standard error`. `pause` halts the process, inviting the
 user to either stop with a *[CTRL] - C* or continue with a *[Return]*
 
 When turned **off** the commands simply return.
@@ -115,13 +115,12 @@ alias on='debug_on; pause_on'
 
 ### The APP
 
-- here, or Applications > An appliction, the APP
-
+- here, or Applications > An application, the APP
 
 ## Applications
 
 ### Backup, 
-- the only one you'll ever need
+- the only one you will ever need
 
 ### RDB
 
@@ -142,14 +141,12 @@ alias on='debug_on; pause_on'
 ### simplest surviving functions
 
 
-
-
 ## Concept
 Concepts go here, where either a 
 ## Taxonomy
 To repeat, in a loose hierarchy, functions are collected into
 
-1. apps -- link a traditional Application.   a main function with facets
+1. apps -- like a traditional Application. A main function with facets
    identified by `manual page` documentation.
    
 1. libraries -- 
@@ -157,12 +154,10 @@ To repeat, in a loose hierarchy, functions are collected into
 ## Definition
 
 <!--
-
 ## deprecated
 
 1. xhylib 
    workup the **xhylib** process, it's part of both/either
    the **Development Loop** and the **Value of an Alias**.
-
 
   -->

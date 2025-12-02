@@ -1,5 +1,5 @@
 
-# Debuging Utilitiers
+# Debugging Utilities
 
 # Concept
 

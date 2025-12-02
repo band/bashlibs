@@ -313,10 +313,9 @@ Now, some of your explanations come easier. Since the day, the hour or
 the minutes many be the same number, some letter options may give the
 same result, and therefore, still be ambiguous.
 
-You've assigned the first positional parameter, and you can likely
+You have assigned the first positional parameter, and you can likely
 figure out how to deal with the second, third, ... etc. Also, notice, if
-you haven't done this before, you've just assigned and used a ****shell
-variable****, in this case the variable *opt*. You assign it just by the
+you have not done this before, you have just assigned and used a **shell variable**, in this case the variable **opt**. You assign it just by the
 name, and (in the for loop) substitute the value with a leading dollar
 sign: ****\$opt****. So, in this case, ****dateArg**** is invoked with
 each of the lower case letters since the *{a..z}* list expands into the
