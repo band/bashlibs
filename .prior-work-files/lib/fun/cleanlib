@@ -125,7 +125,7 @@ myname ()
 }
 namedfiles () 
 { 
-    : the ordinary file arguments, default is curren directory;
+    : the ordinary file arguments, default is current directory;
     : revised from a version that ignored ~;
     : lesson: hide Error reminders behind a Debug;
     : date: 2023-07-22;

@@ -33,7 +33,7 @@ argnumber ()
 }
 args_uniq () 
 { 
-    : return one instance of each uniqe argument;
+    : return one instance of each unique argument;
     : usage: ~ a b c a d e b;
     : hint: eval_example ... show_example args_example;
     : date: 2023-07-22;

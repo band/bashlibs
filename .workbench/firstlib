@@ -1,0 +1,68 @@
+# copied from ".prior-work-files/lib/fun/cleanlib
+# 2025-12-01
+debug () 
+{ 
+    return
+}
+debug_off () 
+{ 
+    : no diagnostics, just return;
+    : date: 2023-03-29;
+    : date: 2024-11-05;
+    function debug () 
+    { 
+        return
+    }
+}
+debug_on () 
+{ 
+    : write a COMMENT, on STDERR, at a point in a function, listing ...;
+    : the CALLER and any passed ARGS, who CALLED it, 3rd, and that CALLER, 4th as well;
+    : lesson: NO user functions in DEBUG:;
+    : date: 2022-03-07;
+    : date: 2023-01-30;
+    : date: 2024-11-05;
+    eval "debug () { printf \"%-21s\\t%-21s\\t%-21s : %s\\n\" \${FUNCNAME[3]} \${FUNCNAME[2]} \${FUNCNAME[1]} \"\$*\" 1>&2; }"
+}
+pause () 
+{ 
+    return
+}
+pause_off () 
+{ 
+    : do not pause, just return;
+    : date: 2023-03-29;
+    : date: 2024-11-05;
+    function pause () 
+    { 
+        return
+    }
+}
+pause_on () 
+{ 
+    : pause the script, waiting for the users CR;
+    : date: 2023-01-30;
+    : date: 2024-11-05;
+    eval "pause () { read -p \"[return] / [Ctrl-C] \${FUNCNAME[1]} \$@ ? \" < /dev/tty; }"
+}
+namedfiles () 
+{ 
+    : the ordinary file arguments, default is current directory;
+    : revised from a version that ignored ~;
+    : lesson: hide Error reminders behind a Debug;
+    : date: 2023-07-22;
+    : date: 2024-04-30;
+    : date: 2024-06-26;
+    debug ENTRY $# $@;
+    pause;
+    local err=~/tmp/.file.err;
+    set -- ${@:-$(ls -a)};
+    debug SET $PWD, $# $@;
+    pause;
+    for file in $*;
+    do
+        debug file: $file;
+        debug Errors are thrown into $err;
+        [[ -f $file ]] && echo $file;
+    done 2> $err
+}
