@@ -1,5 +1,5 @@
 
-# What's Different Here
+# What Is Different Here
 
 While our wider subject is bash shell libraries, how to organize and
 maintain them, a few words on the function itself will alert you to
@@ -10,7 +10,7 @@ turtles](https://en.wikipedia.org/wiki/Turtles_all_the_way_down).
 Like the turtle, the function is the building block of any shell
 application.
 
-Here's the [Table of Contents](./Development.html)
+Here is the [Table of Contents](./Development.html)
 
 ## New Concepts
 

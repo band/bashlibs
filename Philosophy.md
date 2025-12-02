@@ -1,39 +1,42 @@
 
 # Function Philosophy
 
+TODO: (2025-12-02) figure out how to use or replace the `!include ...` shell code snippets.
+
 Here is the [Table of Contents](./Development.html).
 
 Is there a "function philosophy"?  Raising the question makes it so,
 provided the questions lead to a useful outlook on the subject of
 functions.
 
-Let's raise a few philosophic questions about shell functions.
+Let us raise a few philosophic questions about shell functions.
 
 First of all, a function is meant to do one thing well with few side
-effects.  Which suggests size may be a constraint.  I like to think
-that if function has control flow statements, it should have but one.
+effects.  This suggests size may be a constraint.  I like to think
+that if a function has control flow statements, it should have but one.
 
-On the subject of size, it's possible to have an awk script inside a
-function; at some point it makes sense to put the awk script in a
+On the subject of size, it is possible to have an **awk** script inside a
+function; at some point it makes sense to put the **awk** script in a
 separate file.  I've not developed a hard and fast practice about how
-large an awk script is before it needs it's own file.
+large an awk script is before it needs its own file.
 
-A big issue for the bash function is how well documented must it be.
-I'd like to think functions are self-documenting, easily read by the
-code.  We'll go thru a sequence of documentation features for a
+An issue for a shell function is how well documented must it be.
+I'd like to think functions are self-documenting, easily understood by reading the code. 
+We will go through a sequence of documentation features for a
 function.  These features would seem to place a performance penalty on
-the function.  Before we're through, let's run a few timing tests on
-that prospect.  The philosophic question in this chapter is *How, and
-what features serve the objective of sufficiently documented
-function*?
+the function.  Before we are through, we will run a few timing tests on
+that prospect. 
+The philosophic question in this chapter is _How to fulfill, and
+what features serve, the objective of sufficiently documented
+function_?
 
 ## An Example
 
-Since we claim a philosophical point here, and we're talking code, a
+Since we claim a philosophical point here, and we are talking code, a
 famous challenge in any language is a [quine
-program](https://en.wikipedia.org/wiki/Quine_(computing)).  We'll base
-our example on a function which may be called a `quine` since, in it's
-fullest form doesn't require external input, though it does depend on
+program](https://en.wikipedia.org/wiki/Quine_(computing)).  We will base
+our example on a function that may be called a `quine` since, in its
+fullest form, it does not require external input, though it does depend on
 the shell `Environment`.
 
 That function is `aFunctionBody` so named because it shows its own source: 
@@ -54,34 +57,22 @@ aFunctionBody ()
 ```
 
 This chapter introduces a more practical name for such a function, which
-we'll call `fbdy`, pronounced by saying it's letters.   This is a good point
+we call `fbdy`, pronounced by saying the letters.   This is a good place
 to introduce a practice of naming functions.  The higher principles are
 
-The functions name should:
+A function name should:
 
-1. say **what** the function does, possibly naming what it may **produce**
-1. and not necissarily say **how** it does it,
-1. is sufficiently **concise**
-1. reflect higher-level naming requirements.
-
-
-
-A big issue for the bash function is how well documented must it be.
-I'd like to think functions are self-documenting, easily read by the
-code.  We'll go thru a sequence of documentation features for a
-function.  These features would seem to place a performance penalty on
-the function.  Before we're through, let's run a few timing tests on
-that prospect.  The philosophic question in this chapter is *How, and
-what features serve the objective of sufficiently documented
-function*?
+1. say **what** the function does, possibly naming what it may **produce**;
+2. not necessarily say **how** it does it;
+3. be **concise**;
+4. reflect higher-level naming requirements (TODO: explain this).
 
 ## Practical Application
 
 This leads us to a much-used function to display the function bodies
-of it's arguments.  It's called **F**unction**B**o**DY**.  We will go
-thru a sequence of steps, adding a feature at a time, a line at a
+of it's arguments (TODO: fix this sentence).  It is called **F**unction**B**o**DY**.  We will go
+through a sequence of steps, adding a feature at a time, a line at a
 time.  
-
 ### simple
 
 The elementary function is shown here.  Each of the subsequent
@@ -105,7 +96,7 @@ Now introduce an abstract,
 ```
 
 Where we'll see that an `abstract` is the first line of a function's
-`shdoc`, or **sh**ell **doc**umentation.  More on that subject in it's
+`shdoc`, or **sh**ell **doc**umentation.  More on that subject in its
 own chapter.
 
 ### default
@@ -117,7 +108,7 @@ Next add the syntax to permit a default argument.
 ```
 
 which in this case is the function itself. If no arguments are
-suopplied, then display `fbdy` itself, otherwise, display the bodies
+supplied, then display `fbdy` itself, otherwise, display the bodies
 of function arguments.
 
 ### tag
@@ -135,18 +126,17 @@ the function was recently updated.
 ## The SHell DOCumentation 
 
 Shell functions each have their `shdoc` and there is a function to
-extract it.  The idea arose from *javacoc, perdoc,* ... It uses the
+extract it.  The idea arose from *javacoc, perldoc,* ... It uses the
 first `null-command` lines of the function, which must be the first
-lines of the function.  The first line of the funcion is the
+lines of the function.  The first line of the function is the
 function's `abstract`. Any `tag`s the function uses follow the `shdoc`
-and any `date` tags follow the remaining `tags` and preceed the
+and any `date` tags follow the remaining `tags` and precede the
 function code.
 
 Null-commands may be placed throughout the function code, but are not
 considered part of the function's `shdoc`.
 
-Use of the null-command carries with it some cautionary warnings,
-fully covered in [The Null Command](./TheNullCommand.html)
+Use of the null-command carries with it some cautionary warnings, covered in [The Null Command](./TheNullCommand.html)
 
 ## Reference
 

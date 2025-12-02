@@ -1,6 +1,8 @@
 ## Document Conventions
 
-Here we specify the formating required for each identified document obuject:
+TODO: finish specifications (2025-12-02)  
+
+Here we specify the formatting required for each identified document object:
 
 - any **file**
 - user `function`
