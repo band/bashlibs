@@ -1,11 +1,11 @@
 
 # The Value of an Alias
 
-I've long questioned the value of an *alias* in shell
-programming. I've grown a collection of about 40 but they all see to
-be "one-off"s, which serve as a short-hand to make the shell command
-typing easier.  Just recently I've encountered a situtation where a
-small and related collection serve a work-flow.
+I have long questioned the value of an *alias* in shell
+programming. I have a collection of about 40 but they all see to
+be "one-offs", which serve as a short-hand to make shell command
+typing easier.  Just recently I have encountered a situation where a
+small and related collection can serve a work-flow.
 
 Here is this folder's [Changelog](./Changelog.html).
 
@@ -15,38 +15,35 @@ I was working in a **src** directory just now, with a bunch of
 `file_function`s where I've found the value of using *alias*es.
 
 It  serves when  you  know, for  example, your  first  shell arg  "$1"
-doesn't need reapeating.  Since you've a few args in hand, the idea is
-to take individual step with a  single argument, where the result will
-tell you the next  step to take.  It shouldn't be  a long process with
+doesn't need repeating.  Since you have a few args in hand, the idea is
+to take an individual step with a  single argument, where the result will
+tell you the next  step to take.  It should not be  a long process with
 too many decisions.  A handful will  be plenty. 
 
 
 ## The Pieces
 
-library/family namew wiht a sub function _al hold definitions
-supporting the functions in the library.  e.b.  'backup_al` assigns
+library/family name with a sub function _al_ hold definitions
+supporting the functions in the library.  E.g.,  `backup_al` assigns
 aliases using functions in the backup library.
 
-a sufficient number of these Fam_al functions span the majority of the
-alias in use.  in order to keep all alias assignment in definingl
+A sufficient number of these Fam_al functions span the majority of the
+aliases in use.  In order to keep all alias assignments in defining
 functions, at some point it serves to collect those yet seeking
-assignment in, say the `cmdlinelib`.
+assignment in, say, the `cmdlinelib`.
 
-here, we develope a process to round up the dominant useage, to leave
-the remaining few in the designated collection, e.g. cmdlinelib.
+Here we develop a process to round up the dominant usage, and to leave
+the remaining few in the designated collection, e.g. `cmdlinelib`.
 
 ## alias collection
 
 ## A Procedure
 
-
-Here's the process I'm going thru to restore a group of file functions
+Here is the process I am going through to restore a group of file functions
 to their appropriate library, which is either the library where the
 function is defined, or a library with the most affiliated functions,
-either called by or called from:
-
+either called by or called from: (?)
 ### Starting
-
 
 ```txt
 
@@ -56,7 +53,7 @@ either called by or called from:
 ### First steps
 
 Having loaded the library, all the functions and aliases are available.
-The routine seqeunce, now having source the library:
+The routine sequence, now having source the library:
 
 #### xgo - using `xhy` to return the functions 
 
@@ -88,8 +85,7 @@ When the functions have been looped through this way you are left with
 those functions needing  further editing, testing, before  they may be
 returned home.
 
-The paper  on [The Development Loop](./TheDevLoop.html)  addresses the
-challenges when functions have newly been entered or returned home.
+The page on [[TheDevLoop]] addresses the challenges when functions have newly been entered or returned home.
            
 ### functions
         
@@ -108,9 +104,9 @@ challenges when functions have newly been entered or returned home.
 ## Concepts
         
 - alias
-- home,d
+- homed
 - home library
-- solo,s
+- solos
 - file function
 
 
