@@ -8,24 +8,17 @@
   -->
 ## Abstract
 
-All notable changes to this project will be documented in this file.
+All notable changes to this project are documented in this file.
 
-Inspect the [source of this document](./Changelog.md); here is the
-[pending](#pending) change.
+Inspect the [source of this document](./Changelog.md); here is the [pending](#pending) change.
 
-The format is based on [Keep a
-CHANGELOG](https://keepachangelog.com/), and this project adheres to
+The format is based on [Keep a CHANGELOG](https://keepachangelog.com/), and this project adheres to 
 [Semantic Versioning](https://semver.org/).
-
-Please read those documents; the links now take you to the most recent
-version.  And, do occasionally return to refresh your understanding.
 
 ## [Unreleased]
 
 The first few point releases 0.1.N will: 
-
 + remove personal libraries from control group
-
 + move functions in sparsely populated libraries to an appropriate
   library.
 + anticipate recovering recent (0.1.1) programlib functions which are
@@ -96,7 +89,6 @@ The first few point releases 0.1.N will:
 
 ### Removed
 
-- `financelib` to personal directory
 
 ## [0.1.1] - 2024-07-14
 
