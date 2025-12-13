@@ -1,11 +1,11 @@
-# copied from ".prior-work-files/lib/fun/cleanlib
-# 2025-12-01
-debug () 
-{ 
+# 2025-12-01: copied from .prior-work-files/lib/fun/cleanlib
+# 
+debug ()
+{
     return
 }
-debug_off () 
-{ 
+debug_off ()
+{
     : no diagnostics, just return;
     : date: 2023-03-29;
     : date: 2024-11-05;
@@ -14,8 +14,8 @@ debug_off ()
         return
     }
 }
-debug_on () 
-{ 
+debug_on ()
+{
     : write a COMMENT, on STDERR, at a point in a function, listing ...;
     : the CALLER and any passed ARGS, who CALLED it, 3rd, and that CALLER, 4th as well;
     : lesson: NO user functions in DEBUG:;
@@ -24,12 +24,12 @@ debug_on ()
     : date: 2024-11-05;
     eval "debug () { printf \"%-21s\\t%-21s\\t%-21s : %s\\n\" \${FUNCNAME[3]} \${FUNCNAME[2]} \${FUNCNAME[1]} \"\$*\" 1>&2; }"
 }
-pause () 
-{ 
+pause ()
+{
     return
 }
-pause_off () 
-{ 
+pause_off ()
+{
     : do not pause, just return;
     : date: 2023-03-29;
     : date: 2024-11-05;
@@ -38,15 +38,17 @@ pause_off ()
         return
     }
 }
-pause_on () 
-{ 
+pause_on ()
+{
     : pause the script, waiting for the users CR;
     : date: 2023-01-30;
     : date: 2024-11-05;
     eval "pause () { read -p \"[return] / [Ctrl-C] \${FUNCNAME[1]} \$@ ? \" < /dev/tty; }"
 }
-namedfiles () 
-{ 
+#
+# copied from .prior-work-files/lib/fun/cleanlib
+namedfiles ()
+{
     : the ordinary file arguments, default is current directory;
     : revised from a version that ignored ~;
     : lesson: hide Error reminders behind a Debug;
@@ -65,4 +67,51 @@ namedfiles ()
         debug Errors are thrown into $err;
         [[ -f $file ]] && echo $file;
     done 2> $err
+}
+#
+# 2025-12-13: copied from .prior-work-file/lib/fun/programlib
+report_notargcount ()
+{
+    : report an insufficient number of args from the calling function;
+    : date: 2023-01-01;
+    debug ENTRY $@;
+    [[ $2 -ge $1 ]] && return 1;
+    report_usage need at least $1 arg/s: ${*:3}
+}
+#
+# 2025-12-13: copied from .prior-work-files/lib/fun/utillib
+if_missingargs ()
+{
+    : returns the source of the calling function for any missing argumpents;
+    : usage: ~ "{ Minimum Arg Count } $@";
+    : date: 2023-07-10;
+    : date: 2024-02-23;
+    :;
+    : ------- Save the Minimum Arg Count, shift to see the callers Args --;
+    :;
+    local shouldHave=$1;
+    shift;
+    : ---------------- demonstration use of debug, whose default is OFF --;
+    :;
+    debug "$#: $@";
+    :;
+    report_notargcount $shouldHave $# || return 1;
+    declare -f $(myname 2);
+    return
+}
+setenv ()
+{
+    : set the First ARG in the ENVironment to the value of the remaining;
+    : related: setget;
+    : date: 2023-08-02;
+    : debug ENTRY $# $*;
+    : date: 2024-04-29;
+    if_missingargs 1 $* && return;
+    local na=$1;
+    : debug na: $na;
+    shift;
+    : debug ASSIGN $na=\"$*\";
+    eval $na=\"$*\";
+    export $na;
+    : debug RETURN $na
 }
