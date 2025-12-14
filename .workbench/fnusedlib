@@ -1,18 +1,16 @@
 # 2025-12-01: copied from .prior-work-files/lib/fun/cleanlib
-# 
+# 2025-12-14: updated to manage zsh / bash diffs (further cleanup expected)
 debug ()
 {
     return
 }
 debug_off ()
 {
-    : no diagnostics, just return;
+    : no diagnostics, redefine debug to just return;
     : date: 2023-03-29;
     : date: 2024-11-05;
-    function debug () 
-    { 
-        return
-    }
+    : date: 2025-12-14: copyedits;
+    debug () { return }
 }
 debug_on ()
 {
@@ -22,7 +20,14 @@ debug_on ()
     : date: 2022-03-07;
     : date: 2023-01-30;
     : date: 2024-11-05;
-    eval "debug () { printf \"%-21s\\t%-21s\\t%-21s : %s\\n\" \${FUNCNAME[3]} \${FUNCNAME[2]} \${FUNCNAME[1]} \"\$*\" 1>&2; }"
+    : date: 2025-12-14: zsh / bash differences;
+    if [[ -n $ZSH_VERSION ]]; then
+        debug () { printf "%-21s\t%-21s\t%-21s : %s\n" ${funcstack[4]} ${funcstack[3]} ${funcstack[2]} "$*" 1>&2 }
+    elif [[ -n $BASH_VERSION ]]; then
+        debug () { printf \"%-21s\\t%-21s\\t%-21s : %s\\n\" \${FUNCNAME[3]} \${FUNCNAME[2]} \${FUNCNAME[1]} \"\$*\" 1>&2; }
+    else
+        echo "unsupported shell: no functions defined"
+    fi
 }
 pause ()
 {
