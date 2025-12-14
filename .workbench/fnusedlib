@@ -151,9 +151,20 @@ setenv ()
 timestamp ()
 {
     : date: 2023-08-07;
+    : debug ENTRY $# $@;
     report_notfile $1 && return 1;
-    touch -t $(date -r $(epoch $1) +%Y%m%d%H%M.%S) $2
+    touch -t $(date -r $(epochmtime $1) +%Y%m%d%H%M.%S) $2
 } 
+# 2025-12-14: copied from .prior-work-files/lib/fun/utillib
+epochmtime () 
+{ 
+    : mtime of a file in epoch seconds;
+    : date: 2023-07-22;
+    : date: 2025-12-14: rename for clarity;
+    [[ -f $1 ]] || return;
+    set $(stat -r $1);
+    echo ${10}
+}
 #
 # 2025-12-13: copied from ShellFunctions.md
 fbdy () {
