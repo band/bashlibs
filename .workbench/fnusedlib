@@ -159,3 +159,12 @@ timestamp ()
 fbdy () {
 	declare -f ${@:-fbdy}
 }
+#
+# 2025-12-14: copied from .prior-work-files/lib/fun/cleanlib
+myname () 
+{ 
+    : a calling functions NAME, default MYcaller;
+    : 2 is the callers caller, 3 is theirs, etc...;
+    : date: 2023-07-22;
+    echo ${FUNCNAME[${1:-1}]}
+}
