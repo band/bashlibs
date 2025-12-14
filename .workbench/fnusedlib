@@ -166,5 +166,14 @@ myname ()
     : a calling functions NAME, default MYcaller;
     : 2 is the callers caller, 3 is theirs, etc...;
     : date: 2023-07-22;
-    echo ${FUNCNAME[${1:-1}]}
+    : date: 2025-12-14: POSIX version, zsh / bash diffs;
+    if [ -n "$ZSH_VERSION" ]; then
+       local level=${1:-1}
+       echo ${funcstack[$((level + 1))]}
+    elif [ -n "$BASH_VERSION" ]; then
+        echo ${FUNCNAME[${1:-1}]}
+    else
+	echo "unsupported shell - use zsh or bash"
+    fi
 }
+
