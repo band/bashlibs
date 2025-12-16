@@ -10,7 +10,7 @@ debug_off ()
     : date: 2023-03-29;
     : date: 2024-11-05;
     : date: 2025-12-14: copyedits;
-    debug () { return }
+    debug () { return; }
 }
 debug_on ()
 {
@@ -35,20 +35,23 @@ pause ()
 }
 pause_off ()
 {
-    : do not pause, just return;
-    : date: 2023-03-29;
-    : date: 2024-11-05;
-    function pause () 
-    { 
-        return
-    }
+    : do not pause, redefine pause to just return;
+    : date: 2025-12-15;
+    pause () { return; }
 }
 pause_on ()
 {
-    : pause the script, waiting for the users CR;
+    : pause the script, wait for user CR/CTRL-C;
     : date: 2023-01-30;
     : date: 2024-11-05;
-    eval "pause () { read -p \"[return] / [Ctrl-C] \${FUNCNAME[1]} \$@ ? \" < /dev/tty; }"
+    : date: 2025-12-15: zsh / bash differences;
+    if in_zsh; then
+       pause () { read "?[return] / [Ctrl-C] ${funcstack[2]} $@ ? " < /dev/tty; }
+    elif in_bash; then
+       pause () { read -p "[return] / [Ctrl-C] ${FUNCNAME[1]} $@ ? " < /dev/tty; }
+    else
+       echo "unsupported shell - use zsh or bash"
+    fi
 }
 #
 # copied from .prior-work-files/lib/fun/cleanlib
