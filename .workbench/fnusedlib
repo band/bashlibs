@@ -195,4 +195,3 @@ myname ()
 	echo "unsupported shell - use zsh or bash"
     fi
 }
-
