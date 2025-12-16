@@ -1,0 +1,95 @@
+# 2025-12-16: preliminary version library
+# - based on SimpleVersion.md
+# ``` example
+# ln -f  a/b/.bak/file  .ver/{YYYY_MMDD_hhmmss}/a/b/file
+# ```
+#
+version_init ()
+{
+    : date: 2025-12-16;
+    if [ ! -d $VERSION_DIRECTORY ]; then
+        mkdir $VERSION_DIRECTORY
+    fi
+}
+version_one ()
+{
+    : for a single file in current directory;
+    : date: 2025-12-16;
+    : debug ENTRY $PWD $@;
+    local file=${1:-/dev/null};
+    if [ ! -f "$file" ]; then
+        debug NOT file: $file;
+	: pause;
+	return 1
+    fi
+    debug FILE $file;
+    : pause;
+# TODO: figure out how to make ver directories
+#    ln -f ./.bak/$file $VERSION_DIRECTORY/$(date +"%Y_%m%d%H%M%S")/$file
+}
+# 2025-12-16: copied from .prior-work-files/lib/fun/utillib
+my_versions () 
+{ 
+    : list local directory version numbers from the most recent;
+    : versions must begin with 1 or more digits;
+    : related: backup_ver to set the x.y.z nums;
+    : date: 2023-09-26;
+    : date: 2023-09-30;
+    : date: 2023-12-15;
+    : date: 2024-01-06;
+    : date: 2024-06-19;
+    : date: 2024-07-13;
+    local dir=$(basename $PWD);
+    debug dir: $dir;
+    [[ $dir = ".ver" ]] && { 
+        indir .. $(myname);
+        return
+    };
+    indir .ver ls -at1 | grep '^[0-9][0-9]*[.]'
+}
+latest_version () 
+{ 
+    : most recent in numero-alphic order;
+    : date: 2023-09-26;
+    : date: 2023-09-30;
+    : date: 2024-06-19;
+    my_versions | sed 1q
+}
+
+# 2025-12-16: copied from .prior-work-files/lib/fun/maintlib
+mmp_version () 
+{ 
+    : space delimited Main, Minor, point version;
+    : date: 2024-05-28;
+    : date: 2024-06-19;
+    my_versions | awk -F. '{ printf "%5d\t%5d\t%5d\n", $1, $2, $3 }' | sort -r | sed 1q
+}
+next_version () 
+{ 
+    : increment Major, minor, or patch version, default Patch;
+    : date: 2023-10-20;
+    : date: 2024-06-19;
+    local ver=$1;
+    set -- $(mmp_version) 0 0 0;
+    case $ver in 
+        M)
+            echo $(expr $1 + 1).0.0
+        ;;
+        m)
+            echo $1.$(expr $2 + 1).0
+        ;;
+        *)
+            echo $1.$2.$(expr $3 + 1)
+        ;;
+    esac
+}
+# 2025-12-16: claude.ai indir rewrite
+# here a subshell is used to run the commands in the specified directory
+indir () {
+    : run commands IN the first DIRectory argument
+    debug ENTRY $@
+    [[ ! -d "$1" ]] && return 1
+    local target_dir="$1"
+    shift
+    ( cd "$target_dir" && "$@" )
+}
