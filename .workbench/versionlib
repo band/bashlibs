@@ -24,8 +24,9 @@ version_one ()
     fi
     debug FILE $file;
     : pause;
-# TODO: figure out how to make ver directories
-#    ln -f ./.bak/$file $VERSION_DIRECTORY/$(date +"%Y_%m%d%H%M%S")/$file
+    local verdir=$VERSION_DIRECTORY/$(next_version)
+    mkdir $verdir
+    ln -f ./.bak/$file $verdir/$file
 }
 # 2025-12-16: copied from .prior-work-files/lib/fun/utillib
 my_versions () 
