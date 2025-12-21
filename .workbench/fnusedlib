@@ -26,7 +26,7 @@ debug_on ()
     elif [[ -n $BASH_VERSION ]]; then
         debug () { printf \"%-21s\\t%-21s\\t%-21s : %s\\n\" \${FUNCNAME[3]} \${FUNCNAME[2]} \${FUNCNAME[1]} \"\$*\" 1>&2; }
     else
-        echo "unsupported shell: no functions defined"
+        echo "unsupported shell: no debug functions defined"
     fi
 }
 pause ()
@@ -59,7 +59,7 @@ namedfiles ()
 {
     : the ordinary file arguments, default is current directory;
     : revised from a version that ignored ~;
-    : lesson: hide Error reminders behind a Debug;
+    : lesson: hide Error reminders behind a debug;
     : date: 2023-07-22;
     : date: 2024-04-30;
     : date: 2024-06-26;
