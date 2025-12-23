@@ -27,7 +27,7 @@ backup ()
     : date: 2024-08-20;
     local file;
     backup_init;
-    map backup_one $@
+    apply backup_one $@
 }
 backup_all () 
 { 
@@ -47,7 +47,7 @@ backup_allfiles ()
     };
     backup_sync;
     local files=$(backup_onlyfiles);
-    backup $(map backup_needed $files);
+    backup $(apply backup_needed $files);
     unset backup_needed
 }
 backup_copyright () 
@@ -171,7 +171,7 @@ backup_onlyfiles ()
     : candidate backup files, including DOT or system files;
     : date: 2023-09-11;
     : date: 2023-10-21;
-    map name_existing .* *
+    apply name_existing .* *
 }
 backup_outdated () 
 { 

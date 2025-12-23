@@ -10,7 +10,7 @@ apply ()
     shift
     for arg in "$@"
     do
-        "$cmd" "$arg"
+        $cmd "$arg"
     done
 }
 fileall() {
