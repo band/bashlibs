@@ -104,4 +104,11 @@ version_findlinks () {
 	print "version: $1 is linked to: $2"
     done
 }
+# 2025-12-14: prune .bak/.bak/* files not linked to a .ver/
+prune_bakfiles() {
+    for f in $(find .ver -type f); do
+	: debug echo $f
+	find .bak/.bak -name $(basename $f) -links 1
+    done | sort -u | xargs printf "pruning(i.e., rm): %s\n"
+}
 
