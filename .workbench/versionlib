@@ -94,3 +94,14 @@ indir () {
     shift
     ( cd "$target_dir" && "$@" )
 }
+# 2025-12-24: find and list version linked files
+version_findlinks () {
+    : find version linked files in local .ver/.bak directories
+    for f in $(find .ver/ -type f); do
+	: debug $(ls -i $f)
+	local _inode=$(ls -i $f | cut -d' ' -f1)
+	set -- $(find . -inum $_inode)
+	print "version: $1 is linked to: $2"
+    done
+}
+
