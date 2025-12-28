@@ -4,6 +4,7 @@
 # ln -f  a/b/.bak/file  .ver/{YYYY_MMDD_hhmmss}/a/b/file
 # ```
 #
+# 2025-12-27: TODO: revisit dependency on 'backup_init' and ENV vars
 version_init ()
 {
     : date: 2025-12-16;
@@ -11,6 +12,9 @@ version_init ()
         mkdir $VERSION_DIRECTORY
     fi
 }
+# 2025-12-27: TODO: this entire function-based workflow needs review
+# - specifically the filename independent notion of versions
+# - my model is now different from the way these functions work
 version_one ()
 {
     : for a single file in current directory;
@@ -65,23 +69,35 @@ mmp_version ()
     : date: 2024-06-19;
     my_versions | awk -F. '{ printf "%5d\t%5d\t%5d\n", $1, $2, $3 }' | sort -r | sed 1q
 }
-next_version () 
+# 2025-12-27: version functions work on specific files and versions
+version_bump () 
 { 
-    : increment Major, minor, or patch version, default Patch;
+    : increment Major, minor, or patch version of provided version number
+    : libs: fnusedlib
     : date: 2023-10-20;
     : date: 2024-06-19;
-    local ver=$1;
-    set -- $(mmp_version) 0 0 0;
-    case $ver in 
-        M)
+    : date: 2025-12-26: bump needs a starting version number
+    debug ENTRY $# $@;
+    local bump=$1;
+    if [[ -n $2 ]]; then
+	parts=(${(s:.:)2})
+	set -- $parts
+    else
+        set -- 0 0 0;
+    fi
+    case $bump in 
+        (M|[Mm]ajor)
             echo $(expr $1 + 1).0.0
         ;;
-        m)
+        (m|[Mm]inor)
             echo $1.$(expr $2 + 1).0
         ;;
-        *)
+        (p|[Pp]atch)
             echo $1.$2.$(expr $3 + 1)
         ;;
+	(*)
+	    echo "missing or invalid value: $bump" && return 1;
+	;;
     esac
 }
 # 2025-12-16: claude.ai indir rewrite
@@ -95,7 +111,7 @@ indir () {
     ( cd "$target_dir" && "$@" )
 }
 # 2025-12-24: find and list version linked files
-version_findlinks () {
+version_files () {
     : find version linked files in local .ver/.bak directories
     for f in $(find .ver/ -type f); do
 	: debug $(ls -i $f)
@@ -103,12 +119,5 @@ version_findlinks () {
 	set -- $(find . -inum $_inode)
 	print "version: $1 is linked to: $2"
     done
-}
-# 2025-12-14: prune .bak/.bak/* files not linked to a .ver/
-prune_bakfiles() {
-    for f in $(find .ver -type f); do
-	: debug echo $f
-	find .bak/.bak -name $(basename $f) -links 1
-    done | sort -u | xargs printf "pruning(i.e., rm): %s\n"
 }
 
