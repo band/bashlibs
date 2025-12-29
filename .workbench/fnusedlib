@@ -65,11 +65,11 @@ namedfiles ()
     : date: 2024-04-30;
     : date: 2024-06-26;
     debug ENTRY $# $@;
-    pause;
+    : pause;
     local err=~/tmp/.file.err;
     set -- ${@:-$(ls -a)};
     debug SET $PWD, $# $@;
-    pause;
+    : pause;
     for file in $*;
     do
         debug file: $file;
@@ -93,7 +93,7 @@ report_notfile ()
     : date: 2018-02-16;
     : date: 2022-01-08;
     [[ -f $1 ]] && return 1;
-    report_usage $1 "ISN'T" a file;
+    report_usage $1 "IS NOT" a file;
     declare -f $(myname 2) 1>&2
 }
 report_usage () 
@@ -212,17 +212,6 @@ apply ()
     done
 }
 # 2025-12-13
-# these functions will be needed
-detect_shell() {
-    if [ -n "$BASH_VERSION" ]; then
-        echo "bash"
-    elif [ -n "$ZSH_VERSION" ]; then
-        echo "zsh"
-    else
-        echo "sh or unknown"
-    fi
-}
-#
 findfdef () {
     : date: 2025-12-13
     local dir="$(realpath ~/Documents/Github/bashlibs/.prior-work-files)"
