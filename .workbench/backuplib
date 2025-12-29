@@ -79,6 +79,64 @@ backup_init ()
     setenv BACKUP_DIRECTORY $1 > /dev/null;
     setenv VERSION_DIRECTORY $2 > /dev/null
 }
+classic_mode () 
+{ 
+    : the octal representation of files RWX modes;
+    : date: 2023-07-22;
+    set -- $(file_mode $1);
+    echo ${1:4}
+}
+file_mode () 
+{ 
+    : permission bits of the file argument;
+    : date: 2023-07-22;
+    report_notfile ${1:-/dev/null} && return 1;
+    set -- $(stat -r $1);
+    echo $3
+}
+backup_here () 
+{ 
+    : recursively move backups down the stack;
+    : clearing the way for their replacement at the top;
+    : date: 2023-09-11;
+    : date: 2024-04-29;
+    : date: 2023-09-05;
+    debug ENTRY $@;
+    set $1 ${BACKUP_DIRECTORY} "${2:-$PWD}";
+    debug SET $@ $(dirs);
+    : pause;
+    [[ -d $2 ]] || mkdir $2;
+    [[ "$3" == "$PWD" ]] && { 
+        debug TEST: "$3" equal $PWD;
+        cmp $1 $2/$1 2> /dev/null 1>&2 && { 
+            debug CMP RETURN $(dirs);
+            : pause;
+            return
+        }
+    };
+    local mode=$(classic_mode $1);
+    [[ -f $2/$1 ]] && { 
+        debug DOWN $@ $(dirs);
+        : pause;
+        cd $2;
+        backup_here $1 "$3"
+    } || { 
+        mv $1 $2/$1;
+        [[ $3 == $PWD ]] && { 
+            debug DONE: $@ $(dirs);
+            : pause;
+            cp $2/$1 $1;
+            timestamp $2/$1 $1;
+            chmod $mode $1;
+            cd ..;
+            debug STACK RETURN $(dirs);
+            : pause;
+            return
+        };
+        cd ..;
+        backup_here $1 "$3"
+    }
+}
 backup_one () 
 { 
     : for a single file in possible non-local directory;
@@ -93,13 +151,7 @@ backup_one ()
     };
     local file=$(basename $file);
     local dir=$(dirname $1);
-    ignore pushd $dir;
-    : debug PUSHD $(dirs);
-    : pause;
     backup_here $file;
-    ignore popd;
-    : debug POPD $(dirs);
-    : pause
 }
 backup_onlyfiles () 
 { 
@@ -156,7 +208,7 @@ backup_prunefiles () {
     for f in $(find .ver -type f); do
 	: debug echo $f
 	find .bak/.bak -name $(basename $f) -links 1
-    done | sort -u | xargs printf "pruning(i.e., rm -v): %s\n"
+    done | sort -u | xargs rm -v
 }
 backup_needed () {
     : files in cwd not in .bak/ tree
