@@ -106,10 +106,16 @@ backup_onlyfiles ()
     : candidate backup files, including DOT or system files;
     : date: 2023-09-11;
     : date: 2023-10-21;
-    apply name_existing .* *
+    : date: 2025-12-28: eval and quote to prevent early globbing
+    eval "apply name_existing .* *"
 }
 # 2025-12-28: maybe backup_prunefiles is the new version of backup_sync () 
+backup_outdated () 
 { 
+    : backup files no longer used;
+    comm -13 <(backup_onlyfiles) <(indir ${BACKUP_DIRECTORY:-.bak} backup_onlyfiles)
+}
+backup_sync () { 
     : BACKUP Outdated backups and REMOVE them;
     : a backup is Outdated when there is a backup, but no FILE;
     : date: 2023-08-29;

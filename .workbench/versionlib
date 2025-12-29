@@ -100,16 +100,6 @@ version_bump ()
 	;;
     esac
 }
-# 2025-12-16: claude.ai indir rewrite
-# here a subshell is used to run the commands in the specified directory
-indir () {
-    : run commands IN the first DIRectory argument
-    debug ENTRY $@
-    [[ ! -d "$1" ]] && return 1
-    local target_dir="$1"
-    shift
-    ( cd "$target_dir" && "$@" )
-}
 # 2025-12-24: find and list version linked files
 version_files () {
     : find version linked files in local .ver/.bak directories

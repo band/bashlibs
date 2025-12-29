@@ -239,3 +239,33 @@ in_bash() {
 # if in_zsh; then ... fi
 # Or with && / ||
 # in_zsh && echo "Running zsh" || echo "Not zsh"
+#
+# 2025-12-16: claude.ai indir rewrite
+# here a subshell is used to run the commands in the specified directory
+indir () {
+    : run commands IN the first DIRectory argument
+    debug ENTRY $@
+    [[ ! -d "$1" ]] && return 1
+    local target_dir="$1"
+    shift
+    (
+	cd "$target_dir" || return 1
+	echo "EVAL in $target_dir: $*" >&2
+	eval "$@"
+    )
+}
+# based on `foreach` from ".prior-work-files/lib/fun/cleanlib"
+# 2025-12-03
+apply () 
+{ 
+    : TCL legacy, FOREACH function Arg ...;
+    : date: 2024-04-29;
+    : date: 2025-12-20: rename foreach as apply, zsh keyword collision;
+    [[ $# -lt 2 ]] && return;
+    local cmd="$1"
+    shift
+    for arg in "$@"
+    do
+        $cmd "$arg"
+    done
+}
