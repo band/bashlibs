@@ -3,7 +3,7 @@ Here we have a hierarchy of function groups organized into Shell libraries.
 
 The first collection may be called package, which is a collection of
 apps. The package concept has commercial implementations. It is not a
-feature of Shell function libraries at such.
+feature of Shell function libraries as such.
 
 The second group is called an app. Since an app may use functions from
 many libraries, a function collects the separate functions from

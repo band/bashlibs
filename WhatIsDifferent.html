@@ -17,11 +17,11 @@
     <link rel="stylesheet" href="https://unpkg.com/bluesky-comments@0.12.0/dist/bluesky-comments.css">
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.9/lunr.min.js"></script>
-    <script src="/bashlibs/lunr-index-1767044382.430262.js"></script>
+    <script src="/bashlibs/lunr-index-1767127811.2411313.js"></script>
     <script>var index = lunr.Index.load(lunr_index)</script>
     
     
-    <script src="/bashlibs/lunr-posts-1767044382.430262.js"></script>
+    <script src="/bashlibs/lunr-posts-1767127811.2411313.js"></script>
     <script> function randomPageLink() { return "/bashlibs"+lunr_posts[Math.floor(Math.random() * lunr_posts.length)].link; } </script>
     
   </head>
@@ -85,14 +85,7 @@
       
       <div class="prose prose-gray max-w-none">
         <h1>What Is Different Here</h1>
-<p>While our wider subject is bash shell libraries, how to organize and
-maintain them, a few words on the function itself will alert you to
-new developments I've found helpful.  Your first surprise is that
-"it is functions all the way down" If you're unfamiliar with the
-reference, read <a href="https://en.wikipedia.org/wiki/Turtles_all_the_way_down">this little joke about
-turtles</a>.
-Like the turtle, the function is the building block of any shell
-application.</p>
+<p>The primary subject is zsh or bash shell libraries, how to organize and maintain them. Some preliminaries on the shell function itself are included. A claim made here is that the function is the building block of any shell application.</p>
 <p>Here is the <a href="./Development.html">Table of Contents</a></p>
 <h2>New Concepts</h2>
 <!-- begin concept -->
@@ -100,29 +93,28 @@ application.</p>
 <li>
 <p>We focus on shell function libraries, collections of functions,
 and how collections are named and gathered into libraries.  Small
-functions are often born on the command line, tested as individual
-<code>file functions</code>.  Rather than editing libraries, tested functions
-are appended to an appropriate library.</p>
+functions are often born on the command line and tested as individual
+<code>file functions</code>.  Once tested, functions are appended to an appropriate library.</p>
 </li>
 <li>
 <p>This is the next to last place you will find any mention of a
 <code>shell script</code> since we are working with shell functions and their
 collections. Thus an individual high-level function may be treated
-like an <code>app</code>.</p>
+like an <code>app</code>. TODO: clarify the definitions and use of these terms; e.g., "app". cf. <a class="wikilink" href="/bashlibs/documentConventions.html">documentConventions</a></p>
 </li>
 <li>
-<p>We will frequently use the shell <code>pretty printer</code>, the <strong>declare</strong>
+<p>The shell <code>pretty printer</code> facility, the <strong>declare</strong>
 built-in command with the minus <code>f</code> flag, thusly:</p>
 <pre><code>  $ declare -f  some_function 
 </code></pre>
 <p>formats the shell syntax in a standard and consistent manner,
 highlighting the decision, looping syntax, consistent function
-naming. It does not display the sharp comment, preferring the null-command
+naming (note: <code>zsh</code> and <code>bash</code> formatting differs w.r.t. the opening brace "{"). <code>declare -f</code>does not display sharp ("#") comments, hence use of the null-command
 format comment.</p>
 </li>
 <li>
 <p>A colon <strong>( : )</strong>, a <code>null-command</code> may be used as a
-shell comment. Here it is the preferred shell comment.</p>
+shell function comment. In these pages it is the preferred shell comment. TODO: add nuance of using "#" for certain kinds of contents.</p>
 </li>
 <li>
 <p>The null command has useful default properties, whose conditions
@@ -136,11 +128,11 @@ namely:</p>
 <p>An example of a tag-line:</p>
 <pre><code> : todo: factor this function into three parts; 
 </code></pre>
-<p>The null command deserves an <a href="./TheNullCommand.html">entire chapter</a>.</p>
+<p>The null command deserves an <a class="wikilink" href="/bashlibs/TheNullCommand.html">entire chapter</a>.</p>
 </li>
 <li>
 <p>A <code>smart file</code> is a function returning an object, such as a file
-or directory, another function or a list of these. An example</p>
+or directory, another function, or a list of these. An example</p>
 <pre><code>`smartpair () { ${*:-echo} $HOME/lib/{smart,pair}; }`
 </code></pre>
 <p>whose default behavior returns the names of two files or directories,</p>
@@ -241,7 +233,7 @@ whose opening line is the familiar <code>sh-bang</code>.</p>
     
     <div>Licensed under <a href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</div>
     
-    <div class="text-sm italic">Site last updated on Monday, December 29, 2025 at 21:39 UTC.</div>
+    <div class="text-sm italic">Site last updated on Tuesday, December 30, 2025 at 20:50 UTC.</div>
   </div>
 </footer>
 </body>
