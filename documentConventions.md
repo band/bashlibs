@@ -8,7 +8,7 @@ Here we specify the formatting required for each identified document object:
 - user `function`
 - *system concept*
 - system **command**
-- user-define App
+- user-defined App
 - included source file markdown format
 - internal section reference
 - link: internal

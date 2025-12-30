@@ -32,17 +32,17 @@ here.](./
 
 ## 2 The backup {#sec-2}
 
-[]{#text-2} For some years now (since 2006), I\'ve practiced a backup
+[]{#text-2} For some years now (since 2006), I have practiced a backup
 system with a few simple principles:
 
-1.  backup files should have the same name as the file being backed up.
-    (and not have a version component in their file name).
-2.  file modification times don\'t change because of a backup
-3.  binary and text files are backed up similarly. (the commands don\'t
-    take notice of the file type)
-4.  unchanged files are not be backed up.
-5.  the latest backup is the candidate for a complete version.
-6.  the backup files should be easily inspected, and if necessary may be
+1.  backup files have the same name as the file being backed up.
+    (and do not have a version component in their file name);
+2.  file modification times do not change because of a backup;
+3.  binary and text files are backed up similarly (the commands do not
+    take notice of the file type);
+4.  unchanged files are not be backed up;
+5.  the latest backup is the candidate for a complete version;
+6.  the backup files can be easily inspected, and if necessary may be
     deleted.
 
 The model, once you see it, is so simple, I hope you say \"Now, why
@@ -55,8 +55,8 @@ In Bell Labs\' *Plan 9* release of Unix, he included a directory
 component whose name was \"...\", yes, \"dot, dot, dot\". In all known
 versions of Unix, the current directory may be referenced as *dot*, the
 parent directory as *dot dot*, So why not a child directory, and in this
-case, explicitly named \"...\", *dot, dot, dot*. So, what\'s in the
-child directory? How about successive versions of a file. The nfile
+case, explicitly named \"...\", *dot, dot, dot*. So, what is in the
+child directory? How about successive versions of a file. The (Plan 9?) file
 system calls: *open, read, write, ...* have options to address the
 versioning system. I forget exactly how it goes, but the defaults all
 behave consistently, and *write* creates the latest version.
@@ -71,7 +71,7 @@ the command:
 $ backup file.txt
 ```
 
-produces a separate (i.e. not *linked*) file in the backup directory,
+produces a separate (i.e., not *linked*) file in the backup directory,
 with the same name and modification time. More on the link idea later.
 
 ``` example
@@ -80,14 +80,14 @@ $ ls -l .bak/file.txt file.txt
 
 shows two files with identical size and modification times.
 
-What if you\'ve already backed up a file? Won\'t you overwrite it? The
+What if you have already backed up a file? Won\'t you overwrite it? The
 answer is \"no\". Why? Well, in the example we just saw, since that was
-our first backup, there was no .bak/file.txt, so, of course we create
+our first backup, there was no `.bak/file.txt`, so, of course we create
 the identical copy. What allowed us to do that? There was no file in the
-.bak directory, so we may copy (or move) our current file to the backup
+`.bak` directory, so we may copy (or move?) our current file to the backup
 without a copy of the file.
 
-So, to answer the question: before we blithely copy a file into a
+So, to answer the question: before we copy a file into a `.bak/`
 directory, see if there is already one there, and if so, continue down
 the backup chain to find a file with no backup, That one gets moved down
 to it\'s backup and so on until we\'ve created the space for our newly
@@ -102,7 +102,7 @@ All was fine, as I blithely backed up files, paying no attention to the
 depth of .bak/.bak\'s, e.g, I was at a depth of 30-plus backups for some
 files. Truth be told, a dozen is plenty of backups.
 
-One other motivating interest in developing \"The Only Backup You\'ll
+One other motivating interest in developing \"The Only Backup You Will
 Ever Need\" was a letter in one of the on-line forums. A fellow was
 taking a disk from Windows machine to machine (speaks to an era) and had
 coded for ten backup files: file.bat was copied to file.001 which had
@@ -110,7 +110,7 @@ been copied to file.002, and so-on down to file.010. And the question
 immediately arises. \"What if that was the good one, the one you wanted
 to keep?\"
 
-Not a problem with TOBYEN.
+Not a problem with TOBYWEN.
 
 The backup has evolved in one significant way. As it stands. a
 directory\'s backup chain hangs from itself. In other words, the
@@ -162,8 +162,14 @@ for a multi-site version are identified:
 find . -type d -name .bak | grep -v '\/\.bak\/\/.bak' 
 ```
 
-since the only files to collect for a version are those in the top
-backup directory (the newest).
+NOTE: 2025-12-30: that example does not work; I think the "//" escape is a typo; Copilot suggested this:
+```
+find . -type d -name .bak ! -path '*/.bak/.bak'
+```
+
+since the only files to collect for a version are those in the top backup directory (the newest).
+
+NOTE: 2025-12-30: this needs a rethinking. Right now there is `versionlib` code that links specific `./bak` files with `.ver/M.m.p/` files. This is one-to-one and so looks more like a GitHub release naming than a version collection. Part of the issue with MM3's outline here is that it is not clear how a collection of files is gathered into a specific version. So this is very interesting from a single developer perspective. When you have reached a checkpoint then make a version of the top-level (`.bak/`) file. Since the `.bak/` directory can get full of non-versioned backups, periodic pruning is advisable. And there is a fair amount of attention needed to keep this all organized. This is one reason git forges are popular.
 
 []{#outline-container-sec-5}
 

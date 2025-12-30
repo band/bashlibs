@@ -1,14 +1,7 @@
 
 # What Is Different Here
 
-While our wider subject is bash shell libraries, how to organize and
-maintain them, a few words on the function itself will alert you to
-new developments I've found helpful.  Your first surprise is that
-"it is functions all the way down" If you're unfamiliar with the
-reference, read [this little joke about
-turtles](https://en.wikipedia.org/wiki/Turtles_all_the_way_down).
-Like the turtle, the function is the building block of any shell
-application.
+The primary subject is zsh or bash shell libraries, how to organize and maintain them. Some preliminaries on the shell function itself are included. A claim made here is that the function is the building block of any shell application.
 
 Here is the [Table of Contents](./Development.html)
 
@@ -18,27 +11,26 @@ Here is the [Table of Contents](./Development.html)
 
 1. We focus on shell function libraries, collections of functions,
    and how collections are named and gathered into libraries.  Small
-   functions are often born on the command line, tested as individual
-   `file functions`.  Rather than editing libraries, tested functions
-   are appended to an appropriate library.
+   functions are often born on the command line and tested as individual
+   `file functions`.  Once tested, functions are appended to an appropriate library.
 
 2. This is the next to last place you will find any mention of a
    `shell script` since we are working with shell functions and their
    collections. Thus an individual high-level function may be treated
-   like an `app`.
+   like an `app`. TODO: clarify the definitions and use of these terms; e.g., "app". cf. [[documentConventions]]  
 
-3. We will frequently use the shell `pretty printer`, the **declare**
+3. The shell `pretty printer` facility, the **declare**
    built-in command with the minus `f` flag, thusly:
 
          $ declare -f  some_function 
    
    formats the shell syntax in a standard and consistent manner,
    highlighting the decision, looping syntax, consistent function
-   naming. It does not display the sharp comment, preferring the null-command
+   naming (note: `zsh` and `bash` formatting differs w.r.t. the opening brace "{"). `declare -f`does not display sharp ("#") comments, hence use of the null-command
    format comment.
 
 4. A colon **( : )**, a `null-command` may be used as a
-   shell comment. Here it is the preferred shell comment.
+   shell function comment. In these pages it is the preferred shell comment. TODO: add nuance of using "#" for certain kinds of contents.
 
 5. The null command has useful default properties, whose conditions
    require respect for its limitations.  The null command opens the
@@ -53,10 +45,10 @@ Here is the [Table of Contents](./Development.html)
 
         : todo: factor this function into three parts; 
 		
-   The null command deserves an [entire chapter](./TheNullCommand.html). 		
+   The null command deserves an [[TheNullCommand|entire chapter]].  
 	
 6. A `smart file` is a function returning an object, such as a file
-   or directory, another function or a list of these. An example 
+   or directory, another function, or a list of these. An example 
    
        `smartpair () { ${*:-echo} $HOME/lib/{smart,pair}; }`
 	   
