@@ -80,3 +80,34 @@ find .bak/.bak -name $filename -links 1
 - other utility functions:  
   - `latest_version` and `all_versions` for a specified file
   - simple way to see all versions of all files: `tree -a .ver/`  
+
+## 2025-12-31: backup and versioning operational model
+
+- `backup` is used to save copies of files that have been changed
+- **backup** saves copies of files in a `.bak/` directory hierarchy;
+  the `.bak/` level is increased every time a file processed by
+  `backup` differs from the copy of that file in the `.bak/`
+  directory.
+  - right now there is no limit to the hierarchy of `.bak/filename`
+    files
+  - complete copies of files are stored in the `.bak/` hierarchy
+  
+- the functions used for backup include:
+  - `backup`
+  - `backup_init`: initialize ENV variables
+  - `backup_one`
+  - `backup_here`: recursive movement of a file down the `.bak/` tree
+  - `backup_prunefiles`: remove files in `.bak/` tree not versioned
+    (cf. **Versioning**)
+  
+- TODO: cleanup and improve readability for all functions used.
+	- figure out the licensing of this code
+
+- suggested and existing functions for managing backup (`.bak/`)
+  trees:
+  - `backup_files`: list first-level backed up files
+  - list files in **cwd** that are candidates for backup
+  - list files in `.bak/` that do not exist in **cwd** (candidates for
+    deletion) (right now `backup_outdated` does this)  
+
+  
