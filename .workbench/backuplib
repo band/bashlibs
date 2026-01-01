@@ -63,41 +63,42 @@ backup_files ()
     : date: 2023-10-21;
     indir .bak namedfiles
 }
-backup_here () 
-{ 
-    : recursively move backups down the stack;
-    : clearing the way for their replacement at the top;
-    : uses: cmp
-    : debug ENTRY $@;
-    set $1 ${BACKUP_DIRECTORY} "${2:-$PWD}";
-    : debug SET $@ $(dirs);
-    [[ -d $2 ]] || mkdir $2;
-    [[ "$3" == "$PWD" ]] && { 
-        : debug TEST: "$3" equal $PWD;
-        cmp $1 $2/$1 2> /dev/null 1>&2 && { 
-            : debug CMP RETURN $(dirs);
-            return
-        }
-    };
-    local mode=$(classic_mode $1);
-    [[ -f $2/$1 ]] && { 
-        : debug DOWN $@ $(dirs);
-        cd $2;
-        backup_here $1 "$3"
-    } || { 
-        mv $1 $2/$1;
-        [[ $3 == $PWD ]] && { 
-            : debug DONE: $@ $(dirs);
-	    echo "dollar3: $3   dollar2: $2  dollar1: #1"
-            cp $2/$1 $1;
-            timestamp $2/$1 $1;
-            chmod $mode $1;
-            cd ..;
-            : debug STACK RETURN $(dirs);
-            return
-        };
-        cd ..;
-        backup_here $1 "$3"
+backup_here () {
+    : recursively move backups down the stack
+    : clearing the way for their replacement at the top
+    debug ENTRY $@
+    [ -n "$ZSH_VERSION" ] && echo "depth: ${#funcstack}"
+    set $1 ${BACKUP_DIRECTORY} "${2:-$PWD}"
+    debug SET $@ $(dirs)
+    [[ -d $2 ]] || mkdir $2
+    if [[ "$3" == "$PWD" ]]; then
+	: debug TEST: "$3" equal $PWD
+	if cmp -s "$1" "$2/$1" 2>/dev/null; then
+	    echo "$1 unchanged, skipping backup"
+	    return 0
+	fi
+    fi
+    local mode=$(classic_mode "$1") 
+    [[ -f "$2/$1" ]] && {
+	debug DOWN "$@" $(dirs)
+	cd "$2"
+	echo "DIRS: " $(dirs)
+	backup_here "$1" "$3"
+    } || {
+	mv $1 $2/$1
+	[[ $3 == $PWD ]] && {
+	    debug DONE: "$@" $(dirs)
+	    echo "dollar3: $3   dollar2: $2  dollar1: $1"
+	    cp $2/$1 $1
+	    timestamp $2/$1 $1
+	    chmod $mode $1
+	    cd ..
+	    debug STACK RETURN $(dirs)
+	    return
+	}
+	cd ..
+	echo "DIRS: " $(dirs)
+	backup_here $1 "$3"
     }
 }
 backup_init () 
