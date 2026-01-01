@@ -60,12 +60,15 @@ backup_files ()
 { 
     : only immediate backupups;
     : related: version_files w.r.t .bak;
+    : lib: fnusedlib
     : date: 2023-10-21;
     indir .bak namedfiles
 }
 backup_here () {
     : recursively move backups down the stack
     : clearing the way for their replacement at the top
+    : uses: cmp
+    : lib: fnusedlib
     debug ENTRY $@
     [ -n "$ZSH_VERSION" ] && echo "depth: ${#funcstack}"
     set $1 ${BACKUP_DIRECTORY} "${2:-$PWD}"
@@ -108,6 +111,8 @@ backup_init ()
     : date: 2023-09-18;
     : date: 2023-09-20;
     : date: 2024-04-30;
+    : date: 2026-01-01
+    : lib: shutilib
     [[ $# -eq 1 ]] && { 
         comment ERROR, Zero or Two args;
         return
@@ -123,6 +128,7 @@ backup_one ()
     : date: 2023-09-11;
     : debug ENTRY $PWD $@;
     : date: 2024-04-29;
+    : lib: newreportlib, fnusedlib
     local file=${1:-/dev/null};
     report_notfile $file && return 1
     local file=$(basename $file);
@@ -138,6 +144,7 @@ backup_one ()
 backup_onlyfiles () 
 { 
     : candidate backup files, including DOT files;
+    : lib: fnusedlib
     : date: 2026-01-01: use array to handle shell expansion
     local files=( * .* )
     apply name_existing "${files[@]}"
@@ -159,6 +166,7 @@ file_mode ()
 { 
     : permission bits of the file argument;
     : date: 2023-07-22;
+    : lib: newreportlib
     report_notfile ${1:-/dev/null} && return 1;
     set -- $(stat -r $1);
     echo $3
@@ -170,6 +178,6 @@ backup_prunefiles () {
 	: debug echo $f
 	find .bak/.bak -name $(basename $f) -links 1
     done | sort -u | xargs rm -v
-    : prune all but the most recent 3 unversioned files
-    find .bak/.bak/.bak -type f -links 1 | xargs printf "pruning(i.e., rm -v): %s\n"
+    : prune unversioned files older than the last 2 backups
+    find .bak/.bak/.bak -type f -links 1 | xargs rm -v
 }
