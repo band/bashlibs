@@ -1,12 +1,5 @@
 # miscellaneous shell utilities - may find lib homes
 #
-fileall() {
-  : Copilot example Loop over all non-directories in current folder
-  : date: 2025-12-12;
-  for f in *(N); do
-    file -- "$f"
-  done
-}
 # 2025-12-13
 # this function will be needed
 detect_shell() {
@@ -25,18 +18,12 @@ findfdef () {
     rg -l "$1\ \(\)" ${2:-$dir}
 }
 # 2025-12-28: copied from a circa 2009 bashlib
+# 2025-12-31: Gemini and Copilot assist
 comment () 
-{ 
-    echo "$@" 1>&2
+{
+    printf '%s\n' "$*" >&2
 }
 error () 
 { 
-    comment ERROR "$@";
-    exit $?
-}
-# 2025-12-28: copied from .prior-work-files/lib/fun/programlib
-name_existing () 
-{ 
-    : date: 2025-04-29;
-    [[ -f $1 ]] && echo $1
+    comment "ERROR: $*"
 }
