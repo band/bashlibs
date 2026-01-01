@@ -87,29 +87,23 @@ report_notargcount ()
     [[ $2 -ge $1 ]] && return 1;
     report_usage need at least $1 arg/s: ${*:3}
 }
-report_notfile () 
-{ 
-    : report the argument is not a File;
-    : date: 2018-02-16;
-    : date: 2022-01-08;
-    [[ -f $1 ]] && return 1;
-    report_usage $1 "IS NOT" a file;
-    declare -f $(myname 2) 1>&2
+report_notfile () {
+	: report the argument is not a File
+	: date: 2018-02-16
+	: date: 2022-01-08
+	: date: 2026-01-01
+	[[ -f "$1" ]] && return 1
+	report_usage $1 "IS NOT" a file
+	declare -f $(myname 2) >&2
 }
-report_usage () 
-{ 
-    : writes: usage message of report_... caller FAILURE to STDERR;
-    : date: 2018-03-30;
-    : date: 2022-04-29;
-    : date: 2024-11-14;
-    local caller=$(myname 3);
-    : case $caller in;
-    : diff_pair;
-    : callStack;
-    : read -p "HALT, use ctrl-C" < /dev/tty > /dev/tty;
-    :;
-    : esac;
-    echo USAGE $caller: $* 1>&2
+report_usage () {
+	: writes usage message of report_... caller FAILURE to STDERR
+	: date: 2018-03-30
+	: date: 2022-04-29
+	: date: 2024-11-14
+	: date: 2026-01-01
+	local caller=$(myname 3) 
+	echo USAGE $caller: "$*" >&2
 }
 ignore () 
 { 
@@ -118,6 +112,10 @@ ignore ()
     : date: 2026-01-01
     "$@" > /dev/null
 }
+name_existing () {
+	[[ -f "$1" ]] && echo "$1"
+}
+
 #
 # 2025-12-13: copied from .prior-work-files/lib/fun/utillib
 if_missingargs ()
@@ -240,19 +238,4 @@ indir () {
 	echo "EVAL in $target_dir: $*" >&2
 	eval "$@"
     )
-}
-# based on `foreach` from ".prior-work-files/lib/fun/cleanlib"
-# 2025-12-03
-apply () 
-{ 
-    : TCL legacy, FOREACH function Arg ...;
-    : date: 2024-04-29;
-    : date: 2025-12-20: rename foreach as apply, zsh keyword collision;
-    [[ $# -lt 2 ]] && return;
-    local cmd="$1"
-    shift
-    for arg in "$@"
-    do
-        $cmd "$arg"
-    done
 }
