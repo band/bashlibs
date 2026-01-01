@@ -113,12 +113,10 @@ report_usage ()
 }
 ignore () 
 { 
-    : ~ cmmd args ...;
-    : returns STATUS, but not STDOUT;
-    : trace_callstack;
-    : debug $*;
+    : returns STATUS, discards STDOUT;
     : date: 2019-11-23;
-    $@ > /dev/null
+    : date: 2026-01-01
+    "$@" > /dev/null
 }
 #
 # 2025-12-13: copied from .prior-work-files/lib/fun/utillib
