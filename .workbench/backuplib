@@ -155,22 +155,6 @@ backup_outdated ()
     : uses: comm
     comm -13 <(backup_onlyfiles) <(indir ${BACKUP_DIRECTORY:-.bak} backup_onlyfiles)
 }
-classic_mode () 
-{ 
-    : the octal representation of files RWX modes;
-    : date: 2023-07-22;
-    set -- $(file_mode $1);
-    echo ${1:4}
-}
-file_mode () 
-{ 
-    : permission bits of the file argument;
-    : date: 2023-07-22;
-    : lib: fnusedlib
-    report_notfile ${1:-/dev/null} && return 1;
-    set -- $(stat -r $1);
-    echo $3
-}
 backup_prunefiles () {
     : prune bak files not linked to a version
     : uses: basename, find, rm, sort, xargs
@@ -179,9 +163,29 @@ backup_prunefiles () {
 	find .bak/.bak -name $(basename $f) -links 1
     done | sort -u | xargs rm -v
     : prune unversioned files older than the last 2 backups
-    find .bak/.bak/.bak -type f -links 1 | xargs rm -v
+    find .bak/.bak/.bak -type f -links 1 | xargs printf "pruning(i.e., rm -v): %s\n"
 }
 backup_needed () {
     : files in cwd not in .bak/ tree
     cmp -s "$1" .bak/"$1" || echo "$1"
 }
+backup_libstatus ()
+{ 
+    : report on backup and version state of shell library files in cwd;
+    : uses: tree
+    : lib: fnusedlib
+    : date: 2026-01-02;
+    : debug ENTRY "$*";
+    if [[ $# -ne 0 && "$1" != '.' ]]; then
+	error "libstatus not available for remote directories"
+	return 1
+    fi
+    echo "libraries that are not backed up:"
+    apply backup_needed *lib
+    echo "\nshow all version files:"
+    version_files
+    tree -a .ver
+    echo "\nshow backup tree:"
+    tree -a .bak
+}
+
