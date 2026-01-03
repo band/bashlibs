@@ -110,4 +110,8 @@ find .bak/.bak -name $filename -links 1
   - list files in `.bak/` that do not exist in **cwd** (candidates for
     deletion) (right now `backup_outdated` does this)  
 
-  
+## 2026-01-03: version_new has a bug: apparently .ver/ files can end up linked to .ver/files
+	- **TODO**: need to think about checking that latest version differs from the .bak/file copy?
+		- there is something very brittle about this version/backup model  
+
+
