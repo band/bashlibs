@@ -3,10 +3,10 @@
 # 2025-12-13
 # this function will be needed
 detect_shell() {
-    if [ -n "$BASH_VERSION" ]; then
-        echo "bash"
-    elif [ -n "$ZSH_VERSION" ]; then
+    if [ -n "$ZSH_VERSION" ]; then
         echo "zsh"
+    elif [ -n "$BASH_VERSION" ]; then
+        echo "bash"
     else
         echo "sh or unknown"
     fi
@@ -26,4 +26,15 @@ comment ()
 error () 
 { 
     comment "ERROR: $*"
+}
+# 2026-01-03: zsh / bash glob support?
+nglob () {
+    [[ -n "$BASH_VERSION" ]] && shopt -s nullglob
+    [[ -n "$ZSH_VERSION" ]] && setopt NULL_GLOB
+    files=( * )
+    for f in "${files[@]}"; do
+	file "$f"
+    done
+    [[ -n "$BASH_VERSION" ]] && shopt -u nullglob
+    [[ -n "$ZSH_VERSION" ]] && unsetopt NULL_GLOB
 }
