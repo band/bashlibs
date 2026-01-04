@@ -35,46 +35,6 @@ version_one ()
     mkdir $verdir
     ln -f ./.bak/$file $verdir/$file
 }
-# 2025-12-16: copied from .prior-work-files/lib/fun/utillib
-my_versions () 
-{ 
-    : list local directory version numbers from the most recent;
-    : versions must begin with 1 or more digits;
-    : related: backup_ver to set the x.y.z nums;
-    : uses: grep, ls
-    : date: 2023-09-26;
-    : date: 2023-09-30;
-    : date: 2023-12-15;
-    : date: 2024-01-06;
-    : date: 2024-06-19;
-    : date: 2024-07-13;
-    local dir=$(basename $PWD);
-    debug dir: $dir;
-    [[ $dir = ".ver" ]] && { 
-        indir .. $(myname);
-        return
-    };
-    indir .ver ls -at1 | grep '^[0-9][0-9]*[.]'
-}
-latest_version () 
-{ 
-    : most recent in numero-alphic order;
-    : uses: sed
-    : date: 2023-09-26;
-    : date: 2023-09-30;
-    : date: 2024-06-19;
-    my_versions | sed 1q
-}
-
-# 2025-12-16: copied from .prior-work-files/lib/fun/maintlib
-mmp_version () 
-{ 
-    : space delimited Main, Minor, point version;
-    : uses: awk, sed, sort
-    : date: 2024-05-28;
-    : date: 2024-06-19;
-    my_versions | awk -F. '{ printf "%5d\t%5d\t%5d\n", $1, $2, $3 }' | sort -r | sed 1q
-}
 # 2025-12-27: version functions work on specific files and versions
 version_bump () 
 { 
@@ -129,49 +89,57 @@ version_latest () {
     done | sort -t'/' -k3,3V -k4,4 | awk -F'/' '{latest[$4]=$0} END {for (lib in latest) print latest[lib]}' | sort
 }
 # TODO: 2026-01-03: version_new has a bug: apparently .ver/ files can end up linked to .ver/files
+# 2026-01-04: claude assisted analysis and debug update
 version_new () {
-    : create a new first or next version of a file;
-    : uses: find, ln, mkdir, sort, tail;
+    : create a new first or next version of a file
+    : uses: find, ln, mkdir, sort, tail
     : libs: fnusedlib, shutilib
-    debug ENTRY $# $@;
-    if [ $# -lt 1 ]; then
-	echo "Usage: version_new filename [M|m|p|semver]" && return 1;
-    elif [[ ! -f .bak/"$1" ]]; then
-	echo "error: .bak/$1 is not a file" && return 1;
+    debug ENTRY $# $@
+    if [ $# -lt 1 ]
+    then
+	echo "Usage: version_new filename [M|m|p|semver]" && return 1
+    elif [[ ! -f .bak/"$1" ]]
+    then
+	echo "error: .bak/$1 is not a file" && return 1
     fi
-    local file=$1
-    if [[ -z $2 ]]; then
-	local bump=patch
-    elif [[ -n "$2" ]]; then
-        case "$2" in
-	    (M) local bump=major ;;
-	    (m) local bump=minor ;;
-	    (p) local bump=patch ;;
+    local file=$1 
+    if [[ -z $2 ]]
+    then
+	local bump=patch 
+    elif [[ -n "$2" ]]
+    then
+	case "$2" in
+	    (M) local bump=major  ;;
+	    (m) local bump=minor  ;;
+	    (p) local bump=patch  ;;
 	    (*) if [[ $2 =~ ^[0-9]+(\.[0-9]+)*$ ]]
-                then
-	            local newversion=$2
+		then
+		    local newversion=$2 
 		else
 		    error "invalid argument: %s\n" "$2"
 		    return 1
 		fi ;;
 	esac
     fi
-    echo "bump: $bump OR version: $newversion for $file";
-    if [[ -n $bump ]]; then
-	echo "bump $bump version for $file";
+    echo "bump: $bump OR version: $newversion for $file"
+    if [[ -n $bump ]]
+    then
+	echo "bump $bump version for $file"
 	: echo "determine previous version or assign 0.0.1"
 	local highest=$(find .ver/ -name $file 2>/dev/null | sort -t'/' -k2 -V | tail -n 1)
-	debug highest: $highest;
-	local currentversion=${${highest#.ver/}%%/*}
-	if [[ -n $currentversion ]]; then
+	debug highest: $highest
+	local temp=${highest#.ver/}
+	local currentversion=${temp%%/*} 
+	if [[ -n $currentversion ]]
+	then
 	    echo "bump $currentversion $bump value"
-	    local newversion=$(version_bump $bump $currentversion)
+	    local newversion=$(version_bump $bump $currentversion) 
 	else
 	    case $bump in
-		(major) local newversion=1.0.0 ;;
-		(minor) local newversion=0.1.0 ;;
-		(patch) local newversion=0.0.1 ;;
-		(*) local newversion=0.0.1 ;;
+		(major) local newversion=1.0.0  ;;
+		(minor) local newversion=0.1.0  ;;
+		(patch) local newversion=0.0.1  ;;
+		(*) local newversion=0.0.1  ;;
 	    esac
 	fi
     fi
@@ -179,5 +147,56 @@ version_new () {
     local verdir=$VERSION_DIRECTORY/$newversion
     : debug verdir: $verdir
     [[ ! -d "$verdir" ]] && mkdir -pv $verdir
+    : check if .bak/$file is already linked to the latest version
+    local latest_ver=$(find .ver/ -name $file 2>/dev/null | sort -t'/' -k2 -V | tail -n 1)
+    if [[ -n $latest_ver ]]; then
+        # Use -ef test to check if files have same inode (are hard-linked)
+        if [[ .bak/$file -ef $latest_ver ]]; then
+            error "Cannot create version: .bak/$file unchanged since ${latest_ver#.ver/}"
+            return 1
+        fi
+    fi
+    : create the version link
     ln -f .bak/$file $verdir/$file
+}
+# previous mm3 bashlib version-related functions
+# 2025-12-16: copied from .prior-work-files/lib/fun/utillib
+my_versions () 
+{ 
+    : list local directory version numbers from the most recent;
+    : versions must begin with 1 or more digits;
+    : related: backup_ver to set the x.y.z nums;
+    : uses: grep, ls
+    : date: 2023-09-26;
+    : date: 2023-09-30;
+    : date: 2023-12-15;
+    : date: 2024-01-06;
+    : date: 2024-06-19;
+    : date: 2024-07-13;
+    local dir=$(basename $PWD);
+    debug dir: $dir;
+    [[ $dir = ".ver" ]] && { 
+        indir .. $(myname);
+        return
+    };
+    indir .ver ls -at1 | grep '^[0-9][0-9]*[.]'
+}
+latest_version () 
+{ 
+    : most recent in numero-alphic order;
+    : uses: sed
+    : date: 2023-09-26;
+    : date: 2023-09-30;
+    : date: 2024-06-19;
+    my_versions | sed 1q
+}
+
+# 2025-12-16: copied from .prior-work-files/lib/fun/maintlib
+mmp_version () 
+{ 
+    : space delimited Main, Minor, point version;
+    : uses: awk, sed, sort
+    : date: 2024-05-28;
+    : date: 2024-06-19;
+    my_versions | awk -F. '{ printf "%5d\t%5d\t%5d\n", $1, $2, $3 }' | sort -r | sed 1q
 }
