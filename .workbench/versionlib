@@ -159,6 +159,15 @@ version_new () {
     : create the version link
     ln -f .bak/$file $verdir/$file
 }
+version_status () {
+    : show current VERSION_DIRECTORY information
+    : lib: fnusedlib
+    : local directory version numbers from the most recent;
+    echo "local versions; most recent first"
+    indir .ver ls -t1
+    echo "local version files:"
+    version_files
+}
 # previous mm3 bashlib version-related functions
 # 2025-12-16: copied from .prior-work-files/lib/fun/utillib
 my_versions () 
@@ -189,14 +198,4 @@ latest_version ()
     : date: 2023-09-30;
     : date: 2024-06-19;
     my_versions | sed 1q
-}
-
-# 2025-12-16: copied from .prior-work-files/lib/fun/maintlib
-mmp_version () 
-{ 
-    : space delimited Main, Minor, point version;
-    : uses: awk, sed, sort
-    : date: 2024-05-28;
-    : date: 2024-06-19;
-    my_versions | awk -F. '{ printf "%5d\t%5d\t%5d\n", $1, $2, $3 }' | sort -r | sed 1q
 }
