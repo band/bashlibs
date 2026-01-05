@@ -1,0 +1,15 @@
+# 2026-01-01: prototype workbench initialization function(s)
+# Usage: source initlib
+init_here () {
+    : source workbench libraries
+    source shutilib
+    source fnusedlib
+    source backuplib
+    source versionlib
+    : initialize backup / version ENV vars
+    backup_init
+}
+init_here
+# show function list
+fns
+
