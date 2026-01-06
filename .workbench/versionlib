@@ -88,8 +88,7 @@ version_latest () {
 	print "$1 is linked to: $2"
     done | sort -t'/' -k3,3V -k4,4 | awk -F'/' '{latest[$4]=$0} END {for (lib in latest) print latest[lib]}' | sort
 }
-# TODO: 2026-01-03: version_new has a bug: apparently .ver/ files can end up linked to .ver/files
-# 2026-01-04: claude assisted analysis and debug update
+# 2026-01-04: claude sonnet-4 assisted analysis and debug update
 version_new () {
     : create a new first or next version of a file
     : uses: find, ln, mkdir, sort, tail
@@ -167,35 +166,4 @@ version_status () {
     indir .ver ls -t1
     echo "local version files:"
     version_files
-}
-# previous mm3 bashlib version-related functions
-# 2025-12-16: copied from .prior-work-files/lib/fun/utillib
-my_versions () 
-{ 
-    : list local directory version numbers from the most recent;
-    : versions must begin with 1 or more digits;
-    : related: backup_ver to set the x.y.z nums;
-    : uses: grep, ls
-    : date: 2023-09-26;
-    : date: 2023-09-30;
-    : date: 2023-12-15;
-    : date: 2024-01-06;
-    : date: 2024-06-19;
-    : date: 2024-07-13;
-    local dir=$(basename $PWD);
-    debug dir: $dir;
-    [[ $dir = ".ver" ]] && { 
-        indir .. $(myname);
-        return
-    };
-    indir .ver ls -at1 | grep '^[0-9][0-9]*[.]'
-}
-latest_version () 
-{ 
-    : most recent in numero-alphic order;
-    : uses: sed
-    : date: 2023-09-26;
-    : date: 2023-09-30;
-    : date: 2024-06-19;
-    my_versions | sed 1q
 }
