@@ -1,0 +1,169 @@
+# 2025-12-16: preliminary version library
+# - based on SimpleVersion.md
+# ``` example
+# ln -f  a/b/.bak/file  .ver/{YYYY_MMDD_hhmmss}/a/b/file
+# ```
+#
+# 2025-12-27: TODO: revisit dependency on 'backup_init' and ENV vars
+version_init ()
+{
+    : insure a VERSION_DIRECTORY exists
+    : uses: mkdir
+    : date: 2025-12-16;
+    if [ ! -d $VERSION_DIRECTORY ]; then
+        mkdir $VERSION_DIRECTORY
+    fi
+}
+# 2025-12-27: TODO: this entire function-based workflow needs review
+# - specifically the filename independent notion of versions
+# - my model is now different from the way these functions work
+version_one ()
+{
+    : for a single file in current directory;
+    : uses: mkdir, ln;
+    : date: 2025-12-16;
+    : debug ENTRY $PWD $@;
+    local file=${1:-/dev/null};
+    if [ ! -f "$file" ]; then
+        debug NOT file: $file;
+	: pause;
+	return 1
+    fi
+    debug FILE $file;
+    : pause;
+    local verdir=$VERSION_DIRECTORY/$(next_version)
+    mkdir $verdir
+    ln -f ./.bak/$file $verdir/$file
+}
+# 2025-12-27: version functions work on specific files and versions
+version_bump () 
+{ 
+    : increment Major, minor, or patch version of provided version number
+    : uses: expr
+    : libs: fnusedlib
+    : date: 2023-10-20;
+    : date: 2024-06-19;
+    : date: 2025-12-26: bump needs a starting version number
+    debug ENTRY $# $@;
+    local bump=$1;
+    if [[ -n $2 ]]; then
+	parts=(${(s:.:)2})
+	set -- $parts
+    else
+        set -- 0 0 0;
+    fi
+    case $bump in 
+        (M|[Mm]ajor)
+            echo $(expr $1 + 1).0.0
+        ;;
+        (m|[Mm]inor)
+            echo $1.$(expr $2 + 1).0
+        ;;
+        (p|[Pp]atch)
+            echo $1.$2.$(expr $3 + 1)
+        ;;
+	(*)
+	    echo "missing or invalid value: $bump" && return 1;
+	;;
+    esac
+}
+# 2025-12-24: find and list version linked files
+version_files () {
+    : find version linked files in local .ver/.bak directories
+    : uses: cut, find, ls, sort
+    for f in $(find .ver/ -type f); do
+	: debug $(ls -i $f)
+	local _inode=$(ls -i $f | cut -d' ' -f1)
+	set -- $(find . -inum $_inode)
+	print "$1 is linked to: $2"
+    done | sort -t'/' -k3,3V -k4,4
+}
+version_latest () {
+    : find latest version linked files in local .ver/.bak directories
+    : uses: awk, cut, find, ls, sort
+    for f in $(find .ver/ -type f); do
+	: debug $(ls -i $f)
+	local _inode=$(ls -i $f | cut -d' ' -f1)
+	set -- $(find . -inum $_inode)
+	print "$1 is linked to: $2"
+    done | sort -t'/' -k3,3V -k4,4 | awk -F'/' '{latest[$4]=$0} END {for (lib in latest) print latest[lib]}' | sort
+}
+# 2026-01-04: claude sonnet-4 assisted analysis and debug update
+version_new () {
+    : create a new first or next version of a file
+    : uses: find, ln, mkdir, sort, tail
+    : libs: fnusedlib, shutilib
+    debug ENTRY $# $@
+    if [ $# -lt 1 ]
+    then
+	echo "Usage: version_new filename [M|m|p|semver]" && return 1
+    elif [[ ! -f .bak/"$1" ]]
+    then
+	echo "error: .bak/$1 is not a file" && return 1
+    fi
+    local file=$1 
+    if [[ -z $2 ]]
+    then
+	local bump=patch 
+    elif [[ -n "$2" ]]
+    then
+	case "$2" in
+	    (M) local bump=major  ;;
+	    (m) local bump=minor  ;;
+	    (p) local bump=patch  ;;
+	    (*) if [[ $2 =~ ^[0-9]+(\.[0-9]+)*$ ]]
+		then
+		    local newversion=$2 
+		else
+		    error "invalid argument: %s\n" "$2"
+		    return 1
+		fi ;;
+	esac
+    fi
+    echo "bump: $bump OR version: $newversion for $file"
+    if [[ -n $bump ]]
+    then
+	echo "bump $bump version for $file"
+	: echo "determine previous version or assign 0.0.1"
+	local highest=$(find .ver/ -name $file 2>/dev/null | sort -t'/' -k2 -V | tail -n 1)
+	debug highest: $highest
+	local temp=${highest#.ver/}
+	local currentversion=${temp%%/*} 
+	if [[ -n $currentversion ]]
+	then
+	    echo "bump $currentversion $bump value"
+	    local newversion=$(version_bump $bump $currentversion) 
+	else
+	    case $bump in
+		(major) local newversion=1.0.0  ;;
+		(minor) local newversion=0.1.0  ;;
+		(patch) local newversion=0.0.1  ;;
+		(*) local newversion=0.0.1  ;;
+	    esac
+	fi
+    fi
+    echo "create version $newversion link file for .bak/$file"
+    local verdir=$VERSION_DIRECTORY/$newversion
+    : debug verdir: $verdir
+    [[ ! -d "$verdir" ]] && mkdir -pv $verdir
+    : check if .bak/$file is already linked to the latest version
+    local latest_ver=$(find .ver/ -name $file 2>/dev/null | sort -t'/' -k2 -V | tail -n 1)
+    if [[ -n $latest_ver ]]; then
+        # Use -ef test to check if files have same inode (are hard-linked)
+        if [[ .bak/$file -ef $latest_ver ]]; then
+            error "Cannot create version: .bak/$file unchanged since ${latest_ver#.ver/}"
+            return 1
+        fi
+    fi
+    : create the version link
+    ln -f .bak/$file $verdir/$file
+}
+version_status () {
+    : show current VERSION_DIRECTORY information
+    : lib: fnusedlib
+    : local directory version numbers from the most recent;
+    echo "local versions; most recent first"
+    indir .ver ls -t1
+    echo "local version files:"
+    version_files
+}
