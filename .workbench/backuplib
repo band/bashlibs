@@ -83,20 +83,19 @@ backup_here () {
     fi
     local mode=$(classic_mode "$1") 
     [[ -f "$2/$1" ]] && {
-	debug DOWN "$@" $(dirs)
+	: debug DOWN "$@" $(dirs)
 	cd "$2"
 	echo "DIRS: " $(dirs)
 	backup_here "$1" "$3"
     } || {
 	mv $1 $2/$1
 	[[ $3 == $PWD ]] && {
-	    debug DONE: "$@" $(dirs)
-	    echo "dollar3: $3   dollar2: $2  dollar1: $1"
+	    : debug DONE: "$@" $(dirs)
 	    cp $2/$1 $1
 	    timestamp $2/$1 $1
 	    chmod $mode $1
 	    cd ..
-	    debug STACK RETURN $(dirs)
+	    : debug STACK RETURN $(dirs)
 	    return
 	}
 	cd ..
@@ -109,8 +108,6 @@ backup_init ()
     # 2026-01-01: TOO: cleanup usage comment
     : establish {BACKUP,VERSION}_DIRECTORY;
     : date: 2023-09-18;
-    : date: 2023-09-20;
-    : date: 2024-04-30;
     : date: 2026-01-01
     : lib: shutilib
     [[ $# -eq 1 ]] && { 
@@ -151,7 +148,7 @@ backup_onlyfiles ()
 }
 backup_outdated () 
 { 
-    : backup files no longer used;
+    : files in .bak/ tree not in cwd;
     : uses: comm
     comm -13 <(backup_onlyfiles) <(indir ${BACKUP_DIRECTORY:-.bak} backup_onlyfiles)
 }
