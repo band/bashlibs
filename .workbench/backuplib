@@ -67,7 +67,7 @@ backup_files ()
 backup_here () {
     : recursively move backups down the stack
     : clearing the way for their replacement at the top
-    : uses: cmp
+    : uses: chmod, cmp, mkdir
     : lib: fnusedlib
     debug ENTRY $@
     [ -n "$ZSH_VERSION" ] && echo "depth: ${#funcstack}"
@@ -168,7 +168,7 @@ backup_needed () {
 }
 backup_libstatus ()
 { 
-    : report on backup and version state of shell library files in cwd;
+    : show backup and version info of shell library files in cwd;
     : uses: tree
     : lib: fnusedlib
     : date: 2026-01-02;
