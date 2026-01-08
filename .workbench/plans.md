@@ -117,9 +117,9 @@ find .bak/.bak -name $filename -links 1
 	  - some brittleness remains
 	  
 ## 2026-01-08: next steps
-	- TODO: update git repo
-	- TODO: backup and version_new `.src` files
-	- create a changelog for this project
+	- DONE: update git repo
+	- DONE: backup and version_new `.src` files
+	- TODO: create a changelog for this project
 	
 	- cleanup and review `backuplib`
 		- then push to repo in `bashlibs/.src/` directory
