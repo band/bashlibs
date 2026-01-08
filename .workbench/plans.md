@@ -113,5 +113,19 @@ find .bak/.bak -name $filename -links 1
 ## 2026-01-03: version_new has a bug: apparently .ver/ files can end up linked to .ver/files
 	- **TODO**: need to think about checking that latest version differs from the .bak/file copy?
 		- there is something very brittle about this version/backup model  
-
+    - 2026-01-06: versionlib 0.1.2 fixes this bug
+	  - some brittleness remains
+	  
+## 2026-01-08: next steps
+	- TODO: update git repo
+	- TODO: backup and version_new `.src` files
+	- create a changelog for this project
+	
+	- cleanup and review `backuplib`
+		- then push to repo in `bashlibs/.src/` directory
+	
+	- prune the backup directory
+		- this will serve to test `backup_prunefiles`
+		- possibly put the "dry-run" guard in the next release?
+          (definitely need a changelog)  
 
