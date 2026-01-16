@@ -1,0 +1,188 @@
+backup_libheader () 
+{ 
+    : " This is the backuplib Function Library Comment Header";
+    : "Copyright 2025, Marty McGowwan @ Shell Functions";
+    : date: 2025-05-08;
+    :;
+    : " This program is free software: you can redistribute it and/or modify";
+    : "it under the terms of the GNU General Public License as published by";
+    : "the Free Software Foundation, either version 3 of the License, or";
+    : "(at your option) any later version.";
+    :;
+    : " This program is distributed in the hope that it will be useful,";
+    : "but WITHOUT ANY WARRANTY; without even the implied warranty of";
+    : "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the";
+    : "GNU General Public License for more details.";
+    :;
+    : " You should have received a copy of the GNU General Public License";
+    : "along with this program.  If not, see <http://www.gnu.org/licenses/>.";
+    :;
+    : date: 2025-05-08 - even libheaders need a date;
+    :
+}
+backup () 
+{ 
+    : ~ one or more files down the .bak/.bak/... stack;
+    : date: 2023-09-20;
+    : date: 2024-08-20;
+    backup_init;
+    apply backup_one "$@"
+}
+backup_copyright () 
+{ 
+    : date: 2024-06-28;
+    cat <<EOF
+
+Copyright (c) 2005-2020,2022 Marty McGowan, JYATL - Just Yet Another Testing Lab
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+EOF
+
+}
+backup_files () 
+{ 
+    : only immediate backupups;
+    : related: version_files w.r.t .bak;
+    : lib: fnusedlib
+    : date: 2023-10-21;
+    indir .bak namedfiles
+}
+backup_here () {
+    : recursively move backups down the stack
+    : clearing the way for their replacement at the top
+    : uses: chmod, cmp, mkdir
+    : lib: fnusedlib
+    debug ENTRY $@
+    [ -n "$ZSH_VERSION" ] && echo "depth: ${#funcstack}"
+    set $1 ${BACKUP_DIRECTORY} "${2:-$PWD}"
+    debug SET $@ $(dirs)
+    [[ -d $2 ]] || mkdir $2
+    if [[ "$3" == "$PWD" ]]; then
+	: debug TEST: "$3" equal $PWD
+	if cmp -s "$1" "$2/$1" 2>/dev/null; then
+	    echo "$1 unchanged, skipping backup"
+	    return 0
+	fi
+    fi
+    local mode=$(classic_mode "$1") 
+    [[ -f "$2/$1" ]] && {
+	: debug DOWN "$@" $(dirs)
+	cd "$2"
+	echo "DIRS: " $(dirs)
+	backup_here "$1" "$3"
+    } || {
+	mv $1 $2/$1
+	[[ $3 == $PWD ]] && {
+	    : debug DONE: "$@" $(dirs)
+	    cp $2/$1 $1
+	    timestamp $2/$1 $1
+	    chmod $mode $1
+	    cd ..
+	    : debug STACK RETURN $(dirs)
+	    return
+	}
+	cd ..
+	echo "DIRS: " $(dirs)
+	backup_here $1 "$3"
+    }
+}
+backup_init () 
+{
+    # 2026-01-01: TOO: cleanup usage comment
+    : establish {BACKUP,VERSION}_DIRECTORY;
+    : date: 2023-09-18;
+    : date: 2026-01-01
+    : lib: shutilib
+    [[ $# -eq 1 ]] && { 
+        comment ERROR, Zero or Two args;
+        return
+    };
+    set $@ .bak .ver;
+    setenv BACKUP_DIRECTORY $1 > /dev/null;
+    setenv VERSION_DIRECTORY $2 > /dev/null
+}
+backup_one () 
+{
+    # 2026-01-01: TODO: revisit the non-local directory operation
+    : for a single file in possible non-local directory;
+    : date: 2023-09-11;
+    : debug ENTRY $PWD $@;
+    : date: 2024-04-29;
+    : lib: fnusedlib, fnusedlib
+    local file=${1:-/dev/null};
+    report_notfile $file && return 1
+    local file=$(basename $file);
+    local dir=$(dirname $1);
+    ignore pushd $dir;
+    : debug PUSHD $(dirs);
+    : pause;
+    backup_here $file;
+    ignore popd;
+    : debug POPD $(dirs);
+    : pause
+}
+backup_onlyfiles () 
+{ 
+    : candidate backup files, including DOT files;
+    : lib: fnusedlib
+    : date: 2026-01-01: use array to handle shell expansion
+    local files=( * .* )
+    apply name_existing "${files[@]}"
+}
+backup_outdated () 
+{ 
+    : files in .bak/ tree not in cwd;
+    : uses: comm
+    comm -13 <(backup_onlyfiles) <(indir ${BACKUP_DIRECTORY:-.bak} backup_onlyfiles)
+}
+backup_prunefiles () {
+    : prune bak files not linked to a version
+    : uses: basename, find, rm, sort, xargs
+    for f in $(find .ver -type f); do
+	: debug echo $f
+	find .bak/.bak -name $(basename $f) -links 1
+    done | sort -u | xargs rm -v
+    : prune unversioned files older than the last 2 backups
+    find .bak/.bak/.bak -type f -links 1 | xargs printf "pruning(i.e., rm -v): %s\n"
+}
+backup_needed () {
+    : files in cwd not in .bak/ tree
+    cmp -s "$1" .bak/"$1" || echo "$1"
+}
+backup_libstatus ()
+{ 
+    : show backup and version info of shell library files in cwd;
+    : uses: tree
+    : lib: fnusedlib
+    : date: 2026-01-02;
+    : debug ENTRY "$*";
+    if [[ $# -ne 0 && "$1" != '.' ]]; then
+	error "libstatus not available for remote directories"
+	return 1
+    fi
+    echo "libraries that are not backed up:"
+    apply backup_needed *lib
+    echo "\nshow all version files:"
+    version_files
+    tree -a .ver
+    echo "\nshow backup tree:"
+    tree -a .bak
+}
+

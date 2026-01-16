@@ -1,0 +1,8 @@
+This work was created with an even blend of human and AI contributions. AI was used to make stylistic edits, such as changes to structure, wording, and clarity. AI was used to make content edits, such as changes to scope, information, and ideas. AI was used to make new content, such as text,  analysis, and ideas. AI was prompted for its contributions, or AI assistance was enabled. AI-generated content was reviewed and approved. The following model(s) or application(s) were used: claude-sonnet-4-5-20250929, Claude Code v2.0.76, Copilot GPT-5.1, Gemini 3.
+
+- AIA Human-AI blend, Stylistic edits, Content edits, New content, Human-initiated, Reviewed, claude-sonnet-4-5-20250929, Claude Code v2.0.76, Copilot GPT-5.1, Gemini 3 v1.0.
+
+This Notice generated using the AI Attribution Toolkit:
+  <https://aiattribution.github.io>
+
+

@@ -1,0 +1,6 @@
+fbdy_simple () {
+	declare -f $1
+}
+fbdy () {
+	declare -f ${@:-fbdy}
+}
