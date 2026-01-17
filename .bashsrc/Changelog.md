@@ -1,11 +1,6 @@
 
 # Changelog
 
-<!--
-  1. TAB the Changelog twice, to open the ##'s
-  2. scroll to the ## after Unreleased 
-  3. TAB twice on that paragraph
-  -->
 ## Abstract
 
 All notable changes to this project are documented in this file.
@@ -26,6 +21,12 @@ The first few point releases 0.1.N will:
   unneeded cmdlinelib functions.
 + absorb the Shell Libraries documentation.
 
++ trim down the number of libraries and functions.
+
+- document the "bash" specific function definitions; e.g., `foreach`
+  is an available function name in `bash`.  
+  - `debug_on` for bash and zsh: function stacks differ
+  
 ### Added 
 
 ### Changed

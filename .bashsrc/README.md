@@ -1,6 +1,6 @@
 # README
 
-This `src` directory holds source code for the first version of Shell
+This `src` directory holds `bash` source code for the first version of Shell
 Libraries, Edition 2.
 
 The shell libraries in this tree are a combination of source code from
