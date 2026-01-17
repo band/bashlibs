@@ -1,0 +1,17 @@
+# miscellaneous zsh utilities - may find lib homes
+#
+findfdef () {
+    : date: 2025-12-13
+    local dir="$(realpath ~/Documents/Github/bashlibs/.prior-work-files)"
+    rg -l "$1\ \(\)" ${2:-$dir}
+}
+# 2025-12-28: copied from a circa 2009 bashlib
+# 2025-12-31: Gemini and Copilot assist
+comment () 
+{
+    printf '%s\n' "$*" >&2
+}
+error () 
+{ 
+    comment "ERROR: $*"
+}
