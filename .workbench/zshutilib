@@ -34,7 +34,7 @@ usage ()
 {
     : writes one-line usage message to STDERR
     : date: 2026-01-20;
-    echo USAGE: $(myname 2) "$* >&2
+    echo USAGE: $(myname 2) "$*" >&2
 }
 #
 # 2025-12-01: copied from .prior-work-files/lib/fun/cleanlib

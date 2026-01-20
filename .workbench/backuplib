@@ -86,8 +86,8 @@ backup_init ()
 	usage "[backupworkingdir] - provide alternate working directory for backup, or use cwd"
 	return
     fi
-    setenv BACKUP_DIR ${1:-.}/.bak > /dev/null;
-    setenv VERSION_DIR ${1:-.}/.ver > /dev/null
+    setenv BACKUP_DIRECTORY ${1:-.}/.bak > /dev/null;
+    setenv VERSION_DIRECTORY ${1:-.}/.ver > /dev/null
 }
 backup_one () 
 {
