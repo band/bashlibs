@@ -2,8 +2,7 @@
 # Usage: source initlib
 init_here () {
     : source workbench libraries
-    source shutilib
-    source fnusedlib
+    source zshutilib
     source backuplib
     source versionlib
     : initialize backup / version ENV vars

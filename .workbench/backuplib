@@ -15,60 +15,32 @@ backup_libheader ()
     : "GNU General Public License for more details.";
     :;
     : " You should have received a copy of the GNU General Public License";
-    : "along with this program.  If not, see <http://www.gnu.org/licenses/>.";
+    : "along with this program.  If not, see <https://www.gnu.org/licenses/>.";
     :;
     : date: 2025-05-08 - even libheaders need a date;
     :
 }
 backup () 
 { 
-    : ~ one or more files down the .bak/.bak/... stack;
+    : ~ one or more files down the $BACKUP_DIRECTORY/.bak/.bak/... stack;
     : date: 2023-09-20;
-    : date: 2024-08-20;
+    : date: 2026-01-19;
     backup_init;
-    apply backup_one "$@"
-}
-backup_copyright () 
-{ 
-    : date: 2024-06-28;
-    cat <<EOF
-
-Copyright (c) 2005-2020,2022 Marty McGowan, JYATL - Just Yet Another Testing Lab
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
-EOF
-
+    foreach_ backup_one "$@"
 }
 backup_files () 
 { 
     : only immediate backupups;
     : related: version_files w.r.t .bak;
-    : lib: fnusedlib
+    : lib: zshutilib
     : date: 2023-10-21;
-    indir .bak namedfiles
+    indir ${BACKUP_DIRECTORY:-.bak} namedfiles
 }
 backup_here () {
     : recursively move backups down the stack
     : clearing the way for their replacement at the top
     : uses: chmod, cmp, mkdir
-    : lib: fnusedlib
+    : lib: zshutilib
     debug ENTRY $@
     [ -n "$ZSH_VERSION" ] && echo "depth: ${#funcstack}"
     set $1 ${BACKUP_DIRECTORY} "${2:-$PWD}"
@@ -105,27 +77,27 @@ backup_here () {
 }
 backup_init () 
 {
-    # 2026-01-01: TOO: cleanup usage comment
-    : establish {BACKUP,VERSION}_DIRECTORY;
+    : establish {BACKUP,VERSION}_DIRECTORY ENV vars;
     : date: 2023-09-18;
-    : date: 2026-01-01
-    : lib: shutilib
-    [[ $# -eq 1 ]] && { 
-        comment ERROR, Zero or Two args;
-        return
-    };
-    set $@ .bak .ver;
-    setenv BACKUP_DIRECTORY $1 > /dev/null;
-    setenv VERSION_DIRECTORY $2 > /dev/null
+    : date: 2026-01-20: specify working dir or use cwd
+    : lib: zshutilib
+    debug $# $@
+    if [[ $# -gt 1 ]]; then
+	usage "[backupworkingdir] - provide alternate working directory for backup, or use cwd"
+	return
+    fi
+    setenv BACKUP_DIR ${1:-.}/.bak > /dev/null;
+    setenv VERSION_DIR ${1:-.}/.ver > /dev/null
 }
 backup_one () 
 {
     # 2026-01-01: TODO: revisit the non-local directory operation
     : for a single file in possible non-local directory;
+    : uses: basename, dirname;
+    : lib: zshutilib;
     : date: 2023-09-11;
     : debug ENTRY $PWD $@;
-    : date: 2024-04-29;
-    : lib: fnusedlib, fnusedlib
+    : date: 2026-01-15;
     local file=${1:-/dev/null};
     report_notfile $file && return 1
     local file=$(basename $file);
@@ -141,10 +113,10 @@ backup_one ()
 backup_onlyfiles () 
 { 
     : candidate backup files, including DOT files;
-    : lib: fnusedlib
+    : lib: zshutilib
     : date: 2026-01-01: use array to handle shell expansion
     local files=( * .* )
-    apply name_existing "${files[@]}"
+    foreach_ name_existing "${files[@]}"
 }
 backup_outdated () 
 { 
@@ -155,7 +127,7 @@ backup_outdated ()
 backup_prunefiles () {
     : prune bak files not linked to a version
     : uses: basename, find, rm, sort, xargs
-    for f in $(find .ver -type f); do
+    for f in $(find ${VERSION_DIRECTORY:-.ver} -type f); do
 	: debug echo $f
 	find .bak/.bak -name $(basename $f) -links 1
     done | sort -u | xargs rm -v
@@ -163,14 +135,15 @@ backup_prunefiles () {
     find .bak/.bak/.bak -type f -links 1 | xargs printf "pruning(i.e., rm -v): %s\n"
 }
 backup_needed () {
-    : files in cwd not in .bak/ tree
-    cmp -s "$1" .bak/"$1" || echo "$1"
+    : files in cwd not in $BACKUP_DIRECTORY tree
+    : uses: cmp
+    cmp -s "$1" ${BACKUP_DIRECTORY:-.bak}/"$1" || echo "$1"
 }
 backup_libstatus ()
 { 
     : show backup and version info of shell library files in cwd;
     : uses: tree
-    : lib: fnusedlib
+    : lib: zshutilib
     : date: 2026-01-02;
     : debug ENTRY "$*";
     if [[ $# -ne 0 && "$1" != '.' ]]; then
@@ -178,11 +151,11 @@ backup_libstatus ()
 	return 1
     fi
     echo "libraries that are not backed up:"
-    apply backup_needed *lib
+    foreach_ backup_needed *lib
     echo "\nshow all version files:"
     version_files
-    tree -a .ver
+    tree -a ${VERSION_DIRECTORY:-.ver}
     echo "\nshow backup tree:"
-    tree -a .bak
+    tree -a ${BACKUP_DIRECTORY:-.bak}
 }
 

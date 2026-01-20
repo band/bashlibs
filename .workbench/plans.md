@@ -129,3 +129,11 @@ find .bak/.bak -name $filename -links 1
 		- possibly put the "dry-run" guard in the next release?
           (definitely need a changelog)  
 
+## 2026-01-19:  
+	- DONE: separate zsh and bash libraries development
+		- TODO: sync bash libraries with working zsh libs
+	- TODO: streamline shell function dev initialization
+	- TODO: minimize the number of functions needed for backup and
+      version  
+	- TODO: manage backups and versions in remote directories  
+	
