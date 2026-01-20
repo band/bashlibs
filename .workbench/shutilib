@@ -17,16 +17,6 @@ findfdef () {
     local dir="$(realpath ~/Documents/Github/bashlibs/.prior-work-files)"
     rg -l "$1\ \(\)" ${2:-$dir}
 }
-# 2025-12-28: copied from a circa 2009 bashlib
-# 2025-12-31: Gemini and Copilot assist
-comment () 
-{
-    printf '%s\n' "$*" >&2
-}
-error () 
-{ 
-    comment "ERROR: $*"
-}
 # 2026-01-03: zsh / bash glob support?
 nglob () {
     [[ -n "$BASH_VERSION" ]] && shopt -s nullglob

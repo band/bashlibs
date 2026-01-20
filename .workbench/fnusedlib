@@ -1,5 +1,7 @@
 # 2025-12-01: copied from .prior-work-files/lib/fun/cleanlib
 # 2025-12-14: updated to manage zsh / bash diffs (further cleanup expected)
+# 2026-01-17: updated to be zsh specific (separate bash work to follow)
+#  - these functions may be unnecessary (TBD)
 # 2025-12-14: claude.ai assisted
 in_zsh() {
     [ -n "$ZSH_VERSION" ]
@@ -35,21 +37,15 @@ debug_on ()
     : date: 2024-11-05;
     : date: 2025-12-14: zsh / bash differences;
     : date: 2026-01-02: zsh take account of funcstack length;
-    if in_zsh; then
-	debug () {
-	    case ${#funcstack} in
-		(0|1) printf "%-21s : %s\n" ${funcstack[1]} "$*" >&2 ;;
-		(2) printf "%-21s : %s\n" ${funcstack[2]} "$*" >&2 ;;
-		(3) printf "%-21s\t%-21s : %s\n" ${funcstack[3]} ${funcstack[2]} "$*" >&2 ;;
-		(4) printf "%-21s\t%-21s\t%-21s : %s\n" ${funcstack[4]} ${funcstack[3]} ${funcstack[2]} "$*" >&2 ;;
-		(*) printf "%-21s\t%-21s\t%-21s : %s\n" ${funcstack[4]} ${funcstack[3]} ${funcstack[2]} "$*" >&2 ;;
-	    esac
-	}
-    elif in_bash; then
-        debug () { printf \"%-21s\\t%-21s\\t%-21s : %s\\n\" \${FUNCNAME[3]} \${FUNCNAME[2]} \${FUNCNAME[1]} \"\$*\" 1>&2; }
-    else
-        echo "unsupported shell: no debug functions defined"
-    fi
+    debug () {
+	case ${#funcstack} in
+	    (0|1) printf "%-21s : %s\n" ${funcstack[1]} "$*" >&2 ;;
+	    (2) printf "%-21s : %s\n" ${funcstack[2]} "$*" >&2 ;;
+	    (3) printf "%-21s\t%-21s : %s\n" ${funcstack[3]} ${funcstack[2]} "$*" >&2 ;;
+	    (4) printf "%-21s\t%-21s\t%-21s : %s\n" ${funcstack[4]} ${funcstack[3]} ${funcstack[2]} "$*" >&2 ;;
+	    (*) printf "%-21s\t%-21s\t%-21s : %s\n" ${funcstack[4]} ${funcstack[3]} ${funcstack[2]} "$*" >&2 ;;
+	esac
+    }
 }
 pause ()
 {
@@ -67,13 +63,7 @@ pause_on ()
     : date: 2023-01-30;
     : date: 2024-11-05;
     : date: 2025-12-15: zsh / bash differences;
-    if in_zsh; then
-       pause () { read "?[return] / [Ctrl-C] ${funcstack[2]} $@ ? " < /dev/tty; }
-    elif in_bash; then
-       pause () { read -p "[return] / [Ctrl-C] ${FUNCNAME[1]} $@ ? " < /dev/tty; }
-    else
-       echo "unsupported shell - use zsh or bash"
-    fi
+    pause () { read "?[return] / [Ctrl-C] ${funcstack[2]} $@ ? " < /dev/tty; }
 }
 #
 # copied from .prior-work-files/lib/fun/cleanlib
@@ -102,22 +92,22 @@ report_notargcount ()
     report_usage need at least $1 arg/s: ${*:3}
 }
 report_notfile () {
-	: report the argument is not a File
-	: date: 2018-02-16
-	: date: 2022-01-08
-	: date: 2026-01-01
-	[[ -f "$1" ]] && return 1
-	report_usage "$1" "IS NOT" a file
-	declare -f $(myname 2) >&2
+    : report the argument is not a File
+    : date: 2018-02-16
+    : date: 2022-01-08
+    : date: 2026-01-01
+    [[ -f "$1" ]] && return 1
+    report_usage "$1" "IS NOT" a file
+    declare -f $(myname 2) >&2
 }
 report_usage () {
-	: writes usage message of report_... caller FAILURE to STDERR
-	: date: 2018-03-30
-	: date: 2022-04-29
-	: date: 2024-11-14
-	: date: 2026-01-01
-	local caller=$(myname 3) 
-	echo USAGE $caller: "$*" >&2
+    : writes usage message of report_... caller FAILURE to STDERR
+    : date: 2018-03-30
+    : date: 2022-04-29
+    : date: 2024-11-14
+    : date: 2026-01-01
+    local caller=$(myname 3) 
+    echo USAGE $caller: "$*" >&2
 }
 ignore () 
 { 
@@ -127,7 +117,7 @@ ignore ()
     "$@" > /dev/null
 }
 name_existing () {
-	[[ -f "$1" ]] && echo "$1"
+    [[ -f "$1" ]] && echo "$1"
 }
 
 #
@@ -179,23 +169,17 @@ myname ()
     : a calling functions NAME, default MYcaller;
     : 2 is the callers caller, 3 is theirs, etc...;
     : date: 2023-07-22;
-    : date: 2025-12-14: POSIX version, zsh / bash diffs;
-    if in_zsh; then
-       local level=${1:-1}
-       echo ${funcstack[$((level + 1))]}
-    elif in_bash; then
-        echo ${FUNCNAME[${1:-1}]}
-    else
-	echo "unsupported shell - use zsh or bash"
-    fi
+    : date: 2026-01-18: zsh specific
+    local level=${1:-1}
+    echo ${funcstack[$((level + 1))]}
 }
 # based on `foreach` from ".prior-work-files/lib/fun/cleanlib"
-# 2025-12-03
-apply () 
+# 2025-12-03; 2026-01-17 (zsh has an "apply" executable)
+foreach_ () 
 { 
     : TCL legacy, FOREACH function Arg ...;
     : date: 2024-04-29;
-    : date: 2025-12-20: rename foreach as apply, zsh keyword collision;
+    : date: 2026-01-17: rename foreach as foreach_, zsh keyword collision;
     [[ $# -lt 2 ]] && return;
     local cmd="$1"
     shift
