@@ -126,11 +126,12 @@ report_usage () {
     local caller=$(myname 3) 
     echo USAGE $caller: "$*" >&2
 }
-ignore () 
+# 2026-01-22: Copilot / Gemini / Claude all suggest rename "ignore" as "quiet"
+quiet () 
 { 
     : returns STATUS, discards STDOUT;
     : date: 2019-11-23;
-    : date: 2026-01-01
+    : date: 2026-01-22;
     "$@" > /dev/null
 }
 name_existing () {

@@ -24,8 +24,7 @@ backup ()
 { 
     : ~ one or more files down the $BACKUP_DIRECTORY/.bak/.bak/... stack;
     : date: 2023-09-20;
-    : date: 2026-01-19;
-    backup_init;
+    : date: 2026-01-22: backup_init done at library install;
     foreach_ backup_one "$@"
 }
 backup_files () 
@@ -102,11 +101,11 @@ backup_one ()
     report_notfile $file && return 1
     local file=$(basename $file);
     local dir=$(dirname $1);
-    ignore pushd $dir;
+    quiet pushd $dir;
     : debug PUSHD $(dirs);
     : pause;
     backup_here $file;
-    ignore popd;
+    quiet popd;
     : debug POPD $(dirs);
     : pause
 }
@@ -127,12 +126,14 @@ backup_outdated ()
 backup_prunefiles () {
     : prune bak files not linked to a version
     : uses: basename, find, rm, sort, xargs
-    for f in $(find ${VERSION_DIRECTORY:-.ver} -type f); do
+    : debug echo $(pwd)
+    for f in $(find ${VERSION_DIRECTORY:-.ver} -type f)
+    do
 	: debug echo $f
-	find .bak/.bak -name $(basename $f) -links 1
+	find ${BACKUP_DIRECTORY:-.}/.bak/.bak -name $(basename $f) -links 1
     done | sort -u | xargs rm -v
     : prune unversioned files older than the last 2 backups
-    find .bak/.bak/.bak -type f -links 1 | xargs printf "pruning(i.e., rm -v): %s\n"
+    find ${BACKUP_DIRECTORY:-.}/.bak/.bak/.bak -type f -links 1 | xargs rm -v
 }
 backup_needed () {
     : files in cwd not in $BACKUP_DIRECTORY tree
