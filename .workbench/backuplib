@@ -139,23 +139,20 @@ backup_needed () {
     : uses: cmp
     cmp -s "$1" ${BACKUP_DIRECTORY:-.bak}/"$1" || echo "$1"
 }
-backup_libstatus ()
-{ 
-    : show backup and version info of shell library files in cwd;
-    : uses: tree
-    : lib: zshutilib
-    : date: 2026-01-02;
-    : debug ENTRY "$*";
-    if [[ $# -ne 0 && "$1" != '.' ]]; then
-	error "libstatus not available for remote directories"
-	return 1
-    fi
-    echo "libraries that are not backed up:"
-    foreach_ backup_needed *lib
-    echo "\nshow all version files:"
-    version_files
-    tree -a ${VERSION_DIRECTORY:-.ver}
-    echo "\nshow backup tree:"
-    tree -a ${BACKUP_DIRECTORY:-.bak}
+backup_status () {
+	: show backup and version info of shell lib files in $BACKUP_DIRECTORY
+	: uses: tree
+	: lib: zshutilib
+	: date: 2026-01-21
+	: debug ENTRY "$*"
+	echo "libraries in cwd that are not backed up in $(dirname $BACKUP_DIRECTORY):"
+	foreach_ backup_needed *lib
+	if confirm "Show all version and backup files"; then
+	    echo "\nversion files:"
+	    version_files
+	    tree -a ${VERSION_DIRECTORY:-.ver}
+	    echo "\nsbackup tree:"
+	    tree -a ${BACKUP_DIRECTORY:-.bak}
+	fi
 }
 

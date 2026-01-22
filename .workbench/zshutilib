@@ -236,3 +236,26 @@ file_mode ()
     set -- $(stat -r $1);
     echo $3
 }
+# 2026-01-21: Copilot suggested safe mode function
+with_strict() {
+    local _opts=$(set +o)
+    trap 'eval "$_opts"' RETURN
+    set -euo pipefail
+    IFS=$'\n\t'
+}
+# 2026-01-22: Copilot/Gemini co-developed
+confirm() {
+    : Usage: "if confirm \"prompt message\"; then ..."
+    : date: 2026-01-22;
+    local prompt="$1"
+    local response
+    # We use 'return' here; if it fails in your specific shell, 'exit' is the alternative.
+    trap 'echo; return 1' INT
+    read -r "response?${prompt} [return=yes / n=no] ? " < /dev/tty
+    trap - INT
+
+    case "$response" in
+        ""|[Yy]*) return 0 ;; # Success (Yes)
+        *)        return 1 ;; # Failure (No/Anything else)
+    esac
+}
