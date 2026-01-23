@@ -63,7 +63,6 @@ debug_on ()
 	    (0|1) printf "%-21s : %s\n" ${funcstack[1]} "$*" >&2 ;;
 	    (2) printf "%-21s : %s\n" ${funcstack[2]} "$*" >&2 ;;
 	    (3) printf "%-21s\t%-21s : %s\n" ${funcstack[3]} ${funcstack[2]} "$*" >&2 ;;
-	    (4) printf "%-21s\t%-21s\t%-21s : %s\n" ${funcstack[4]} ${funcstack[3]} ${funcstack[2]} "$*" >&2 ;;
 	    (*) printf "%-21s\t%-21s\t%-21s : %s\n" ${funcstack[4]} ${funcstack[3]} ${funcstack[2]} "$*" >&2 ;;
 	esac
     }
@@ -259,4 +258,9 @@ confirm() {
         ""|[Yy]*) return 0 ;; # Success (Yes)
         *)        return 1 ;; # Failure (No/Anything else)
     esac
+}
+# 2026-01-23: functions to set up for testing
+test_init () {
+    setenv FUNCNEST 29
+    echo "nesting limit: $FUNCNEST"
 }

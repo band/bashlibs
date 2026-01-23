@@ -20,60 +20,67 @@ backup_libheader ()
     : date: 2025-05-08 - even libheaders need a date;
     :
 }
+
 backup () 
 { 
     : ~ one or more files down the $BACKUP_DIRECTORY/.bak/.bak/... stack;
     : date: 2023-09-20;
-    : date: 2026-01-22: backup_init done at library install;
-    foreach_ backup_one "$@"
+    : date: 2026-01-23: specify BACKUP_DIRECTORY;
+    : debug $# "$@"
+    if confirm "backup to '$BACKUP_DIRECTORY'"; then
+	foreach_ backup_one "$@"
+    else
+	echo "run 'backup_init [backup_directory]' before running 'backup'"
+    fi
 }
+
 backup_files () 
 { 
-    : only immediate backupups;
+    : list only latest backups;
     : related: version_files w.r.t .bak;
     : lib: zshutilib
     : date: 2023-10-21;
     indir ${BACKUP_DIRECTORY:-.bak} namedfiles
 }
+
 backup_here () {
     : recursively move backups down the stack
     : clearing the way for their replacement at the top
     : uses: chmod, cmp, mkdir
     : lib: zshutilib
-    debug ENTRY $@
-    [ -n "$ZSH_VERSION" ] && echo "depth: ${#funcstack}"
-    set $1 ${BACKUP_DIRECTORY} "${2:-$PWD}"
-    debug SET $@ $(dirs)
+    debug ENTRY "$@"
+    [[ -n "$ZSH_VERSION" ]] && echo "backup_here depth: ${#funcstack}"
+    set $1 "${2:-.bak}" "${3:-$PWD}"
+    : debug SET $@ $(dirs)
     [[ -d $2 ]] || mkdir $2
-    if [[ "$3" == "$PWD" ]]; then
-	: debug TEST: "$3" equal $PWD
-	if cmp -s "$1" "$2/$1" 2>/dev/null; then
+    if [[ "$3" == "$PWD" ]]
+    then
+	: debug TEST: "$3" equal "$PWD"
+	if cmp -s "$1" "$2/$1" 2> /dev/null
+	then
 	    echo "$1 unchanged, skipping backup"
 	    return 0
 	fi
     fi
-    local mode=$(classic_mode "$1") 
-    [[ -f "$2/$1" ]] && {
-	: debug DOWN "$@" $(dirs)
+    local mode=$(classic_mode "$1")
+    if [[ -f "$2/$1" ]]; then
 	cd "$2"
-	echo "DIRS: " $(dirs)
-	backup_here "$1" "$3"
-    } || {
-	mv $1 $2/$1
-	[[ $3 == $PWD ]] && {
-	    : debug DONE: "$@" $(dirs)
-	    cp $2/$1 $1
-	    timestamp $2/$1 $1
-	    chmod $mode $1
-	    cd ..
-	    : debug STACK RETURN $(dirs)
-	    return
-	}
+	backup_here "$1" .bak "$3"
+    else
+	mv "$1" "$2/$1"
+	if [[ "$3" == "$PWD" ]]; then
+            cp "$2/$1" "$1"
+            timestamp "$2/$1" "$1"
+            chmod "$mode" "$1"
+            cd ..
+            return
+	fi
 	cd ..
-	echo "DIRS: " $(dirs)
-	backup_here $1 "$3"
-    }
+	echo "DIRS: $(dirs)"
+	backup_here "$1" .bak "$3"
+    fi
 }
+
 backup_init () 
 {
     : establish {BACKUP,VERSION}_DIRECTORY ENV vars;
@@ -88,27 +95,29 @@ backup_init ()
     setenv BACKUP_DIRECTORY ${1:-.}/.bak > /dev/null;
     setenv VERSION_DIRECTORY ${1:-.}/.ver > /dev/null
 }
-backup_one () 
-{
-    # 2026-01-01: TODO: revisit the non-local directory operation
-    : for a single file in possible non-local directory;
-    : uses: basename, dirname;
-    : lib: zshutilib;
-    : date: 2023-09-11;
-    : debug ENTRY $PWD $@;
-    : date: 2026-01-15;
-    local file=${1:-/dev/null};
-    report_notfile $file && return 1
-    local file=$(basename $file);
-    local dir=$(dirname $1);
-    quiet pushd $dir;
-    : debug PUSHD $(dirs);
-    : pause;
-    backup_here $file;
-    quiet popd;
-    : debug POPD $(dirs);
-    : pause
+
+backup_needed () {
+    : files in cwd not in $BACKUP_DIRECTORY tree
+    : uses: cmp
+    cmp -s "$1" ${BACKUP_DIRECTORY:-.bak}/"$1" || echo "$1"
 }
+
+backup_one () {
+    : a single file in possible non-local directory
+    : uses: basename, dirname
+    : lib: zshutilib
+    : date: 2023-09-11
+    : debug ENTRY $PWD "$@"
+    : date: 2026-01-23;
+    local file=${1:-/dev/null}
+    report_notfile $file && return 1
+    local file=$(basename $file)
+    local dir=$(dirname $1)
+    quiet pushd $dir
+    backup_here $file ${BACKUP_DIRECTORY}
+    quiet popd
+}
+
 backup_onlyfiles () 
 { 
     : candidate backup files, including DOT files;
@@ -117,12 +126,14 @@ backup_onlyfiles ()
     local files=( * .* )
     foreach_ name_existing "${files[@]}"
 }
+
 backup_outdated () 
 { 
     : files in .bak/ tree not in cwd;
     : uses: comm
     comm -13 <(backup_onlyfiles) <(indir ${BACKUP_DIRECTORY:-.bak} backup_onlyfiles)
 }
+
 backup_prunefiles () {
     : prune bak files not linked to a version
     : uses: basename, find, rm, sort, xargs
@@ -135,11 +146,7 @@ backup_prunefiles () {
     : prune unversioned files older than the last 2 backups
     find ${BACKUP_DIRECTORY:-.}/.bak/.bak/.bak -type f -links 1 | xargs rm -v
 }
-backup_needed () {
-    : files in cwd not in $BACKUP_DIRECTORY tree
-    : uses: cmp
-    cmp -s "$1" ${BACKUP_DIRECTORY:-.bak}/"$1" || echo "$1"
-}
+
 backup_status () {
 	: show backup and version info of shell lib files in $BACKUP_DIRECTORY
 	: uses: tree
