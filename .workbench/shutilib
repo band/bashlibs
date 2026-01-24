@@ -12,11 +12,6 @@ detect_shell() {
     fi
 }
 #
-findfdef () {
-    : date: 2025-12-13
-    local dir="$(realpath ~/Documents/Github/bashlibs/.prior-work-files)"
-    rg -l "$1\ \(\)" ${2:-$dir}
-}
 # 2026-01-03: zsh / bash glob support?
 nglob () {
     [[ -n "$BASH_VERSION" ]] && shopt -s nullglob
