@@ -58,7 +58,7 @@ backup_here () {
 	: debug TEST: "$3" equal "$PWD"
 	if cmp -s "$1" "$2/$1" 2> /dev/null
 	then
-	    echo "$1 unchanged, skipping backup"
+	    printf '%s unchanged, skipping backup\n' "$1"
 	    return 0
 	fi
     fi
@@ -147,19 +147,6 @@ backup_outdated ()
     comm -13 <(backup_onlyfiles) <(indir ${BACKUP_DIRECTORY:-.bak} backup_onlyfiles)
 }
 
-backup_prunefiles () {
-    : prune bak files not linked to a version
-    : uses: basename, find, rm, sort, xargs
-    : debug echo $(pwd)
-    for f in $(find ${VERSION_DIRECTORY:-.ver} -type f)
-    do
-	: debug echo $f
-	find ${BACKUP_DIRECTORY:-.}/.bak/.bak -name $(basename $f) -links 1
-    done | sort -u | xargs rm -v
-    : prune unversioned files older than the last 2 backups
-    find ${BACKUP_DIRECTORY:-.}/.bak/.bak/.bak -type f -links 1 | xargs rm -v
-}
-
 backup_status () {
     : show backup and version info of shell lib files in $BACKUP_DIRECTORY
     : uses: tree
@@ -167,13 +154,36 @@ backup_status () {
     : date: 2026-01-21
     : debug ENTRY "$*"
     echo "libraries in cwd that are not backed up in $(dirname $BACKUP_DIRECTORY):"
+    printf 'libraries in cwd that are not backed up in %s\n; ' "$(dirname $BACKUP_DIRECTORY)"
     foreach_ backup_needed *lib
     if confirm "Show all version and backup files"; then
 	echo "\nversion files:"
 	version_files
 	tree -a ${VERSION_DIRECTORY:-.ver}
-	echo "\nsbackup tree:"
+	echo "\nbackup tree:"
 	tree -a ${BACKUP_DIRECTORY:-.bak}
     fi
 }
 
+backup_trim () {
+    : prune .bak files not linked to a version
+    : uses: basename, find, rm, sort
+    : date: 2026-01-24 -- include dry-run option
+    : debug ENTRY $# "$@" $(pwd)
+    prunefile () {
+	while IFS= read -r file; do
+	    if [[ "$1" == "-d" ]]; then
+		printf 'dry-run: prune (i.e., rm -v) %s\n' "$file"
+	    else
+		rm -v "$file"
+	    fi
+	done
+    }
+    for f in $(find ${VERSION_DIRECTORY:-.ver} -type f)
+    do
+	: debug echo $f
+	find ${BACKUP_DIRECTORY:-.}/.bak/.bak -name $(basename $f) -links 1
+    done | sort -u | prunefile "$1"
+    : prune unversioned files older than the last 2 backups
+    find ${BACKUP_DIRECTORY:-.}/.bak/.bak/.bak -type f -links 1 | prunefile "$1"
+}
