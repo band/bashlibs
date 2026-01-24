@@ -108,14 +108,27 @@ backup_one () {
     : lib: zshutilib
     : date: 2023-09-11
     : debug ENTRY $PWD "$@"
-    : date: 2026-01-23;
+    : date: 2026-01-23: handle absolute BACKUP_DIRECTORY paths
     local file=${1:-/dev/null}
     report_notfile $file && return 1
     local file=$(basename $file)
     local dir=$(dirname $1)
-    quiet pushd $dir
-    backup_here $file ${BACKUP_DIRECTORY}
-    quiet popd
+    # Check if BACKUP_DIRECTORY is absolute path (remote backup)
+    if [[ "$BACKUP_DIRECTORY" = /* ]]; then
+        # Remote backup: copy file to remote location and manage backups there
+        quiet pushd $dir
+        [[ -d "$BACKUP_DIRECTORY" ]] || mkdir -p "$BACKUP_DIRECTORY"
+        cp "$file" "$BACKUP_DIRECTORY/"
+        quiet pushd "$BACKUP_DIRECTORY"
+        backup_here "$file" .bak "$BACKUP_DIRECTORY"
+        quiet popd
+        quiet popd
+    else
+        # Local backup: original behavior
+        quiet pushd $dir
+        backup_here $file ${BACKUP_DIRECTORY} $PWD
+        quiet popd
+    fi
 }
 
 backup_onlyfiles () 
@@ -148,19 +161,19 @@ backup_prunefiles () {
 }
 
 backup_status () {
-	: show backup and version info of shell lib files in $BACKUP_DIRECTORY
-	: uses: tree
-	: lib: zshutilib
-	: date: 2026-01-21
-	: debug ENTRY "$*"
-	echo "libraries in cwd that are not backed up in $(dirname $BACKUP_DIRECTORY):"
-	foreach_ backup_needed *lib
-	if confirm "Show all version and backup files"; then
-	    echo "\nversion files:"
-	    version_files
-	    tree -a ${VERSION_DIRECTORY:-.ver}
-	    echo "\nsbackup tree:"
-	    tree -a ${BACKUP_DIRECTORY:-.bak}
-	fi
+    : show backup and version info of shell lib files in $BACKUP_DIRECTORY
+    : uses: tree
+    : lib: zshutilib
+    : date: 2026-01-21
+    : debug ENTRY "$*"
+    echo "libraries in cwd that are not backed up in $(dirname $BACKUP_DIRECTORY):"
+    foreach_ backup_needed *lib
+    if confirm "Show all version and backup files"; then
+	echo "\nversion files:"
+	version_files
+	tree -a ${VERSION_DIRECTORY:-.ver}
+	echo "\nsbackup tree:"
+	tree -a ${BACKUP_DIRECTORY:-.bak}
+    fi
 }
 
