@@ -137,3 +137,36 @@ find .bak/.bak -name $filename -links 1
       version  
 	- TODO: manage backups and versions in remote directories  
 	
+## 2026-01-22:  
+	- work practice note: the libraries can be sourced in any Terminal
+      instance.
+	- `initlib [backup-directory-path]` is sourced  in the current
+      working directory. In many cases the cwd is the
+      backup-directory. What is the use case for using a separate
+      directory?  
+	- there is only one ENV var: BACKUP_DIRECTORY, which is the path
+      to the directory that houses `.bak` and `.env`. 
+	  - hmmm... is there a use case for separating `.bak` and `.env`
+        into different directories? In any case, these two directories
+        cannot span filesystems (hard-link constraint).  
+    - DONE: `backup_status` function  
+	
+	- TODO: check where to include `with_strict` function  
+		- examine use and value of using `dirs` built-in  
+		
+	- TODO: convert use of "echo" with "printf" (claude.ai opinion):  
+		- Use printf '%s\n' "$var" as a direct echo "$var" replacement
+		- For literal strings, echo "Error: file not found" is still
+          fine  
+	  - Why printf is better for scripts
+	    - Consistent and predictable Works the same across all POSIX shells:
+	```
+	printf '%s\n' "$variable" # Always safe, always works
+```
+	    - Better control
+		```
+	printf '%s\n' "$var" # Just the variable, one newline
+	printf '%s' "$var" # No newline
+	printf '<%s>\n' "$var" # Formatted output
+```
+
