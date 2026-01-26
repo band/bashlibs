@@ -26,7 +26,7 @@ backup ()
     : date: 2023-09-20;
     : date: 2024-08-20;
     backup_init;
-    apply backup_one "$@"
+    foreach_ backup_one "$@"
 }
 backup_copyright () 
 { 
@@ -123,18 +123,17 @@ backup_one ()
     # 2026-01-01: TODO: revisit the non-local directory operation
     : for a single file in possible non-local directory;
     : date: 2023-09-11;
-    : debug ENTRY $PWD $@;
+    debug ENTRY $PWD $@;
     : date: 2024-04-29;
-    : lib: fnusedlib, fnusedlib
     local file=${1:-/dev/null};
     report_notfile $file && return 1
     local file=$(basename $file);
     local dir=$(dirname $1);
-    ignore pushd $dir;
+    quiet pushd $dir;
     : debug PUSHD $(dirs);
     : pause;
     backup_here $file;
-    ignore popd;
+    quiet popd;
     : debug POPD $(dirs);
     : pause
 }
@@ -144,7 +143,7 @@ backup_onlyfiles ()
     : lib: fnusedlib
     : date: 2026-01-01: use array to handle shell expansion
     local files=( * .* )
-    apply name_existing "${files[@]}"
+    foreach_ name_existing "${files[@]}"
 }
 backup_outdated () 
 { 
@@ -178,7 +177,7 @@ backup_libstatus ()
 	return 1
     fi
     echo "libraries that are not backed up:"
-    apply backup_needed *lib
+    foreach_ backup_needed *lib
     echo "\nshow all version files:"
     version_files
     tree -a .ver

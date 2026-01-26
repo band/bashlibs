@@ -129,3 +129,55 @@ find .bak/.bak -name $filename -links 1
 		- possibly put the "dry-run" guard in the next release?
           (definitely need a changelog)  
 
+## 2026-01-19:  
+	- DONE: separate zsh and bash libraries development
+		- TODO: sync bash libraries with working zsh libs
+	- TODO: streamline shell function dev initialization
+	- TODO: minimize the number of functions needed for backup and
+      version  
+	- TODO: manage backups and versions in remote directories  
+	
+## 2026-01-22:  
+	- work practice note: the libraries can be sourced in any Terminal
+      instance.
+	- `initlib [backup-directory-path]` is sourced  in the current
+      working directory. In many cases the cwd is the
+      backup-directory. What is the use case for using a separate
+      directory?  
+	- there is only one ENV var: BACKUP_DIRECTORY, which is the path
+      to the directory that houses `.bak` and `.env`. 
+	  - hmmm... is there a use case for separating `.bak` and `.env`
+        into different directories? In any case, these two directories
+        cannot span filesystems (hard-link constraint).  
+    - DONE: `backup_status` function  
+	
+	- TODO: check where to include `with_strict` function  
+		- examine use and value of using `dirs` built-in  
+		
+	- TODO: convert use of "echo" with "printf" (claude.ai opinion):  
+		- Use printf '%s\n' "$var" as a direct echo "$var" replacement
+		- For literal strings, echo "Error: file not found" is still
+          fine  
+	  - Why printf is better for scripts
+	    - Consistent and predictable Works the same across all POSIX shells:
+	```
+	printf '%s\n' "$variable" # Always safe, always works
+```
+	    - Better control
+		```
+	printf '%s\n' "$var" # Just the variable, one newline
+	printf '%s' "$var" # No newline
+	printf '<%s>\n' "$var" # Formatted output
+```
+
+## 2026-01-26: "backup" not working for remote backup directories
+	- TODO: reset `backuplib` to maybe an early January version
+		- keep the single function files for refernce
+		- verify that the older backup functions work, or get them to
+          a working state
+	    - put the `reportlib` back into `zshutilib`? maybe
+		- set up a test `initlib` and setup practice
+		- step through refactoring `backuplib`, `zshutilib`, `initlib`
+		- write a test script that pushes at least 3 changes onto the
+          `.bak` tree; put cleanup at the start of the script.  
+		  
