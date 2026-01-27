@@ -66,14 +66,15 @@ backup_files ()
     : related: version_files w.r.t .bak;
     : lib: zshutilib
     : date: 2023-10-21;
-    indir .bak namedfiles
+    : date: 2026-01-27: BACKUP_DIRECTORY
+    indir "${BACKUP_DIRECTORY:-.bak}" namedfiles
 }
 backup_here () {
     : recursively move backups down the stack
     : clearing the way for their replacement at the top
     : date: 2023-09-11
     : date: 2024-04-29
-    : date: 2026-01-27: Gemini suggested refactoring
+    : date: 2026-01-27: Gemini generated subshell refactoring
     debug ENTRY $# "$@"
     local filename="$1" 
     local target_dir="${2:-$BACKUP_DIRECTORY}"
@@ -111,7 +112,6 @@ backup_here () {
 	chmod "$mode" "$filename"
     fi
 }
-
 backup_init () 
 {
     : establish {BACKUP,VERSION}_DIRECTORY ENV vars;
@@ -155,34 +155,34 @@ backup_onlyfiles ()
 }
 backup_outdated () 
 { 
-    : files in .bak/ tree not in cwd;
+    : files in $BACKUP_DIRECTORY tree not in cwd;
     : uses: comm
     comm -13 <(backup_onlyfiles) <(indir ${BACKUP_DIRECTORY:-.bak} backup_onlyfiles)
 }
+
 backup_needed () {
 	: files in cwd not in $BACKUP_DIRECTORY tree
 	: date: 2026-01-27
 	cmp -s "$1" "${BACKUP_DIRECTORY:-.bak}"/"$1" || echo "$1"
 }
-backup_libstatus ()
-{ 
-    : show backup and version info of shell library files in cwd;
-    : uses: tree
-    : lib: zshutilib
-    : date: 2026-01-02;
-    : debug ENTRY "$*";
-    if [[ $# -ne 0 && "$1" != '.' ]]; then
-	error "libstatus not available for remote directories"
-	return 1
-    fi
-    echo "libraries that are not backed up:"
-    foreach_ backup_needed *lib
-    echo "\nshow all version files:"
-    version_files
-    tree -a .ver
-    echo "\nshow backup tree:"
-    tree -a .bak
+
+backup_status () {
+	: show backup and version info of shell lib files in $BACKUP_DIRECTORY
+	: uses: tree
+	: lib: zshutilib
+	: date: 2026-01-21
+	: debug ENTRY "$*"
+	echo "libraries in cwd that are not backed up in $(dirname $BACKUP_DIRECTORY):"
+	foreach_ backup_needed *lib
+	if confirm "Show all version and backup files"; then
+	    echo "\nversion files:"
+	    version_files
+	    tree -a ${VERSION_DIRECTORY:-.ver}
+	    echo "\nbackup tree:"
+	    tree -a ${BACKUP_DIRECTORY:-.bak}
+	fi
 }
+
 backup_trim () {
     : prune .bak files not linked to a version
     : uses: basename, find, rm, sort
