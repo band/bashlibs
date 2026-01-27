@@ -175,9 +175,12 @@ find .bak/.bak -name $filename -links 1
 		- keep the single function files for refernce
 		- verify that the older backup functions work, or get them to
           a working state
-	    - put the `reportlib` back into `zshutilib`? maybe
-		- set up a test `initlib` and setup practice
+	    - put the `reportlib` back into `zshutilib`? DONE
+		- set up a test `initlib` and setup practice: 
 		- step through refactoring `backuplib`, `zshutilib`, `initlib`
 		- write a test script that pushes at least 3 changes onto the
           `.bak` tree; put cleanup at the start of the script.  
+	    - DONE: `test_backup.sh` tests local and remote
+          BACKUP_DIRECTORY  
+
 		  
