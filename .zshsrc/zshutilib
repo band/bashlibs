@@ -1,0 +1,266 @@
+# 2026-01-19: building a library of shell function development support functions
+# miscellaneous zsh utilities - may find lib homes
+#
+# findfdef: function to search MM3 prior bashlib dev functions
+findfdef () {
+    : date: 2025-12-13
+    local dir="$(realpath ~/Documents/Github/bashlibs/.prior-work-files)"
+    rg -l "$1\ \(\)" ${2:-$dir}
+}
+#  - these functions may be unnecessary (TBD)
+# 2025-12-14: claude.ai assisted
+in_zsh() {
+    [ -n "$ZSH_VERSION" ]
+}
+in_bash() {
+    [ -n "$BASH_VERSION" ]
+}
+# usage:
+# if in_zsh; then ... fi
+# Or with && / ||
+# in_zsh && echo "Running zsh" || echo "Not zsh"
+#
+# 2025-12-28: copied from a circa 2009 bashlib
+# 2025-12-31: Gemini and Copilot assist
+comment () 
+{
+    printf '%s\n' "$*" >&2
+}
+error () 
+{ 
+    comment "ERROR: $*"
+}
+usage ()
+{
+    : writes one-line usage message to STDERR
+    : date: 2026-01-20;
+    echo USAGE: $(myname 2) "$*" >&2
+}
+#
+# 2025-12-01: copied from .prior-work-files/lib/fun/cleanlib
+# 2025-12-16: TODO: debug_on display statements need work for function stacks shorter than 3
+debug ()
+{
+    return
+}
+debug_off ()
+{
+    : no diagnostics, redefine debug to just return;
+    : date: 2023-03-29;
+    : date: 2024-11-05;
+    : date: 2025-12-14: copyedits;
+    debug () { return; }
+}
+debug_on ()
+{
+    : write a COMMENT, on STDERR, at a point in a function, listing ...;
+    : the CALLER and any passed ARGS, who CALLED it, 3rd, and that CALLER, 4th as well;
+    : lesson: NO user functions in DEBUG:;
+    : date: 2022-03-07;
+    : date: 2026-01-02: zsh take account of funcstack length;
+    debug () {
+	case ${#funcstack} in
+	    (0|1) printf "%-21s : %s\n" ${funcstack[1]} "$*" >&2 ;;
+	    (2) printf "%-21s : %s\n" ${funcstack[2]} "$*" >&2 ;;
+	    (3) printf "%-21s\t%-21s : %s\n" ${funcstack[3]} ${funcstack[2]} "$*" >&2 ;;
+	    (*) printf "%-21s\t%-21s\t%-21s : %s\n" ${funcstack[4]} ${funcstack[3]} ${funcstack[2]} "$*" >&2 ;;
+	esac
+    }
+}
+pause ()
+{
+    return
+}
+pause_off ()
+{
+    : do not pause, redefine pause to just return;
+    : date: 2025-12-15;
+    pause () { return; }
+}
+pause_on ()
+{
+    : pause the script, wait for user CR or CTRL-C;
+    : date: 2023-01-30;
+    : date: 2026-01-15: zsh specific
+    pause () { read "?[return] / [Ctrl-C] ${funcstack[2]} $@ ? " < /dev/tty; }
+}
+#
+# copied from .prior-work-files/lib/fun/cleanlib
+# 2026-01-02: claude-sonnet-4-5-20250929 revision
+namedfiles() {
+    : the ordinary file arguments, default is current directory;
+    : date: 2026-01-02;
+    local file
+    if [[ $# -eq 0 ]]; then
+	set -- .* *
+	[[ -e "$1" ]] || return 0
+    fi
+    : debug "ENTRY: $# files in $PWD"
+    for file in "$@"; do
+        [[ -f "$file" ]] && echo "$file"
+    done
+}
+#
+# 2025-12-13: copied from .prior-work-file/lib/fun/programlib
+report_notargcount ()
+{
+    : report an insufficient number of args from the calling function;
+    : date: 2023-01-01;
+    debug ENTRY $@;
+    [[ $2 -ge $1 ]] && return 1;
+    report_usage need at least $1 arg/s: ${*:3}
+}
+report_notfile () {
+    : report the argument is not a File
+    : date: 2018-02-16
+    : date: 2026-01-01
+    [[ -f "$1" ]] && return 1
+    report_usage "$1" "IS NOT" a file
+    declare -f $(myname 2) >&2
+}
+report_usage () {
+    : writes usage message of report_... caller FAILURE to STDERR
+    : date: 2018-03-30
+    : date: 2026-01-01
+    local caller=$(myname 3) 
+    echo USAGE $caller: "$*" >&2
+}
+# 2026-01-22: Copilot / Gemini / Claude all suggest rename "ignore" as "quiet"
+quiet () 
+{ 
+    : returns STATUS, discards STDOUT;
+    : date: 2019-11-23;
+    : date: 2026-01-22;
+    "$@" > /dev/null
+}
+name_existing () {
+    [[ -f "$1" ]] && echo "$1"
+}
+
+#
+# 2025-12-13: copied from .prior-work-files/lib/fun/utillib
+setenv ()
+{
+    : set the First ARG in the ENVironment to the value of the remaining;
+    : date: 2023-08-02;
+    : date: 2026-01-02: add argcount guard;
+    : debug ENTRY $# $*;
+    report_notargcount 1 $# && return 1;
+    local na="$1";
+    : debug na: $na;
+    shift;
+    : debug ASSIGN $na=\"$*\";
+    eval $na=\"$*\";
+    export $na;
+}
+timestamp ()
+{
+    : set timestamp on a file
+    : uses: date, touch
+    : date: 2023-08-07;
+    : debug ENTRY $# $@;
+    report_notfile "$1" && return 1;
+    touch -t $(date -r $(epochmtime $1) +%Y%m%d%H%M.%S) "$2"
+} 
+# 2025-12-14: copied from .prior-work-files/lib/fun/utillib
+epochmtime () 
+{ 
+    : mtime of a file in epoch seconds;
+    : uses: stat
+    : date: 2023-07-22;
+    : date: 2025-12-14: rename for clarity;
+    [[ -f "$1" ]] || return;
+    set $(stat -r "$1");
+    echo ${10}
+}
+#
+# 2025-12-13: copied from ShellFunctions.md
+fbdy () {
+    : display fn body
+    declare -f ${@:-fbdy}
+}
+#
+# 2025-12-14: copied from .prior-work-files/lib/fun/cleanlib
+myname () 
+{ 
+    : a calling functions NAME, default MYcaller;
+    : 2 is the callers caller, 3 is theirs, etc...;
+    : date: 2023-07-22;
+    : date: 2026-01-18: zsh specific
+    local level=${1:-1}
+    echo ${funcstack[$((level + 1))]}
+}
+# based on `foreach` from ".prior-work-files/lib/fun/cleanlib"
+# 2025-12-03; 2026-01-17 (zsh has an "apply" executable)
+foreach_ () 
+{ 
+    : TCL legacy, FOREACH function Arg ...;
+    : date: 2024-04-29;
+    : date: 2026-01-17: rename foreach as foreach_, zsh keyword collision;
+    [[ $# -lt 2 ]] && return;
+    local cmd="$1"
+    shift
+    for arg in "$@"
+    do
+        $cmd "$arg"
+    done
+}
+# 2025-12-16: claude.ai indir rewrite
+# here a subshell is used to run the commands in the specified directory
+indir () {
+    : run commands IN the first DIRectory argument
+    : used cd
+    debug ENTRY $@
+    [[ ! -d "$1" ]] && return 1
+    local target_dir="$1"
+    shift
+    (
+	cd "$target_dir" || return 1
+	debug "EVAL in $target_dir: $*" >&2
+	eval "$@"
+    )
+}
+# 2026-01-02: moved from backuplib (they are general utils)
+classic_mode () 
+{ 
+    : the octal representation of files RWX modes;
+    : date: 2023-07-22;
+    set -- $(file_mode $1);
+    echo ${1:4}
+}
+file_mode () 
+{ 
+    : permission bits of the file argument;
+    : date: 2023-07-22;
+    report_notfile ${1:-/dev/null} && return 1;
+    set -- $(stat -r $1);
+    echo $3
+}
+# 2026-01-21: Copilot suggested safe mode function
+with_strict() {
+    local _opts=$(set +o)
+    trap 'eval "$_opts"' RETURN
+    set -euo pipefail
+    IFS=$'\n\t'
+}
+# 2026-01-22: Copilot/Gemini co-developed
+confirm() {
+    : Usage: "if confirm \"prompt message\"; then ..."
+    : date: 2026-01-22;
+    local prompt="$1"
+    local response
+    # We use 'return' here; if it fails in your specific shell, 'exit' is the alternative.
+    trap 'echo; return 1' INT
+    read -r "response?${prompt} [return=yes / n=no] ? " < /dev/tty
+    trap - INT
+
+    case "$response" in
+        ""|[Yy]*) return 0 ;; # Success (Yes)
+        *)        return 1 ;; # Failure (No/Anything else)
+    esac
+}
+# 2026-01-23: functions to set up for testing
+test_init () {
+    setenv FUNCNEST 53
+    echo "nesting limit: $FUNCNEST"
+}
