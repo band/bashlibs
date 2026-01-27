@@ -160,8 +160,9 @@ backup_outdated ()
     comm -13 <(backup_onlyfiles) <(indir ${BACKUP_DIRECTORY:-.bak} backup_onlyfiles)
 }
 backup_needed () {
-    : files in cwd not in .bak/ tree
-    cmp -s "$1" .bak/"$1" || echo "$1"
+	: files in cwd not in $BACKUP_DIRECTORY tree
+	: date: 2026-01-27
+	cmp -s "$1" "${BACKUP_DIRECTORY:-.bak}"/"$1" || echo "$1"
 }
 backup_libstatus ()
 { 
