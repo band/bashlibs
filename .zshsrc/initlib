@@ -1,0 +1,11 @@
+# 2026-01-01: prototype workbench initialization function(s)
+# Usage: source initlib
+init_here () {
+    : source workbench libraries
+    source zshutilib
+    source backuplib
+    source versionlib
+    echo "Run 'backup_init' before using backup and version functions."
+}
+init_here
+
