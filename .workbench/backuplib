@@ -151,16 +151,6 @@ backup_outdated ()
     : uses: comm
     comm -13 <(backup_onlyfiles) <(indir ${BACKUP_DIRECTORY:-.bak} backup_onlyfiles)
 }
-backup_prunefiles () {
-    : prune bak files not linked to a version
-    : uses: basename, find, rm, sort, xargs
-    for f in $(find .ver -type f); do
-	: debug echo $f
-	find .bak/.bak -name $(basename $f) -links 1
-    done | sort -u | xargs rm -v
-    : prune unversioned files older than the last 2 backups
-    find .bak/.bak/.bak -type f -links 1 | xargs printf "pruning(i.e., rm -v): %s\n"
-}
 backup_needed () {
     : files in cwd not in .bak/ tree
     cmp -s "$1" .bak/"$1" || echo "$1"
@@ -184,4 +174,25 @@ backup_libstatus ()
     echo "\nshow backup tree:"
     tree -a .bak
 }
-
+backup_trim () {
+    : prune .bak files not linked to a version
+    : uses: basename, find, rm, sort
+    : date: 2026-01-24 -- include dry-run option
+    : debug ENTRY $# "$@" $(pwd)
+    prunefile () {
+	while IFS= read -r file; do
+	    if [[ "$1" == "-d" ]]; then
+		printf 'dry-run: prune (i.e., rm -v) %s\n' "$file"
+	    else
+		rm -v "$file"
+	    fi
+	done
+    }
+    for f in $(find ${VERSION_DIRECTORY:-.ver} -type f)
+    do
+	: debug echo $f
+	find ${BACKUP_DIRECTORY:-.}/.bak/.bak -name $(basename $f) -links 1
+    done | sort -u | prunefile "$1"
+    : prune unversioned files older than the last 2 backups
+    find ${BACKUP_DIRECTORY:-.}/.bak/.bak/.bak -type f -links 1 | prunefile "$1"
+}
