@@ -68,38 +68,53 @@ version_bump ()
     esac
 }
 # 2025-12-24: find and list version linked files
+# 2026-01-23: support local and remote directories
 version_files () {
-    : find version linked files in local .ver/.bak directories
+    : find version linked files in .ver/.bak directories
     : uses: cut, find, ls, sort
-    for f in $(find .ver/ -type f); do
+    : lib: zshutilib
+    : date: 2026-01-23: support remote directories
+    verdir=${VERSION_DIRECTORY:-.ver}
+    : debug verdir: $verdir
+    for f in $(find $verdir/ -type f)
+    do
 	: debug $(ls -i $f)
-	local _inode=$(ls -i $f | cut -d' ' -f1)
-	set -- $(find . -inum $_inode)
+	local _inode=$(ls -i $f | cut -d' ' -f1) 
+	set -- $(find $(dirname $verdir) -inum $_inode)
 	print "$1 is linked to: $2"
     done | sort -t'/' -k3,3V -k4,4
 }
+
+
 version_latest () {
-    : find latest version linked files in local .ver/.bak directories
+    : find latest version linked files in .ver/.bak directories
     : uses: awk, cut, find, ls, sort
-    for f in $(find .ver/ -type f); do
+    : date: 2026-01-24: support local and remote directories
+    local verdir=${VERSION_DIRECTORY:-.ver}
+    for f in $(find $verdir/ -type f); do
 	: debug $(ls -i $f)
 	local _inode=$(ls -i $f | cut -d' ' -f1)
-	set -- $(find . -inum $_inode)
+	set -- $(find $(dirname $verdir) -inum $_inode)
 	print "$1 is linked to: $2"
     done | sort -t'/' -k3,3V -k4,4 | awk -F'/' '{latest[$4]=$0} END {for (lib in latest) print latest[lib]}' | sort
 }
 # 2026-01-04: claude sonnet-4 assisted analysis and debug update
+# 2026-01-23: claude assist on parsing paths
 version_new () {
     : create a new first or next version of a file
     : uses: find, ln, mkdir, sort, tail
-    : libs: fnusedlib, shutilib
+    : libs: zshutilib, shutilib
+    : date: 2026-01-23: support for remote directories
     debug ENTRY $# $@
+    local backupdir=${BACKUP_DIRECTORY:-.bak}
+    local versiondir=${VERSION_DIRECTORY:-.ver}
+    debug "backupdir: $backupdir; versiondir: $versiondir"
     if [ $# -lt 1 ]
     then
 	echo "Usage: version_new filename [M|m|p|semver]" && return 1
-    elif [[ ! -f .bak/"$1" ]]
+    elif [[ ! -f $backupdir/"$1" ]]
     then
-	echo "error: .bak/$1 is not a file" && return 1
+	echo "error: $backupdir/$1 is not a file" && return 1
     fi
     local file=$1 
     if [[ -z $2 ]]
@@ -121,14 +136,15 @@ version_new () {
 	esac
     fi
     echo "bump: $bump OR version: $newversion for $file"
+    : pause
     if [[ -n $bump ]]
     then
 	echo "bump $bump version for $file"
 	: echo "determine previous version or assign 0.0.1"
-	local highest=$(find .ver/ -name $file 2>/dev/null | sort -t'/' -k2 -V | tail -n 1)
-	debug highest: $highest
-	local temp=${highest#.ver/}
-	local currentversion=${temp%%/*} 
+	local highest=$(find $versiondir/ -name $file 2>/dev/null | sort -t'/' -k2 -V | tail -n 1) 
+	: debug highest: $highest
+	local currentversion=${${highest%/*}##*/}
+	debug currentversion: $currentversion
 	if [[ -n $currentversion ]]
 	then
 	    echo "bump $currentversion $bump value"
@@ -142,28 +158,33 @@ version_new () {
 	    esac
 	fi
     fi
-    echo "create version $newversion link file for .bak/$file"
-    local verdir=$VERSION_DIRECTORY/$newversion
-    : debug verdir: $verdir
-    [[ ! -d "$verdir" ]] && mkdir -pv $verdir
-    : check if .bak/$file is already linked to the latest version
-    local latest_ver=$(find .ver/ -name $file 2>/dev/null | sort -t'/' -k2 -V | tail -n 1)
-    if [[ -n $latest_ver ]]; then
-        # Use -ef test to check if files have same inode (are hard-linked)
-        if [[ .bak/$file -ef $latest_ver ]]; then
-            error "Cannot create version: .bak/$file unchanged since ${latest_ver#.ver/}"
-            return 1
-        fi
+    echo "create version $newversion link file for $backupdir/$file"
+    local newversiondir=${VERSION_DIRECTORY:-.ver}/$newversion 
+    : debug newversiondir: $newversiondir
+    [[ ! -d "$newversiondir" ]] && mkdir -pv $newversiondir
+    : check if $backupdir/$file is already linked to the latest version
+    local latest_ver=$(find $versiondir/ -name $file 2>/dev/null | sort -t'/' -k2 -V | tail -n 1)
+    : debug latest_ver: $latest_ver
+    : pause
+    if [[ -n $latest_ver ]]
+    then
+	if [[ $backupdir/$file -ef $latest_ver ]]
+	then
+	    error "Cannot create version: $backupdir/$file unchanged since ${latest_ver#.ver/}"
+	    return 1
+	fi
     fi
     : create the version link
-    ln -f .bak/$file $verdir/$file
+    ln -f $backupdir/$file $newversiondir/$file
 }
+
 version_status () {
-    : show current VERSION_DIRECTORY information
-    : lib: fnusedlib
-    : local directory version numbers from the most recent;
-    echo "local versions; most recent first"
-    indir .ver ls -t1
-    echo "local version files:"
-    version_files
+	: show current VERSION_DIRECTORY information
+	: lib: zshutilib
+	: local directory version numbers from the most recent
+	: date: 2026-01-24: support local and remote directories
+	echo "List versions in $VERSION_DIRECTORY; most recent first"
+	indir ${VERSION_DIRECTORY:-.ver} ls -t1
+	echo "$VERSION_DIRECTORY version files:"
+	version_files
 }
