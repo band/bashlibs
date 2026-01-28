@@ -62,7 +62,7 @@ EOF
 }
 backup_files () 
 { 
-    : only immediate backups;
+    : list only immediate backed up files
     : related: version_files w.r.t .bak;
     : lib: zshutilib
     : date: 2023-10-21;
@@ -155,36 +155,19 @@ backup_onlyfiles ()
 }
 backup_outdated () 
 { 
-    : files in $BACKUP_DIRECTORY tree not in cwd;
+    : files in BACKUP_DIRECTORY tree not in cwd;
     : uses: comm
     comm -13 <(backup_onlyfiles) <(indir ${BACKUP_DIRECTORY:-.bak} backup_onlyfiles)
 }
 
 backup_needed () {
-	: files in cwd not in $BACKUP_DIRECTORY tree
-	: date: 2026-01-27
-	cmp -s "$1" "${BACKUP_DIRECTORY:-.bak}"/"$1" || echo "$1"
+    : files in cwd not in $BACKUP_DIRECTORY tree
+    : date: 2026-01-27
+    cmp -s "$1" "${BACKUP_DIRECTORY:-.bak}"/"$1" || echo "$1"
 }
 
-backup_status () {
-	: show backup and version info of shell lib files in $BACKUP_DIRECTORY
-	: uses: tree
-	: lib: zshutilib
-	: date: 2026-01-21
-	: debug ENTRY "$*"
-	echo "libraries in cwd that are not backed up in $(dirname $BACKUP_DIRECTORY):"
-	foreach_ backup_needed *lib
-	if confirm "Show all version and backup files"; then
-	    echo "\nversion files:"
-	    version_files
-	    tree -a ${VERSION_DIRECTORY:-.ver}
-	    echo "\nbackup tree:"
-	    tree -a ${BACKUP_DIRECTORY:-.bak}
-	fi
-}
-
-backup_trim () {
-    : prune .bak files not linked to a version
+backup_prune () {
+    : prune BACKUP_DIRECTORY files not linked to a VERSION_DIRECTORY file
     : uses: basename, find, rm, sort
     : date: 2026-01-24 -- include dry-run option
     : debug ENTRY $# "$@" $(pwd)
@@ -204,4 +187,21 @@ backup_trim () {
     done | sort -u | prunefile "$1"
     : prune unversioned files older than the last 2 backups
     find ${BACKUP_DIRECTORY:-.}/.bak/.bak/.bak -type f -links 1 | prunefile "$1"
+}
+
+backup_status () {
+    : show backup and version info of shell lib files in BACKUP_DIRECTORY
+    : uses: tree
+    : lib: zshutilib
+    : date: 2026-01-21
+    : debug ENTRY "$*"
+    echo "libraries in cwd that are not backed up in $(dirname $BACKUP_DIRECTORY):"
+    foreach_ backup_needed *lib
+    if confirm "Show all version and backup files"; then
+	echo "\nversion files:"
+	version_files
+	tree -a ${VERSION_DIRECTORY:-.ver}
+	echo "\nbackup tree:"
+	tree -a ${BACKUP_DIRECTORY:-.bak}
+    fi
 }
