@@ -1,28 +1,10 @@
+# 
 lib_toc () {
     : display fn name and first null
     : date: 2026-01-28
+    debug ENTRY $# "$@"
     awk '
-        /^[[:space:]]*[A-Za-z_][A-Za-z0-9_]*[[:space:]]*\(\)[[:space:]]*[{]?[[:space:]]*$/ {
-            # Strip trailing { if present
-            line = $0
-            sub(/[[:space:]]*[{][[:space:]]*$/, "", line)
-            print line
-            in_func = 1
-            next
-        }
-        # First null command after entering a function
-        in_func && /^[[:space:]]*:[[:space:]]/ {
-            print $0
-            in_func = 0
-        }
-    ' "$@"
-}
-#
-lib_toc () {
-    : display fn name and first null
-    : date: 2026-01-28
-    awk '
-        /^[[:space:]]*[A-Za-z_][A-Za-z0-9_]*[[:space:]]*\(\)[[:space:]]*[{]?[[:space:]]*$/ {
+        /^[A-Za-z_][A-Za-z0-9_]*[[:space:]]*\(\)[[:space:]]*[{]?[[:space:]]*$/ {
             # Strip trailing { if present
             line = $0
             sub(/[[:space:]]*[{][[:space:]]*$/, "", line)
@@ -35,13 +17,13 @@ lib_toc () {
             # Strip leading whitespace from null command
             null_cmd = $0
             sub(/^[[:space:]]*/, "", null_cmd)
-            print func_name " " null_cmd
+            printf "%-30s %s\n", func_name, null_cmd
             in_func = 0
             func_name = ""
             next
         }
         # If we hit another function or end of input without finding null command
-        in_func && /^[[:space:]]*[A-Za-z_][A-Za-z0-9_]*[[:space:]]*\(\)[[:space:]]*[{]?[[:space:]]*$/ {
+        in_func && /^[A-Za-z_][A-Za-z0-9_]*[[:space:]]*\(\)[[:space:]]*[{]?[[:space:]]*$/ {
             print func_name
             # Process this new function
             line = $0
@@ -58,3 +40,13 @@ lib_toc () {
         }
     ' "$@"
 }
+
+lib_header () {
+    : build a _header function for a lib file
+    : date: 2026-01-29
+    debug ENTRY $# "$@"
+    local libfile="${1:-/dev/null}"
+    report_notfile "$libfile" && return 1
+    lib_toc "$libfile"
+}
+
