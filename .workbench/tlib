@@ -3,7 +3,13 @@ lib_toc () {
     : display fn name and first null
     : date: 2026-01-28
     debug ENTRY $# "$@"
-    awk '
+    awk -v fname="${1}_header" '
+    	BEGIN {
+	      print fname " ()"
+	      print "{"
+	      printf "%-30s %s\n", "name", "abstract"
+	      printf "%-30s %s\n", "----", "--------"
+	}
         /^[A-Za-z_][A-Za-z0-9_]*[[:space:]]*\(\)[[:space:]]*[{]?[[:space:]]*$/ {
             # Strip trailing { if present
             line = $0
