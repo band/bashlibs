@@ -7,8 +7,10 @@ lib_toc () {
     	BEGIN {
 	      print fname " ()"
 	      print "{"
-	      printf "%-30s %s\n", "name", "abstract"
-	      printf "%-30s %s\n", "----", "--------"
+	      printf "    %s \"\n", "echo"
+	      printf "Functions in %s\n\n", fname
+	      printf "    %-30s %s\n", "name", "abstract"
+	      printf "    %-30s %s\n", "----", "--------"
 	}
         /^[A-Za-z_][A-Za-z0-9_]*[[:space:]]*\(\)[[:space:]]*[{]?[[:space:]]*$/ {
             # Strip trailing { if present
@@ -23,14 +25,14 @@ lib_toc () {
             # Strip leading whitespace from null command
             null_cmd = $0
             sub(/^[[:space:]]*/, "", null_cmd)
-            printf "%-30s %s\n", func_name, null_cmd
+            printf "    %-30s %s\n", func_name, null_cmd
             in_func = 0
             func_name = ""
             next
         }
         # If we hit another function or end of input without finding null command
         in_func && /^[A-Za-z_][A-Za-z0-9_]*[[:space:]]*\(\)[[:space:]]*[{]?[[:space:]]*$/ {
-            print func_name
+            printf "   %s\n", func_name
             # Process this new function
             line = $0
             sub(/[[:space:]]*[{][[:space:]]*$/, "", line)
@@ -41,8 +43,9 @@ lib_toc () {
         # Print function name at end of file if no null command was found
         END {
             if (in_func && func_name != "") {
-                print func_name
+                printf "   %s\n", func_name
             }
+	    printf "\"\n}\n"
         }
     ' "$@"
 }
