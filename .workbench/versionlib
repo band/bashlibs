@@ -178,6 +178,25 @@ version_new () {
     ln -f $backupdir/$file $newversiondir/$file
 }
 
+# 2026-01-28: Gemini generated version pruning function
+version_prune() {
+    : remove older versions of "$1", default keep 5;
+    : uses: find,  sort, tail, unlink;
+    : lib: zshutilib
+    debug ENTRY $# "$@"
+    local filename="${1:-/dev/null}"
+    local keep_count="${2:-5}"
+    local verdir="${VERSION_DIRECTORY:-.ver}"
+    report_notfile "$filename" && return 1
+    
+    find "$verdir" -name "$filename" | sort -Vr | tail -n +$((keep_count + 1)) | while read -r target_path; do
+        if [[ -f "$target_path" ]]; then
+            echo "Pruning version: $target_path"
+            echo "unlink $target_path"
+        fi
+    done
+}
+
 version_status () {
 	: show current VERSION_DIRECTORY information
 	: lib: zshutilib
