@@ -13,18 +13,18 @@ lib_toc () {
 	      printf "    %-30s %s\n", "----", "--------"
 	}
         /^[A-Za-z_][A-Za-z0-9_]*[[:space:]]*\(\)[[:space:]]*[{]?[[:space:]]*$/ {
-            # Strip trailing { if present
             line = $0
             sub(/[[:space:]]*[{][[:space:]]*$/, "", line)
+            sub(/[[:space:]]*\(\)[[:space:]]*$/, "", line)
             func_name = line
             in_func = 1
             next
         }
         # First null command after entering a function
         in_func && /^[[:space:]]*:[[:space:]]/ {
-            # Strip leading whitespace from null command
+            # Strip leading whitespace and leading ":" from null command
             null_cmd = $0
-            sub(/^[[:space:]]*/, "", null_cmd)
+	    sub(/^[[:space:]]*:[[:space:]]*/, "", null_cmd)
             printf "    %-30s %s\n", func_name, null_cmd
             in_func = 0
             func_name = ""
@@ -36,6 +36,8 @@ lib_toc () {
             # Process this new function
             line = $0
             sub(/[[:space:]]*[{][[:space:]]*$/, "", line)
+	    # Strip () from function name
+            sub(/[[:space:]]*\(\)[[:space:]]*$/, "", line)
             func_name = line
             in_func = 1
             next
