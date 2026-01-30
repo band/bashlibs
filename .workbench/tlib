@@ -3,9 +3,9 @@ lib_toc () {
     : display fn name and first null
     : date: 2026-01-28
     debug ENTRY $# "$@"
-    awk -v fname="${1}_header" '
+    awk -v fname="${1}" '
     	BEGIN {
-	      print fname " ()"
+	      printf "%s_header ()\n", fname
 	      print "{"
 	      printf "    %s \"\n", "echo"
 	      printf "Functions in %s\n\n", fname
