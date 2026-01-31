@@ -1,18 +1,21 @@
-# 
 lib_toc () {
     : display fn name and first null
+    : uses: awk, date
     : date: 2026-01-28
     debug ENTRY $# "$@"
-    awk -v fname="${1}" '
+    [[ $# -eq 0 ]] && { echo "Usage: lib_toc libraryfile"; return 1; }
+    local ymd="$(date +%Y-%m-%d)"
+    awk -v fname="$1" -v date="$ymd" '
     	BEGIN {
 	      printf "%s_header ()\n", fname
 	      print "{"
+	      printf "    : date: %s\n", date
 	      printf "    %s \"\n", "echo"
 	      printf "Functions in %s\n\n", fname
 	      printf "    %-30s %s\n", "name", "abstract"
 	      printf "    %-30s %s\n", "----", "--------"
 	}
-        /^[A-Za-z_][A-Za-z0-9_]*[[:space:]]*\(\)[[:space:]]*[{]?[[:space:]]*$/ {
+        !in_func && /^[A-Za-z_][A-Za-z0-9_]*[[:space:]]*\(\)[[:space:]]*[{]?[[:space:]]*$/ {
             line = $0
             sub(/[[:space:]]*[{][[:space:]]*$/, "", line)
             sub(/[[:space:]]*\(\)[[:space:]]*$/, "", line)
@@ -61,3 +64,15 @@ lib_header () {
     lib_toc "$libfile"
 }
 
+prepend_to_file() {
+    : prepend text to a file
+    debug ENTRY $# "$@"
+    local text=$1
+    local file=$2
+    local tmp=$(mktemp) || exit 1
+
+    : write the new text first
+    printf '%s\n' "$text" > "$tmp"
+    cat "$file" >> "$tmp"
+    mv "$tmp" "$file"
+}
