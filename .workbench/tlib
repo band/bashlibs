@@ -35,7 +35,7 @@ lib_toc () {
         }
         # If we hit another function or end of input without finding null command
         in_func && /^[A-Za-z_][A-Za-z0-9_]*[[:space:]]*\(\)[[:space:]]*[{]?[[:space:]]*$/ {
-            printf "   %s\n", func_name
+            printf "    %s\n", func_name
             # Process this new function
             line = $0
             sub(/[[:space:]]*[{][[:space:]]*$/, "", line)
@@ -48,7 +48,7 @@ lib_toc () {
         # Print function name at end of file if no null command was found
         END {
             if (in_func && func_name != "") {
-                printf "   %s\n", func_name
+                printf "    %s\n", func_name
             }
 	    printf "\"\n}\n"
         }
