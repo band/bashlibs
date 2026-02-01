@@ -16,26 +16,9 @@ version_init ()
 }
 # 2025-12-27: TODO: this entire function-based workflow needs review
 # - specifically the filename independent notion of versions
-# - my model is now different from the way these functions work
-version_one ()
-{
-    : for a single file in current directory;
-    : uses: mkdir, ln;
-    : date: 2025-12-16;
-    : debug ENTRY $PWD $@;
-    local file=${1:-/dev/null};
-    if [ ! -f "$file" ]; then
-        debug NOT file: $file;
-	: pause;
-	return 1
-    fi
-    debug FILE $file;
-    : pause;
-    local verdir=$VERSION_DIRECTORY/$(next_version)
-    mkdir $verdir
-    ln -f ./.bak/$file $verdir/$file
-}
+# - my model is different from the way mm3 was thinking about versions
 # 2025-12-27: version functions work on specific files and versions
+# 2026-02-01: rename _bump to _next ? (think about it)
 version_bump () 
 { 
     : increment Major, minor, or patch version of provided version number
@@ -70,7 +53,7 @@ version_bump ()
 # 2025-12-24: find and list version linked files
 # 2026-01-23: support local and remote directories
 version_files () {
-    : find version linked files in .ver/.bak directories
+    : find version linked files in VERSION_DIRECTORY/BACKUP_DIRECTORY directories
     : uses: cut, find, ls, sort
     : lib: zshutilib
     : date: 2026-01-23: support remote directories
@@ -87,7 +70,7 @@ version_files () {
 
 
 version_latest () {
-    : find latest version linked files in .ver/.bak directories
+    : find latest version linked files in VERSION_DIRECTORY/BACKUP_DIRECTORY directories
     : uses: awk, cut, find, ls, sort
     : date: 2026-01-24: support local and remote directories
     local verdir=${VERSION_DIRECTORY:-.ver}
