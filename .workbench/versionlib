@@ -180,7 +180,7 @@ version_new () {
 
 # 2026-01-28: Gemini generated version pruning function
 version_prune() {
-    : remove older versions of "$1", default keep 5;
+    : remove older versions of \$1, default keep 5;
     : uses: find,  sort, tail, unlink;
     : lib: zshutilib
     debug ENTRY $# "$@"
