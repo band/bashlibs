@@ -57,22 +57,13 @@ lib_toc () {
 
 lib_header () {
     : build a _header function for a lib file
+    : uses: cat, mktemp
     : date: 2026-01-29
     debug ENTRY $# "$@"
     local libfile="${1:-/dev/null}"
     report_notfile "$libfile" && return 1
-    lib_toc "$libfile"
-}
-
-prepend_to_file() {
-    : prepend text to a file
-    debug ENTRY $# "$@"
-    local text=$1
-    local file=$2
-    local tmp=$(mktemp) || exit 1
-
-    : write the new text first
-    printf '%s\n' "$text" > "$tmp"
-    cat "$file" >> "$tmp"
-    mv "$tmp" "$file"
+    local tmpf=$(mktemp)
+    lib_toc "$libfile" > "$tmpf"
+    cat "$libfile" >> "$tmpf"
+    echo "mv $tmpf $libfile"
 }
