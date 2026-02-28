@@ -114,7 +114,7 @@ backup_here () {
 }
 backup_init () 
 {
-    : establish {BACKUP,VERSION}_DIRECTORY ENV vars;
+    : establish {BACKUP,VERSION,RELEASE}_DIRECTORY ENV vars;
     : date: 2023-09-18;
     : date: 2026-01-20: specify working dir or use cwd
     : lib: zshutilib
@@ -123,8 +123,9 @@ backup_init ()
 	usage "[backupdir] - provide directory path for backup, or use cwd"
 	return
     fi
-    setenv BACKUP_DIRECTORY ${1:-.}/.bak > /dev/null;
+    setenv BACKUP_DIRECTORY ${1:-.}/.bak > /dev/null
     setenv VERSION_DIRECTORY ${1:-.}/.ver > /dev/null
+    setenv RELEASE_DIRECTORY ${1:-.}/.rel > /dev/null
 }
 backup_one () 
 {

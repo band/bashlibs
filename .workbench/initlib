@@ -5,7 +5,8 @@ init_here () {
     source zshutilib
     source backuplib
     source versionlib
-    echo "Run 'backup_init' before using backup and version functions."
+    source releaselib
+    echo "Run 'backup_init' before using backup, version, and release functions."
 }
 init_here
 
