@@ -1,0 +1,50 @@
+# releaselib - functions to group specific versions of libs into a release
+# 2026-02-26
+# outline:
+# - get release number, or start from 0.1.0
+# - select / specify lib versions to gather into this release
+# - insure `.rel/M.m.p` directory exists (create if needed)
+# - copy specific lib version from `.ver/M.m.p/libfile` to `.rel/M.m.p/libfile`
+# - AND add version: info to the top of "libfile"
+#
+release_new () {
+    : uses: mkdir
+    # print -r "Usage: release_new \[M.m.p\]"
+    local relnum
+    # TODO: test and validate $1 as semver
+    # TODO: $1 can be M|m|p|semver
+    if [[ -z "$1" ]]; then
+	relnum=0.1.0
+    else
+	relnum="$1"
+    fi
+    mkdir -pv "${RELEASE_DIRECTORY:-.rel}"/$relnum
+}
+
+# release_files: foreach file listed copy latest_ver to release_dir, adding version info to the top of the file.
+release_files () {
+    debug $# "$@"
+    # TODO: validate $1 as in release_new
+    local relnum="$1" && shift
+    for f in "$@"; do
+	local output=$(version_latest "$f")
+	print -r "release_one ${output%% *} to $RELEASE_DIRECTORY/$relnum"
+    done
+}
+
+release_one () {
+    : release file with version path comment
+    : uses: cat
+    ts () { print -r "$(TZ=UTC date +%Y-%m-%dT%H-%MZ)" }
+    local file_path=$(latest_ver "$1") 
+    local rel_dir="${RELEASE_DIRECTORY}/0.0.1"
+    local dest="$rel_dir/${${file_path}:t}"     # dest file = dirB/filename
+    { echo "# $(ts): $file_path"; cat "$file_path" } > "$dest"
+}
+
+release_status () {
+    : show RELEASE_DIRECTORY information
+    : uses: tree
+    echo "Releases in $RELEASE_DIRECTORY:"
+    tree -a "${RELEASE_DIRECTORY:-.rel}"
+}

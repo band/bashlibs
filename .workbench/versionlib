@@ -73,13 +73,18 @@ version_latest () {
     : find latest version linked files in VERSION_DIRECTORY/BACKUP_DIRECTORY directories
     : uses: awk, cut, find, ls, sort
     : date: 2026-01-24: support local and remote directories
-    local verdir=${VERSION_DIRECTORY:-.ver}
-    for f in $(find $verdir/ -type f); do
+    : date: 2026-02-28: Usage: version_latest libfilename
+    local versiondir=${VERSION_DIRECTORY:-.ver}
+    if [ $# -lt 1 ]
+    then
+	echo "Usage: version_latest filename" && return 1
+    fi
+    for f in $(find $verdir/ -name "$1"); do
 	: debug $(ls -i $f)
 	local _inode=$(ls -i $f | cut -d' ' -f1)
 	set -- $(find $(dirname $verdir) -inum $_inode)
 	print "$1 is linked to: $2"
-    done | sort -t'/' -k3,3V -k4,4 | awk -F'/' '{latest[$4]=$0} END {for (lib in latest) print latest[lib]}' | sort
+    done | sort -t'/' -k3,3V -k4,4 | awk -F'/' '{latest[$4]=$0} END {for (lib in latest) print latest[lib]}'
 }
 # 2026-01-04: claude sonnet-4 assisted analysis and debug update
 # 2026-01-23: claude assist on parsing paths
