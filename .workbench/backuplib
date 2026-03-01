@@ -60,6 +60,20 @@ SOFTWARE.
 EOF
 
 }
+
+backup_diff () {
+	: diff a file with the latest copy in BACKUP_DIRECTORY
+	: uses: diff
+	: date: 2026-03-01: Usage: backup_diff filename
+	(( $# )) || { echo "Usage: backup_diff filename"; return 1 }
+	local backdir=${BACKUP_DIRECTORY:-.bak}
+	if [[ ! -e "$1" ]]; then
+	    echo "ERROR: file $backdir/$1 does not exit"
+	    return 1
+	fi
+	diff "$1" "$backdir/$1"
+}
+
 backup_files () 
 { 
     : list only immediate backed up files
@@ -69,6 +83,7 @@ backup_files ()
     : date: 2026-01-27: BACKUP_DIRECTORY
     indir "${BACKUP_DIRECTORY:-.bak}" namedfiles
 }
+
 backup_here () {
     : recursively move backups down the stack
     : clearing the way for their replacement at the top
