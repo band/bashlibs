@@ -1,17 +1,29 @@
 # 2025-12-16: preliminary version library
 # - based on SimpleVersion.md
-# ``` example
-# ln -f  a/b/.bak/file  .ver/{YYYY_MMDD_hhmmss}/a/b/file
-# ```
-#
-# 2025-12-27: TODO: revisit dependency on 'backup_init' and ENV vars
+# 2026-03-02: setup `lib function` syntax
+version () {
+    echo ENTRY $# "$@"
+    case "${1:-__NADA__}" in
+	(__NADA__) echo "nada, sin problema" ;;
+	("help"|"-h") echo "version_help" ;;
+	("init") version_init ;;
+	("bump") echo "version_bump $2 $3" ;;
+	("list") version_list_files ;;
+	("latest") version_latest "$2" ;;
+	("new") echo "version_new $2 $3" ;;
+	("prune") version_prune $2 $3 ;;
+	("status") version_status ;;
+	(*) echo "Error: valor no válido: $1" ;;
+    esac
+}
+
 version_init ()
 {
     : insure a VERSION_DIRECTORY exists
     : uses: mkdir
     : date: 2025-12-16;
     if [ ! -d $VERSION_DIRECTORY ]; then
-        mkdir $VERSION_DIRECTORY
+        mkdir -p "$VERSION_DIRECTORY"
     fi
 }
 # 2025-12-27: TODO: this entire function-based workflow needs review
@@ -27,7 +39,7 @@ version_bump ()
     : date: 2023-10-20;
     : date: 2024-06-19;
     : date: 2025-12-26: bump needs a starting version number
-    debug ENTRY $# $@;
+    debug ENTRY $# "$@"
     local bump=$1;
     if [[ -n $2 ]]; then
 	parts=(${(s:.:)2})
@@ -38,21 +50,21 @@ version_bump ()
     case $bump in 
         (M|[Mm]ajor)
             echo $(expr $1 + 1).0.0
-        ;;
+            ;;
         (m|[Mm]inor)
             echo $1.$(expr $2 + 1).0
-        ;;
+            ;;
         (p|[Pp]atch)
             echo $1.$2.$(expr $3 + 1)
-        ;;
+            ;;
 	(*)
-	    echo "missing or invalid value: $bump" && return 1;
-	;;
+	    echo "Error: missing or invalid value: $bump" && return 1;
+	    ;;
     esac
 }
 # 2025-12-24: find and list version linked files
 # 2026-01-23: support local and remote directories
-version_files () {
+version_list_files () {
     : find version linked files in VERSION_DIRECTORY/BACKUP_DIRECTORY directories
     : uses: cut, find, ls, sort
     : lib: zshutilib
@@ -93,7 +105,7 @@ version_new () {
     : uses: find, ln, mkdir, sort, tail
     : libs: zshutilib, shutilib
     : date: 2026-01-23: support for remote directories
-    debug ENTRY $# $@
+    debug ENTRY $# "$@"
     local backupdir=${BACKUP_DIRECTORY:-.bak}
     local versiondir=${VERSION_DIRECTORY:-.ver}
     debug "backupdir: $backupdir; versiondir: $versiondir"
@@ -104,7 +116,7 @@ version_new () {
     then
 	echo "error: $backupdir/$1 is not a file" && return 1
     fi
-    local file=$1 
+    local file="$1"
     if [[ -z $2 ]]
     then
 	local bump=patch 
@@ -186,12 +198,12 @@ version_prune() {
 }
 
 version_status () {
-	: show current VERSION_DIRECTORY information
-	: lib: zshutilib
-	: local directory version numbers from the most recent
-	: date: 2026-01-24: support local and remote directories
-	echo "List versions in $VERSION_DIRECTORY; most recent first"
-	indir ${VERSION_DIRECTORY:-.ver} ls -t1
-	echo "$VERSION_DIRECTORY version files:"
-	version_files
+    : show current VERSION_DIRECTORY information
+    : lib: zshutilib
+    : local directory version numbers from the most recent
+    : date: 2026-01-24: support local and remote directories
+    echo "List versions in $VERSION_DIRECTORY; most recent first"
+    indir ${VERSION_DIRECTORY:-.ver} ls -t1
+    echo "$VERSION_DIRECTORY version files:"
+    version_list_files
 }

@@ -184,3 +184,9 @@ find .bak/.bak -name $filename -links 1
           BACKUP_DIRECTORY  
 
 		  
+## 2026-03-02: `backup`, `version`, `release` libraries
+	- TODO: implement `lib function` function syntax for libraries
+	- TODO: implement `lib_help` functions and pattern
+	
+	- TODO: use `ipfs` for distributing library releases
+

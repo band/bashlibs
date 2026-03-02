@@ -20,6 +20,21 @@ backup_libheader ()
     : date: 2025-05-08 - even libheaders need a date;
     :
 }
+# 2026-03-01: high-level library function
+backup_ () {
+    echo ENTRY $# "$@"
+    case "${1:-__NADA__}" in
+	(__NADA__) echo "nada: backup_help" ;;
+	("help"|"-h") echo "backup_help" ;;
+	("init") backup_init ;;
+	("status") backup_status ;;
+	("diff") backup_diff $2 ;;
+	("needed") backup_needed $2 ;;
+	("prune") backup_prune $2 ;;
+	(*) echo "backup $@" ;;
+    esac
+}
+
 backup () {
     : ~ one or more files down the $BACKUP_DIRECTORY/.bak/.bak/... stack
     : date: 2023-09-20
@@ -64,14 +79,14 @@ EOF
 backup_diff () {
 	: diff a file with the latest copy in BACKUP_DIRECTORY
 	: uses: diff
-	: date: 2026-03-01: Usage: backup_diff filename
+	: date: 2026-03-01
 	(( $# )) || { echo "Usage: backup_diff filename"; return 1 }
 	local backdir=${BACKUP_DIRECTORY:-.bak}
 	if [[ ! -e "$1" ]]; then
-	    echo "ERROR: file $backdir/$1 does not exit"
+	    echo "ERROR: file $backdir/$1 does not exist"
 	    return 1
 	fi
-	diff "$1" "$backdir/$1"
+	diff "$backdir/$1" "$1"
 }
 
 backup_files () 
