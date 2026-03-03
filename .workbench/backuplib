@@ -20,7 +20,7 @@ backup_libheader ()
     : date: 2025-05-08 - even libheaders need a date;
     :
 }
-# 2026-03-01: high-level library function
+# 2026-03-01: command-line library function
 backup_ () {
     echo ENTRY $# "$@"
     case "${1:-__NADA__}" in
@@ -75,7 +75,6 @@ SOFTWARE.
 EOF
 
 }
-
 backup_diff () {
 	: diff a file with the latest copy in BACKUP_DIRECTORY
 	: uses: diff
@@ -86,7 +85,7 @@ backup_diff () {
 	    echo "ERROR: file $backdir/$1 does not exist"
 	    return 1
 	fi
-	diff "$backdir/$1" "$1"
+	diff --color="auto" "$backdir/$1" "$1"
 }
 
 backup_files () 
