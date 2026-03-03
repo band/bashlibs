@@ -23,10 +23,11 @@ release () {
 release_files () {
     debug $# "$@"
     # TODO: validate $1 as in release_new
-    local relnum="$1" && shift
-    for f in "$@"; do
-	local output=$(version_latest "$f")
-	print -r "release_one ${output%% *} to $RELEASE_DIRECTORY/$relnum"
+    local relnum="$1"  && shift
+    for f in "$@"
+    do
+	local output=$(version_latest "$f") 
+	release_one ${output%% *} "$relnum"
     done
 }
 
