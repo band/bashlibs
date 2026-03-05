@@ -91,7 +91,6 @@ backup_diff () {
 backup_files () 
 { 
     : list only immediate backed up files
-    : related: version_files w.r.t .bak;
     : lib: zshutilib
     : date: 2023-10-21;
     : date: 2026-01-27: BACKUP_DIRECTORY
@@ -229,7 +228,7 @@ backup_status () {
     foreach_ backup_needed *lib
     if confirm "Show all version and backup files"; then
 	echo "\nversion files:"
-	version_files
+	version_list_files
 	tree -a ${VERSION_DIRECTORY:-.ver}
 	echo "\nbackup tree:"
 	tree -a ${BACKUP_DIRECTORY:-.bak}

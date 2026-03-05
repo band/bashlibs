@@ -1,12 +1,11 @@
-# 2026-01-01: prototype workbench initialization function(s)
+# 2026-03-04: shell library initialization function(s)
 # Usage: source initlib
 init_here () {
-    : source workbench libraries
-    source zshutilib
-    source backuplib
-    source versionlib
-    source releaselib
+    : install lib functions in current shell
+    source "${1:+${1}/}"zshutilib
+    source "${1:+${1}/}"backuplib
+    source "${1:+${1}/}"versionlib
+    source "${1:+${1}/}"releaselib
     echo "Run 'backup_init' before using backup, version, and release functions."
 }
 init_here
-

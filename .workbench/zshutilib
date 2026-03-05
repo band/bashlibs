@@ -261,3 +261,5 @@ test_init () {
     setenv FUNCNEST 53
     echo "nesting limit: $FUNCNEST"
 }
+# 2026-03-05: Claude Sonnet 4.6 POSIX compliant function
+fullpath() { ( cd "$1" && pwd -P ) }
