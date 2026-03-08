@@ -25,7 +25,7 @@ shlib_install () {
     # copy the libraries to $lib_path
     local libs=(zshutilib backuplib versionlib releaselib)
     for lib in $libs; do
-	cp -v $lib $lib_dir
+	cp -fv $lib $lib_dir
     done
 }
 shlib_install
