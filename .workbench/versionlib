@@ -192,7 +192,7 @@ version_prune() {
     find "$versiondir" -name "$filename" | sort -Vr | tail -n +$((keep_count + 1)) | while read -r target_path; do
         if [[ -f "$target_path" ]]; then
             echo "Pruning version: $target_path"
-            echo "unlink $target_path"
+            unlink "$target_path"
         fi
     done
 }
