@@ -246,7 +246,7 @@ confirm() {
     : date: 2026-01-22;
     local prompt="$1"
     local response
-    # We use 'return' here; if it fails in your specific shell, 'exit' is the alternative.
+    # 'return' used here; if it fails in your specific shell, 'exit' is the alternative.
     trap 'echo; return 1' INT
     read -r "response?${prompt} [return=yes / n=no] ? " < /dev/tty
     trap - INT
@@ -258,8 +258,14 @@ confirm() {
 }
 # 2026-01-23: functions to set up for testing
 test_init () {
-    setenv FUNCNEST 53
+    setenv FUNCNEST 23
     echo "nesting limit: $FUNCNEST"
 }
 # 2026-03-05: Claude Sonnet 4.6 POSIX compliant function
 fullpath() { ( cd "$1" && pwd -P ) }
+# 2026-03-08: semantic version checking
+# NOTE: there is a "backup/version/release util library in the works"
+is_semver() {
+    [[ "$1" =~ '^[0-9]+\.[0-9]+\.[0-9]+$' ]]
+}
+

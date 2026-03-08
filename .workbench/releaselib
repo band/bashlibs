@@ -8,12 +8,13 @@
 # - copy specific lib version from `.ver/M.m.p/libfile` to `.rel/M.m.p/libfile`
 # - AND add version: info to the top of destination "libfile"
 #
+# some functions in this library depend on `zshutilib`
 release () {
     echo ENTRY $# "$@"
     case "${1:-__NADA__}" in
 	(__NADA__) { echo "nada: release_help" } ;;
 	("status") release_status ;;
-	("create") echo "release_create $2" ;;
+	("create") release_create "$2" ;;
 	("help") { echo "bueno, release_help" } ;;		
 	(*) echo "release_files $@" ;;
     esac
@@ -22,6 +23,7 @@ release () {
 release_create () {
     : create a new release directory
     : uses: mkdir
+    : libs: zshutilib
     # print -r "Usage: release create \[M.m.p\]"
     local relnum
     if [[ -z "$1" ]]; then
@@ -39,10 +41,8 @@ release_create () {
 # release_files: foreach file listed copy the latest version to release_dir, adding version info to the top of the file.
 # NOTE: `is_semver` function may move to a utility library
 release_files () {
+    : libs: zshutilib
     debug $# "$@"
-    is_semver() {
-	[[ "$1" =~ '^[0-9]+\.[0-9]+\.[0-9]+$' ]]
-    }
     if ! is_semver "$1"; then
 	echo "Error: release version must be M.m.p format"
 	return 1

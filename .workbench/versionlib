@@ -1,5 +1,6 @@
 # 2025-12-16: preliminary version library
 # - based on SimpleVersion.md
+# functions in this library depend on `zshutilib`
 # 2026-03-02: setup `lib function` syntax
 version () {
     echo ENTRY $# "$@"
@@ -8,6 +9,7 @@ version () {
 	("help"|"-h") echo "version_help" ;;
 	("init") version_init ;;
 	("bump") echo "version_bump $2 $3" ;;
+	("diff") version_diff "$2" ;;
 	("list") version_list_files ;;
 	("latest") version_latest "$2" ;;
 	("new") echo "version_new $2 $3" ;;
@@ -62,6 +64,19 @@ version_bump ()
 	    ;;
     esac
 }
+
+version_diff () {
+    : diff a file with the latest version copy
+    : uses: diff
+    : date: 2026-03-08
+    (( $# )) || {
+	echo "Usage: version_diff filename"
+	return 1
+    }
+    local latestver=$(version_latest "$1")
+    diff --color="auto" "${latestver%% *}" "$1"
+}
+
 # 2025-12-24: find and list version linked files
 # 2026-01-23: support local and remote directories
 version_list_files () {
@@ -103,7 +118,7 @@ version_latest () {
 version_new () {
     : create a new first or next version of a file
     : uses: find, ln, mkdir, sort, tail
-    : libs: zshutilib, shutilib
+    : libs: zshutilib
     : date: 2026-01-23: support for remote directories
     debug ENTRY $# "$@"
     local backupdir=${BACKUP_DIRECTORY:-.bak}
@@ -199,11 +214,11 @@ version_prune() {
 
 version_status () {
     : show current VERSION_DIRECTORY information
+    : uses: tree
     : lib: zshutilib
-    : local directory version numbers from the most recent
     : date: 2026-01-24: support local and remote directories
-    echo "List versions in $VERSION_DIRECTORY; most recent first"
-    indir ${VERSION_DIRECTORY:-.ver} ls -t1
-    echo "$VERSION_DIRECTORY version files:"
+    echo "Show $VERSION_DIRECTORY tree:"
+    tree -v "${VERSION_DIRECTORY:-.ver}"
+    printf '%s\n\n' "$VERSION_DIRECTORY version files:"
     version_list_files
 }
