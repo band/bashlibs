@@ -1,25 +1,6 @@
-backup_libheader () 
-{ 
-    : " This is the backuplib Function Library Comment Header";
-    : "Copyright 2025, Marty McGowwan @ Shell Functions";
-    : date: 2025-05-08;
-    :;
-    : " This program is free software: you can redistribute it and/or modify";
-    : "it under the terms of the GNU General Public License as published by";
-    : "the Free Software Foundation, either version 3 of the License, or";
-    : "(at your option) any later version.";
-    :;
-    : " This program is distributed in the hope that it will be useful,";
-    : "but WITHOUT ANY WARRANTY; without even the implied warranty of";
-    : "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the";
-    : "GNU General Public License for more details.";
-    :;
-    : " You should have received a copy of the GNU General Public License";
-    : "along with this program.  If not, see <http://www.gnu.org/licenses/>.";
-    :;
-    : date: 2025-05-08 - even libheaders need a date;
-    :
-}
+# This library is a rewrite of the original `backuplib` written by Martin J. McGowan III, and published [here] and [here on Github].
+# This rewritten library updates the basic TOBYWEN workflow described [here]. It also is part of a Backup/Version/Release workflow described [here].
+# some functions in this library depend on `zshutilib`
 # 2026-03-01: command-line library function
 backup_ () {
     echo ENTRY $# "$@"
@@ -47,34 +28,7 @@ backup () {
 	echo "run 'backup_init [backup_directory]' before running 'backup'"
     fi
 }
-backup_copyright () 
-{ 
-    : date: 2024-06-28;
-    cat <<EOF
 
-Copyright (c) 2005-2020,2022 Marty McGowan, JYATL - Just Yet Another Testing Lab
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
-EOF
-
-}
 backup_diff () {
 	: diff a file with the latest copy in BACKUP_DIRECTORY
 	: uses: diff
@@ -219,16 +173,16 @@ backup_prune () {
 }
 
 backup_status () {
-    : show backup and version info of shell lib files in BACKUP_DIRECTORY
+    : show backup and version info of files in BACKUP_DIRECTORY
     : uses: tree
     : lib: zshutilib
     : date: 2026-01-21
     : debug ENTRY "$*"
-    echo "libraries in cwd that are not backed up in $(dirname $BACKUP_DIRECTORY):"
+    echo "files in cwd not backed up in $(dirname $BACKUP_DIRECTORY):"
     foreach_ backup_needed *lib
     if confirm "Show all version and backup files"; then
 	echo "\nversion files:"
-	version_list_files
+	version_status
 	tree -a ${VERSION_DIRECTORY:-.ver}
 	echo "\nbackup tree:"
 	tree -a ${BACKUP_DIRECTORY:-.bak}
