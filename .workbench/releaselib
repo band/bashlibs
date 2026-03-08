@@ -13,16 +13,36 @@ release () {
     case "${1:-__NADA__}" in
 	(__NADA__) { echo "nada: release_help" } ;;
 	("status") release_status ;;
-	("init") echo "release_init $2" ;;
+	("create") echo "release_create $2" ;;
 	("help") { echo "bueno, release_help" } ;;		
-	(*) echo "release $@" ;;
+	(*) echo "release_files $@" ;;
     esac
+}
+
+release_create () {
+    : create a new release directory
+    : uses: mkdir
+    # print -r "Usage: release create \[M.m.p\]"
+    local relnum
+    if [[ -z "$1" ]]; then
+	relnum=0.1.0
+    else
+	if ! is_semver "$1"; then
+	    echo "Error: release version must be M.m.p format"
+	    return 1
+	fi
+	relnum="$1"
+    fi
+    mkdir -pv "${RELEASE_DIRECTORY:-.rel}"/$relnum
 }
 
 # release_files: foreach file listed copy latest_ver to release_dir, adding version info to the top of the file.
 release_files () {
     debug $# "$@"
-    # TODO: validate $1 as in release_new
+    if ! is_semver "$1"; then
+	echo "Error: release version must be M.m.p format"
+	return 1
+    fi
     local relnum="$1"  && shift
     for f in "$@"
     do
@@ -31,25 +51,10 @@ release_files () {
     done
 }
 
-release_init () {
-    : create a new release directory
-    : uses: mkdir
-    # print -r "Usage: release init \[M.m.p\]"
-    local relnum
-    # TODO: test and validate $1 as semver
-    # TODO: $1 can be M|m|p|semver
-    if [[ -z "$1" ]]; then
-	relnum=0.1.0
-    else
-	relnum="$1"
-    fi
-    mkdir -pv "${RELEASE_DIRECTORY:-.rel}"/$relnum
-}
-
 release_one () {
     : release file with version path comment into specified release
     : uses: cat
-    (( $# == 2 )) || { print -r "Usage release_ filename release_num"; return 1 }
+    (( $# == 2 )) || { print -r "Usage release filename release_num"; return 1 }
     ts () { print -r "$(TZ=UTC date +%Y-%m-%dT%H-%MZ)" }
     local file_path=$(latest_ver "$1")
     local rel_dir="${RELEASE_DIRECTORY}/$2"
