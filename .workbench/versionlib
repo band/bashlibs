@@ -69,13 +69,13 @@ version_list_files () {
     : uses: cut, find, ls, sort
     : lib: zshutilib
     : date: 2026-01-23: support remote directories
-    verdir=${VERSION_DIRECTORY:-.ver}
-    : debug verdir: $verdir
-    for f in $(find $verdir/ -type f)
+    local versiondir=${VERSION_DIRECTORY:-.ver}
+    : debug versiondir: $versiondir
+    for f in $(find $versiondir/ -type f)
     do
 	: debug $(ls -i $f)
 	local _inode=$(ls -i $f | cut -d' ' -f1) 
-	set -- $(find $(dirname $verdir) -inum $_inode)
+	set -- $(find $(dirname $versiondir) -inum $_inode)
 	print "$1 is linked to: $2"
     done | sort -t'/' -k3,3V -k4,4
 }
@@ -91,10 +91,10 @@ version_latest () {
     then
 	echo "Usage: version_latest filename" && return 1
     fi
-    for f in $(find $verdir/ -name "$1"); do
+    for f in $(find $versiondir/ -name "$1"); do
 	: debug $(ls -i $f)
 	local _inode=$(ls -i $f | cut -d' ' -f1)
-	set -- $(find $(dirname $verdir) -inum $_inode)
+	set -- $(find $(dirname $versiondir) -inum $_inode)
 	print "$1 is linked to: $2"
     done | sort -t'/' -k3,3V -k4,4 | awk -F'/' '{latest[$4]=$0} END {for (lib in latest) print latest[lib]}'
 }
@@ -186,10 +186,10 @@ version_prune() {
     debug ENTRY $# "$@"
     local filename="${1:-/dev/null}"
     local keep_count="${2:-5}"
-    local verdir="${VERSION_DIRECTORY:-.ver}"
+    local versiondir="${VERSION_DIRECTORY:-.ver}"
     report_notfile "$filename" && return 1
     
-    find "$verdir" -name "$filename" | sort -Vr | tail -n +$((keep_count + 1)) | while read -r target_path; do
+    find "$versiondir" -name "$filename" | sort -Vr | tail -n +$((keep_count + 1)) | while read -r target_path; do
         if [[ -f "$target_path" ]]; then
             echo "Pruning version: $target_path"
             echo "unlink $target_path"

@@ -36,9 +36,13 @@ release_create () {
     mkdir -pv "${RELEASE_DIRECTORY:-.rel}"/$relnum
 }
 
-# release_files: foreach file listed copy latest_ver to release_dir, adding version info to the top of the file.
+# release_files: foreach file listed copy the latest version to release_dir, adding version info to the top of the file.
+# NOTE: `is_semver` function may move to a utility library
 release_files () {
     debug $# "$@"
+    is_semver() {
+	[[ "$1" =~ '^[0-9]+\.[0-9]+\.[0-9]+$' ]]
+    }
     if ! is_semver "$1"; then
 	echo "Error: release version must be M.m.p format"
 	return 1
@@ -54,12 +58,20 @@ release_files () {
 release_one () {
     : release file with version path comment into specified release
     : uses: cat
-    (( $# == 2 )) || { print -r "Usage release filename release_num"; return 1 }
-    ts () { print -r "$(TZ=UTC date +%Y-%m-%dT%H-%MZ)" }
-    local file_path=$(latest_ver "$1")
-    local rel_dir="${RELEASE_DIRECTORY}/$2"
+    (( $# == 2 )) || {
+	print -r "Usage release_ filename release_num"
+	return 1
+    }
+    ts () {
+	print -r "$(TZ=UTC date +%Y-%m-%dT%H-%MZ)"
+    }
+    local file_path="$1"
+    local rel_dir="${RELEASE_DIRECTORY:-.rel}/$2"
     local dest="$rel_dir/${${file_path}:t}"
-    { echo "# $(ts): $file_path"; cat "$file_path" } > "$dest"
+    {
+	echo "# $(ts): $file_path"
+	cat "$file_path"
+    } > "$dest"
 }
 
 release_status () {
