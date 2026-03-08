@@ -7,7 +7,7 @@ fn () {
 	(__NADA__) { echo "nada, sin problema" } ;;
 	("help"|"-h") echo "bueno, help" ;;
 	("body") fn_body $(shift && echo "$@") ;;		
-	(*) echo "Error: valor no válido: $1" ;;
+	(*) echo "Error: valor inválido: $1" ;;
     esac
 }
 fn_body () {

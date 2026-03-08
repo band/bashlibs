@@ -1,11 +1,10 @@
 ::::::::::::::::::::::::::::::::: {#content}
-# The Only Backup You\'ll Ever Need {#the-only-backup-youll-ever-need .title}
-
+# The Only Backup You Will Ever Need  
 :::: {#table-of-contents}
 ## Table of Contents
 
 ::: {#text-table-of-contents}
-- [1. The Only Backup You\'ll Ever Need](#orgbfa94a1)
+- [1. The Only Backup You Will Ever Need](#orgbfa94a1)
   - [1.1. backup Introduction](#org16f7a76)
   - [1.2.
     functions   [[functions]{.functions} [tangle]{.tangle}]{.tag}](#org828249f)
@@ -26,7 +25,7 @@
 ::::
 
 :::::::::::::::::::::::::::: {#outline-container-orgbfa94a1 .outline-2}
-## [1]{.section-number-2} The Only Backup You\'ll Ever Need {#orgbfa94a1}
+## [1]{.section-number-2} The Only Backup You Will Ever Need {#orgbfa94a1}
 
 :::: {#text-1 .outline-text-2}
 ::: org-src-container
