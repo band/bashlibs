@@ -2,7 +2,7 @@
 # This rewritten library updates the basic TOBYWEN workflow described [here]. It also is part of a Backup/Version/Release workflow described [here].
 # some functions in this library depend on `zshutilib`
 # 2026-03-01: command-line library function
-backup_ () {
+backup () {
     echo ENTRY $# "$@"
     case "${1:-__NADA__}" in
 	(__NADA__) echo "nada: backup_help" ;;
@@ -12,11 +12,11 @@ backup_ () {
 	("diff") backup_diff $2 ;;
 	("needed") backup_needed $2 ;;
 	("prune") backup_prune $2 ;;
-	(*) echo "backup $@" ;;
+	(*) backup_ "$@" ;;
     esac
 }
 
-backup () {
+backup_ () {
     : ~ one or more files down the $BACKUP_DIRECTORY/.bak/.bak/... stack
     : date: 2023-09-20
     : date: 2026-01-23: specify BACKUP_DIRECTORY
@@ -48,6 +48,7 @@ backup_files ()
     : lib: zshutilib
     : date: 2023-10-21;
     : date: 2026-01-27: BACKUP_DIRECTORY
+    echo "First level backed up files: "
     indir "${BACKUP_DIRECTORY:-.bak}" namedfiles
 }
 
