@@ -14,6 +14,7 @@ release () {
     case "${1:-__NADA__}" in
 	(__NADA__) { echo "nada: release_help" } ;;
 	("status") release_status ;;
+	("versions") release_versions "$2" ;;
 	("create") release_create "$2" ;;
 	("help") { echo "bueno, release_help" } ;;		
 	(*) echo "release_files $@" ;;
@@ -79,4 +80,16 @@ release_status () {
     : uses: tree
     echo "Releases in $RELEASE_DIRECTORY:"
     tree -a "${RELEASE_DIRECTORY:-.rel}"
+}
+
+release_versions () {
+    : uses: head
+    : debug ENTRY $# "$@"
+    if [[ -z "$1" ]]; then
+	echo "Usage: release versions release_number"
+	return 1
+    fi
+    for f in "${RELEASE_DIRECTORY:-.rel}"/"${1}"/*; do
+	head -1 "$f"
+    done
 }

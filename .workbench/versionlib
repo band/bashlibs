@@ -8,14 +8,13 @@ version () {
 	(__NADA__) echo "nada, sin problema" ;;
 	("help"|"-h") echo "version_help" ;;
 	("init") version_init ;;
-	("bump") echo "version_bump $2 $3" ;;
 	("diff") version_diff "$2" ;;
 	("list") version_list_files ;;
 	("latest") version_latest "$2" ;;
-	("new") echo "version_new $2 $3" ;;
+	("new") version_new $2 $3 ;;
 	("prune") version_prune $2 $3 ;;
 	("status") version_status ;;
-	(*) echo "Error: valor no válido: $1" ;;
+	(*) echo "Error: valor inválido: $1" ;;
     esac
 }
 
@@ -32,7 +31,7 @@ version_init ()
 # - specifically the filename independent notion of versions
 # - my model is different from the way mm3 was thinking about versions
 # 2025-12-27: version functions work on specific files and versions
-# 2026-02-01: rename _bump to _next ? (think about it)
+# 2026-03-15: bump is an internal function
 version_bump () 
 { 
     : increment Major, minor, or patch version of provided version number
@@ -123,7 +122,7 @@ version_new () {
     debug ENTRY $# "$@"
     local backupdir=${BACKUP_DIRECTORY:-.bak}
     local versiondir=${VERSION_DIRECTORY:-.ver}
-    debug "backupdir: $backupdir; versiondir: $versiondir"
+    : debug "backupdir: $backupdir; versiondir: $versiondir"
     if [ $# -lt 1 ]
     then
 	echo "Usage: version_new filename [M|m|p|semver]" && return 1
@@ -150,16 +149,16 @@ version_new () {
 		fi ;;
 	esac
     fi
-    echo "bump: $bump OR version: $newversion for $file"
+    debug "BUMP: $bump OR version: $newversion for $file"
     : pause
     if [[ -n $bump ]]
     then
-	echo "bump $bump version for $file"
+	: debug "bump $bump version for $file"
 	: echo "determine previous version or assign 0.0.1"
 	local highest=$(find $versiondir/ -name $file 2>/dev/null | sort -t'/' -k2 -V | tail -n 1) 
 	: debug highest: $highest
 	local currentversion=${${highest%/*}##*/}
-	debug currentversion: $currentversion
+	: debug currentversion: $currentversion
 	if [[ -n $currentversion ]]
 	then
 	    echo "bump $currentversion $bump value"
