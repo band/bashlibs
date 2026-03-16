@@ -190,3 +190,24 @@ find .bak/.bak -name $filename -links 1
 	
 	- TODO: use `ipfs` for distributing library releases
 
+## 2026-03-16: testing install release 0.1.3
+	- created release 0.1.3:  
+	```shell
+	release create 0.1.3
+	release_files 0.1.3 initlib backuplib versionlib releaselib	zshutilib shlib-install.sh
+	```   
+	
+	- in that release directory run the install function:  
+	`source shlib-install.sh`  
+	- provided `~/lib/shell` as the install directory  
+	
+	- in a new Terminal window: initialized the libraries in a work directory:  
+	```shell
+	cd ~/Documents/Github/bashlib/.workbench
+	source ~/lib/shell/initlib
+	```
+	
+	- work with these installed functions to establish the use cases
+      for using these libraries  
+	  
+	  
