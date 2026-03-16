@@ -95,21 +95,23 @@ backup_here () {
 	chmod "$mode" "$filename"
     fi
 }
-backup_init () 
-{
-    : establish {BACKUP,VERSION,RELEASE}_DIRECTORY ENV vars;
-    : date: 2023-09-18;
-    : date: 2026-01-20: specify working dir or use cwd
+
+backup_init () {
+    : establish {BACKUP,VERSION,RELEASE}_DIRECTORY ENV vars
+    : date: 2023-09-18
+    : date: 2026-03-15: prompt for directory path
     : lib: zshutilib
-    debug $# $@
-    if [[ $# -gt 1 ]]; then
-	usage "[backupdir] - provide directory path for backup, or use cwd"
-	return
+    local dir_path
+    read "dir_path?Enter backup directory path (or Return for '.'): "
+    if [[ -n $dir_path ]]; then
+	dir_path=$(fullpath "${dir_path/#\~/$HOME}")
     fi
-    setenv BACKUP_DIRECTORY ${1:-.}/.bak > /dev/null
-    setenv VERSION_DIRECTORY ${1:-.}/.ver > /dev/null
-    setenv RELEASE_DIRECTORY ${1:-.}/.rel > /dev/null
+    echo DIRPATH "$dir_path"
+    setenv BACKUP_DIRECTORY ${dir_path:-.}/.bak > /dev/null
+    setenv VERSION_DIRECTORY ${dir_path:-.}/.ver > /dev/null
+    setenv RELEASE_DIRECTORY ${dir_path:-.}/.rel > /dev/null
 }
+
 backup_one () 
 {
     # 2026-01-01: TODO: revisit the non-local directory operation
