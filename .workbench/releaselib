@@ -12,11 +12,12 @@
 release () {
     echo ENTRY $# "$@"
     case "${1:-__NADA__}" in
-	(__NADA__) { echo "nada: release_help" } ;;
+	(__NADA__) { echo "nada: TODO: release_help" } ;;
 	("status") release_status ;;
 	("versions") release_versions "$2" ;;
 	("create") release_create "$2" ;;
-	("help") { echo "bueno, release_help" } ;;		
+	("help") { echo "TODO: release_help" } ;;
+	("-v"|"-V") releaselibv ;;
 	(*) echo "release_files $@" ;;
     esac
 }
@@ -48,7 +49,7 @@ release_files () {
 	echo "Error: release version must be M.m.p format"
 	return 1
     fi
-    local relnum="$1"  && shift
+    local relnum="$1" && shift
     for f in "$@"
     do
 	local output=$(version_latest "$f") 
@@ -57,7 +58,7 @@ release_files () {
 }
 
 release_one () {
-    : release file with version path comment into specified release
+    : release file with version path comment and version function
     : uses: cat
     (( $# == 2 )) || {
 	print -r "Usage release_ filename release_num"
@@ -67,10 +68,12 @@ release_one () {
 	print -r "$(TZ=UTC date +%Y-%m-%dT%H-%MZ)"
     }
     local file_path="$1"
-    local rel_dir="${RELEASE_DIRECTORY:-.rel}/$2"
-    local dest="$rel_dir/${${file_path}:t}"
+    local file=${${file_path%% *}:t}
+    echo FILE "${file}lib"
+    local rel_dir="${RELEASE_DIRECTORY:-.rel}/$2" 
+    local dest="$rel_dir/${${file_path}:t}" 
     {
-	echo "# $(ts): $file_path"
+	echo "# $(ts): $file_path" && echo "${file}v () { echo $file version ${${file_path%/*}##*/} }"
 	cat "$file_path"
     } > "$dest"
 }

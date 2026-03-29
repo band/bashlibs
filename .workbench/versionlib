@@ -6,7 +6,7 @@ version () {
     echo ENTRY $# "$@"
     case "${1:-__NADA__}" in
 	(__NADA__) echo "nada, sin problema" ;;
-	("help"|"-h") echo "version_help" ;;
+	("help"|"-h") echo "TODO: version_help" ;;
 	("init") version_init ;;
 	("diff") version_diff "$2" ;;
 	("list") version_list_files ;;
@@ -14,6 +14,7 @@ version () {
 	("new") version_new $2 $3 ;;
 	("prune") version_prune $2 $3 ;;
 	("status") version_status ;;
+	("-v"|"-V") versionlibv ;;
 	(*) echo "Error: valor inválido: $1" ;;
     esac
 }
