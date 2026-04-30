@@ -5,8 +5,7 @@
 version () {
     echo ENTRY $# "$@"
     case "${1:-__NADA__}" in
-	(__NADA__) echo "nada, sin problema" ;;
-	("help"|"-h") echo "TODO: version_help" ;;
+	("help"|"-h"|__NADA__) echo "TODO: version_help" ;;
 	("init") version_init ;;
 	("diff") version_diff "$2" ;;
 	("list") version_list_files ;;
@@ -28,19 +27,14 @@ version_init ()
         mkdir -p "$VERSION_DIRECTORY"
     fi
 }
-# 2025-12-27: TODO: this entire function-based workflow needs review
-# - specifically the filename independent notion of versions
-# - my model is different from the way mm3 was thinking about versions
-# 2025-12-27: version functions work on specific files and versions
+# 2025-12-27: this model differs from original MM3 2023-24 model
+#   - version functions work on specific files and versions
 # 2026-03-15: bump is an internal function
 version_bump () 
 { 
     : increment Major, minor, or patch version of provided version number
     : uses: expr
-    : libs: fnusedlib
-    : date: 2023-10-20;
-    : date: 2024-06-19;
-    : date: 2025-12-26: bump needs a starting version number
+    : libs: zshutilib
     debug ENTRY $# "$@"
     local bump=$1;
     if [[ -n $2 ]]; then
@@ -50,18 +44,10 @@ version_bump ()
         set -- 0 0 0;
     fi
     case $bump in 
-        (M|[Mm]ajor)
-            echo $(expr $1 + 1).0.0
-            ;;
-        (m|[Mm]inor)
-            echo $1.$(expr $2 + 1).0
-            ;;
-        (p|[Pp]atch)
-            echo $1.$2.$(expr $3 + 1)
-            ;;
-	(*)
-	    echo "Error: missing or invalid value: $bump" && return 1;
-	    ;;
+        (M|[Mm]ajor) echo $(expr $1 + 1).0.0 ;;
+        (m|[Mm]inor) echo $1.$(expr $2 + 1).0 ;;
+        (p|[Pp]atch) echo $1.$2.$(expr $3 + 1) ;;
+	(*) echo "Error: missing or invalid value: $bump" && return 1 ;;
     esac
 }
 
@@ -155,7 +141,7 @@ version_new () {
     if [[ -n $bump ]]
     then
 	: debug "bump $bump version for $file"
-	: echo "determine previous version or assign 0.0.1"
+	: determine previous version or assign 0.0.1
 	local highest=$(find $versiondir/ -name $file 2>/dev/null | sort -t'/' -k2 -V | tail -n 1) 
 	: debug highest: $highest
 	local currentversion=${${highest%/*}##*/}

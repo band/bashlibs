@@ -6,19 +6,18 @@
 #   - 2026-03-03: always select the latest version file
 # - insure `.rel/M.m.p` directory exists (create if needed)
 # - copy specific lib version from `.ver/M.m.p/libfile` to `.rel/M.m.p/libfile`
-# - AND add version: info to the top of destination "libfile"
+# - AND add version info to the top of destination "libfile"
 #
 # some functions in this library depend on `zshutilib`
 release () {
     echo ENTRY $# "$@"
     case "${1:-__NADA__}" in
-	(__NADA__) { echo "nada: TODO: release_help" } ;;
+	(__NADA__|"help"|"-h") { echo "TODO: release_help" } ;;
 	("status") release_status ;;
 	("versions") release_versions "$2" ;;
 	("create") release_create "$2" ;;
-	("help") { echo "TODO: release_help" } ;;
 	("-v"|"-V") releaselibv ;;
-	(*) echo "release_files $@" ;;
+	(*) release_files "$@" ;;
     esac
 }
 
@@ -40,8 +39,7 @@ release_create () {
     mkdir -pv "${RELEASE_DIRECTORY:-.rel}"/$relnum
 }
 
-# release_files: foreach file listed copy the latest version to release_dir, adding version info to the top of the file.
-# NOTE: `is_semver` function may move to a utility library
+# release_files: foreach file listed copy latest version to specified release_dir, adding date and version info at the top of the file.
 release_files () {
     : libs: zshutilib
     debug $# "$@"
@@ -69,11 +67,12 @@ release_one () {
     }
     local file_path="$1"
     local file=${${file_path%% *}:t}
-    echo FILE "${file}lib"
+    echo FILE "${file}"
     local rel_dir="${RELEASE_DIRECTORY:-.rel}/$2" 
     local dest="$rel_dir/${${file_path}:t}" 
     {
-	echo "# $(ts): $file_path" && echo "${file}v () { echo $file version ${${file_path%/*}##*/} }"
+	local p=( ${(s:/:)file_path} )
+	echo "# $(ts): Release $2 :-- .../${(j:/:)p[4,-1]}" && echo "${file}v () { echo Release $2: $file version ${${file_path%/*}##*/} }"
 	cat "$file_path"
     } > "$dest"
 }

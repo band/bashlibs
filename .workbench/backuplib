@@ -5,8 +5,7 @@
 backup () {
     echo ENTRY $# "$@"
     case "${1:-__NADA__}" in
-	(__NADA__) echo "nada: backup_help" ;;
-	("help"|"-h") echo "TODO: backup_help" ;;
+	("help"|"-h"|__NADA__) echo "TODO: backup_help" ;;
 	("init") backup_init $2 ;;
 	("status") backup_status ;;
 	("diff") backup_diff $2 ;;

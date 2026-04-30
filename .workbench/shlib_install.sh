@@ -7,13 +7,13 @@
 #     - install in the current directory (only update `initlib`
 #     - install in another directory (update `initlib` and copy library files
 #
-# TODO: workout the two install options
 # TODO: write up a README.md for
 #   (1) installing the library package
 #   (2) putting the functions into practice
 #
 shlib_install () {
     : uses: sed
+    : lib: zshutilib
     fullpath() { ( cd "$1" && pwd -P ) }
     # get directory/path to hold the libraries
     local lib_dir
@@ -27,6 +27,7 @@ shlib_install () {
     for lib in $libs; do
 	cp -fv $lib $lib_dir
     done
+    setenv SHLIBPATH $lib_dir
 }
 shlib_install
 
